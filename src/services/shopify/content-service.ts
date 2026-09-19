@@ -2,12 +2,15 @@ import { shopifyFetch } from "@/services/shopify/client";
 import {
   sortByDisplayOrder,
   sortOccasionsByDisplayOrder,
+  sortTestimonialsByDisplayOrder,
   toBrand,
   toCategoryTile,
   toCollection,
   toHeroBanner,
   toNavLinks,
   toOccasion,
+  toSitemapEntry,
+  toTestimonial,
 } from "@/services/shopify/adapters";
 import {
   BRAND_QUERY,
@@ -16,8 +19,19 @@ import {
   HERO_BANNERS_QUERY,
   MENU_QUERY,
   OCCASIONS_QUERY,
+  SITEMAP_QUERY,
+  TESTIMONIALS_QUERY,
 } from "@/graphql/queries";
-import type { Brand, CategoryTile, Collection, HeroBanner, NavLink, Occasion } from "@/types/content";
+import type {
+  Brand,
+  CategoryTile,
+  Collection,
+  HeroBanner,
+  NavLink,
+  Occasion,
+  SitemapEntry,
+  Testimonial,
+} from "@/types/content";
 import type {
   ShopifyBrand,
   ShopifyCollection,
@@ -25,6 +39,8 @@ import type {
   ShopifyHeroBannerMetaobject,
   ShopifyMenuItem,
   ShopifyOccasionMetaobject,
+  ShopifySitemapNode,
+  ShopifyTestimonialMetaobject,
 } from "@/types/shopify-api";
 
 const CONTENT_REVALIDATE_SECONDS = 3600; // stable content — rule #22
@@ -145,4 +161,46 @@ export async function getOccasions({
     .map((edge) => edge.node)
     .filter((node) => node.active?.value === "true");
   return sortOccasionsByDisplayOrder(nodes).map(toOccasion);
+}
+
+/**
+ * Returns [] when the `testimonial` metaobject definition hasn't been created
+ * yet, or nothing is marked Active — the homepage section renders nothing in
+ * that case rather than showing fake reviews.
+ */
+export async function getTestimonials({
+  first = 6,
+}: { first?: number } = {}): Promise<Testimonial[]> {
+  const data = await shopifyFetch<{
+    metaobjects: { edges: { node: ShopifyTestimonialMetaobject }[] };
+  }>({
+    query: TESTIMONIALS_QUERY,
+    variables: { first },
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  const nodes = data.metaobjects.edges
+    .map((edge) => edge.node)
+    .filter((node) => node.active?.value === "true" && node.quote?.value);
+  return sortTestimonialsByDisplayOrder(nodes).map(toTestimonial);
+}
+
+/** Storefront API caps a page at 250; a catalogue past that needs pagination. */
+export async function getSitemapEntries(): Promise<{
+  products: SitemapEntry[];
+  collections: SitemapEntry[];
+}> {
+  const data = await shopifyFetch<{
+    products: { edges: { node: ShopifySitemapNode }[] };
+    collections: { edges: { node: ShopifySitemapNode }[] };
+  }>({
+    query: SITEMAP_QUERY,
+    variables: { first: 250 },
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  return {
+    products: data.products.edges.map((edge) => toSitemapEntry(edge.node)),
+    collections: data.collections.edges.map((edge) => toSitemapEntry(edge.node)),
+  };
 }

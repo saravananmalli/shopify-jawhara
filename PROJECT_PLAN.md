@@ -42,7 +42,7 @@ Legend: ✅ done · 🟡 partial · ❌ not started
 | Features bar | ✅ | `FeaturesBar.tsx` |
 | Product grid | ✅ | `ProductGridSection.tsx` with tabs |
 | Story sections | ✅ | `HeritageSection`, `HorlogerieSection`, `ShopByOccasionSection` |
-| Testimonials carousel | 🟡 | Built, but **3 hardcoded reviews**, static grid (not a carousel), and a fixed "4.97 / 5.0" rating |
+| Testimonials carousel | 🟡 | Now reads `testimonial` metaobjects from Shopify (hidden when none). Still a grid, not a carousel. **Needs the `testimonial` definition + entries created in Shopify Admin** (fields: `quote`, `customer_name`, `detail`, `rating`, `display_order`, `active`) |
 | Footer with links | 🟡 | Built. Has `FALLBACK_COLUMNS` and a hardcoded socials list — confirm links come from Shopify menus |
 
 ### Day 5–6 — Shopify integration
@@ -74,8 +74,8 @@ Nothing exists for `/admin`, auth, stores CRUD, delivery zones/charges, ratings 
 1. **Commit and push.** Almost the whole app is untracked (`src/components`, `src/services`, `src/store`, etc.). One machine failure loses it. Highest priority.
 2. **Deploy to Vercel** with the three `NEXT_PUBLIC_SHOPIFY_*` env vars. `.env.local` is git-ignored — confirm `.gitignore` covers it before pushing.
 3. **Store locator.** Build `/stores` with a list plus map. Data source is the open decision below.
-4. **Remove fake content.** Testimonials are hardcoded and reference a different brand ("Maison Vendôme"). Replace with real reviews or an explicit empty state. This also violates the "no mock data" rule in `CLAUDE.md`.
-5. **Missing production essentials:** no `loading.tsx`, `error.tsx`, `not-found.tsx`, `sitemap.ts` or `robots.ts` anywhere. Collection and product routes are dynamic (`ƒ`) — consider `generateStaticParams` + revalidate for SEO and speed.
+4. ~~**Remove fake content.**~~ Done: testimonials come from Shopify, section hidden when empty. Add real entries in Shopify Admin.
+5. ~~**Missing production essentials.**~~ Added `loading`, `error`, `global-error`, `not-found`, `sitemap`, `robots`, and `metadataBase`. Set `NEXT_PUBLIC_SITE_URL` to the real domain (on Vercel it falls back to the production URL). Note: because of `loading.tsx`, missing product/collection URLs return HTTP 200 with a `noindex` tag rather than 404 (Next streaming behaviour). Collection/product routes are still dynamic (`ƒ`); `generateStaticParams` is a possible later optimisation.
 6. **Manual QA pass:** add to cart → update → remove → checkout redirect, mobile widths, keyboard/focus in drawers, Lighthouse.
 7. **Shopify-side data:** homepage tabs rely on product tags (`solitaire`, `ready-for-hand-delivery`, `trending`). Until tagged in Shopify Admin they show "no products match".
 

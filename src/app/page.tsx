@@ -12,6 +12,7 @@ import {
   getHeroBanners,
   getOccasions,
   getProducts,
+  getTestimonials,
 } from "@/services/shopify";
 
 /** Real Shopify collections powering the homepage "Shop By Category" strip
@@ -45,12 +46,13 @@ const TRENDING_TABS: ProductTab[] = [
 ];
 
 export default async function Home() {
-  const [products, categories, heroBanners, horlogerieCollection, occasions] = await Promise.all([
+  const [products, categories, heroBanners, horlogerieCollection, occasions, testimonials] = await Promise.all([
     getProducts({ first: 8 }),
     getCollectionsByHandles(SHOP_BY_CATEGORY_HANDLES),
     getHeroBanners(),
     getCollectionByHandle("horlogerie"),
     getOccasions(),
+    getTestimonials(),
   ]);
 
   return (
@@ -80,7 +82,7 @@ export default async function Home() {
         tabs={TRENDING_TABS}
         products={products.slice(-4)}
       />
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
       <Newsletter />
     </>
   );

@@ -19,4 +19,6 @@ export {
   getCollectionsByHandles,
   getHeroBanners,
   getOccasions,
+  getTestimonials,
+  getSitemapEntries,
 } from "@/services/shopify/content-service";

@@ -2,7 +2,16 @@ import { formatMoney } from "@/utils/format";
 import type { Money } from "@/types/money";
 import type { Product, ProductDetail, ProductImage, ProductVariant } from "@/types/product";
 import type { Cart, CartLine } from "@/types/cart";
-import type { Brand, CategoryTile, Collection, HeroBanner, NavLink, Occasion } from "@/types/content";
+import type {
+  Brand,
+  CategoryTile,
+  Collection,
+  HeroBanner,
+  NavLink,
+  Occasion,
+  SitemapEntry,
+  Testimonial,
+} from "@/types/content";
 import type {
   ShopifyBrand,
   ShopifyCart,
@@ -15,6 +24,8 @@ import type {
   ShopifyOccasionMetaobject,
   ShopifyProduct,
   ShopifyProductDetail,
+  ShopifySitemapNode,
+  ShopifyTestimonialMetaobject,
 } from "@/types/shopify-api";
 
 export function toMoney(money: ShopifyMoney): Money {
@@ -253,4 +264,29 @@ export function sortOccasionsByDisplayOrder(
     (a, b) =>
       Number(a.displayOrder?.value ?? 0) - Number(b.displayOrder?.value ?? 0)
   );
+}
+
+export function toTestimonial(node: ShopifyTestimonialMetaobject): Testimonial {
+  const rating = Number(node.rating?.value);
+  return {
+    id: node.id,
+    quote: node.quote?.value ?? "",
+    customerName: node.customerName?.value ?? "",
+    detail: node.detail?.value ?? "",
+    // Clamp so a bad Admin entry (0, 9, blank) can't render a nonsense star row.
+    rating: Number.isFinite(rating) ? Math.min(5, Math.max(1, Math.round(rating))) : 5,
+  };
+}
+
+export function sortTestimonialsByDisplayOrder(
+  nodes: ShopifyTestimonialMetaobject[]
+): ShopifyTestimonialMetaobject[] {
+  return [...nodes].sort(
+    (a, b) =>
+      Number(a.displayOrder?.value ?? 0) - Number(b.displayOrder?.value ?? 0)
+  );
+}
+
+export function toSitemapEntry(node: ShopifySitemapNode): SitemapEntry {
+  return { handle: node.handle, updatedAt: node.updatedAt ?? null };
 }

@@ -143,3 +143,18 @@ export type ShopifyOccasionMetaobject = {
     reference: { image: ShopifyImage | null } | null;
   } | null;
 };
+
+export type ShopifyTestimonialMetaobject = {
+  id: string;
+  quote: ShopifyMetaobjectField;
+  customerName: ShopifyMetaobjectField;
+  detail: ShopifyMetaobjectField;
+  rating: ShopifyMetaobjectField;
+  displayOrder: ShopifyMetaobjectField;
+  active: ShopifyMetaobjectField;
+};
+
+export type ShopifySitemapNode = {
+  handle: string;
+  updatedAt?: string | null;
+};
