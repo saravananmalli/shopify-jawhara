@@ -234,3 +234,55 @@ export const OCCASIONS_QUERY = /* GraphQL */ `
     }
   }
 `;
+
+export const TESTIMONIALS_QUERY = /* GraphQL */ `
+  query Testimonials($first: Int!) {
+    metaobjects(type: "testimonial", first: $first) {
+      edges {
+        node {
+          id
+          quote: field(key: "quote") {
+            value
+          }
+          customerName: field(key: "customer_name") {
+            value
+          }
+          detail: field(key: "detail") {
+            value
+          }
+          rating: field(key: "rating") {
+            value
+          }
+          displayOrder: field(key: "display_order") {
+            value
+          }
+          active: field(key: "active") {
+            value
+          }
+        }
+      }
+    }
+  }
+`;
+
+/** Handles only — the sitemap doesn't need images, prices or variants. */
+export const SITEMAP_QUERY = /* GraphQL */ `
+  query Sitemap($first: Int!) {
+    products(first: $first) {
+      edges {
+        node {
+          handle
+          updatedAt
+        }
+      }
+    }
+    collections(first: $first) {
+      edges {
+        node {
+          handle
+          updatedAt
+        }
+      }
+    }
+  }
+`;

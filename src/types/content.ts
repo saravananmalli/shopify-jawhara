@@ -57,3 +57,16 @@ export type Occasion = {
   ctaLabel: string;
   ctaHref: string;
 };
+
+export type Testimonial = {
+  id: string;
+  quote: string;
+  customerName: string;
+  detail: string;
+  rating: number;
+};
+
+export type SitemapEntry = {
+  handle: string;
+  updatedAt: string | null;
+};

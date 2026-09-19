@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/store/cart";
 import { WishlistProvider } from "@/store/wishlist";
+import { siteUrl } from "@/config/site";
 import {
   getBrand,
   getCollectionByHandle,
@@ -56,6 +57,7 @@ const description =
   "Heritage fine jewellery from Dubai's historic Gold Souk — GIA certified solitaires, 18K/22K heirloom pieces, and Haute Horlogerie timepieces.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title,
   description,
   openGraph: {
