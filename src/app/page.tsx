@@ -1,69 +1,87 @@
-import Image from "next/image";
+import Hero from "@/components/home/Hero";
+import CategoryStrip from "@/components/home/CategoryStrip";
+import FeaturesBar from "@/components/home/FeaturesBar";
+import ProductGridSection, { type ProductTab } from "@/components/home/ProductGridSection";
+import HorlogerieSection from "@/components/home/HorlogerieSection";
+import ShopByOccasionSection from "@/components/home/ShopByOccasionSection";
+import Testimonials from "@/components/home/Testimonials";
+import Newsletter from "@/components/home/Newsletter";
+import {
+  getCollectionByHandle,
+  getCollectionsByHandles,
+  getHeroBanners,
+  getOccasions,
+  getProducts,
+} from "@/services/shopify";
 
-export default function Home() {
+/** Real Shopify collections powering the homepage "Shop By Category" strip
+ * — the plain, material-agnostic collections (not the "Gold Rings" /
+ * "Diamond Rings" / "Pearl Rings" material-line variants). */
+const SHOP_BY_CATEGORY_HANDLES = [
+  "rings",
+  "earrings",
+  "pendants",
+  "necklace",
+  "bracelet",
+  "bangles",
+];
+
+/** Each tab is a real Shopify Storefront search-query filter — tag the
+ * matching products in Shopify Admin → Products → [product] → Tags with
+ * exactly: "solitaire", "ready-for-hand-delivery", "trending". Until
+ * you do, those tabs honestly show "no products match" rather than
+ * faking a result. */
+const MASTERPIECE_TABS: ProductTab[] = [
+  { label: "All Masterpieces", mode: "initial" },
+  { label: "Under AED 5,000", mode: "query", query: "variants.price:<5000" },
+  { label: "Solitaires", mode: "query", query: "tag:solitaire" },
+  { label: "Ready for Hand Delivery", mode: "query", query: "tag:ready-for-hand-delivery" },
+];
+
+const TRENDING_TABS: ProductTab[] = [
+  { label: "New Arrivals", mode: "sort", sortKey: "CREATED_AT" },
+  { label: "Best Sellers", mode: "sort", sortKey: "BEST_SELLING" },
+  { label: "Trending UAE Gifts", mode: "query", query: "tag:trending" },
+];
+
+export default async function Home() {
+  const [products, categories, heroBanners, horlogerieCollection, occasions] = await Promise.all([
+    getProducts({ first: 8 }),
+    getCollectionsByHandles(SHOP_BY_CATEGORY_HANDLES),
+    getHeroBanners(),
+    getCollectionByHandle("horlogerie"),
+    getOccasions(),
+  ]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <Hero banners={heroBanners} />
+      <CategoryStrip categories={categories} />
+      <FeaturesBar />
+      <ProductGridSection
+        eyebrow="Haute Vitrine"
+        title="Bestselling Creations in UAE"
+        subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
+        tabs={MASTERPIECE_TABS}
+        products={products.slice(0, 4)}
+      />
+      <HorlogerieSection
+        image={
+          horlogerieCollection?.imageUrl
+            ? { url: horlogerieCollection.imageUrl, alt: horlogerieCollection.imageAlt }
+            : null
+        }
+      />
+      <ShopByOccasionSection occasions={occasions} />
+      <ProductGridSection
+        eyebrow="Haute Vitrine"
+        title="Bestselling Creations in UAE"
+        subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
+        tabs={TRENDING_TABS}
+        products={products.slice(-4)}
+      />
+      <Testimonials />
+      <Newsletter />
+    </>
   );
 }
