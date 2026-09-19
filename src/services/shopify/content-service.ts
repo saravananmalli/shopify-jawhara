@@ -5,6 +5,8 @@ import {
   sortTestimonialsByDisplayOrder,
   toBrand,
   toCategoryTile,
+  findMenuColumnItems,
+  toCategoryTilesFromMenu,
   toCollection,
   toHeroBanner,
   toNavLinks,
@@ -14,6 +16,8 @@ import {
 } from "@/services/shopify/adapters";
 import {
   BRAND_QUERY,
+  CATEGORY_MENU_QUERY,
+  MAIN_MENU_COLLECTIONS_QUERY,
   COLLECTION_BY_HANDLE_QUERY,
   COLLECTIONS_QUERY,
   HERO_BANNERS_QUERY,
@@ -34,6 +38,8 @@ import type {
 } from "@/types/content";
 import type {
   ShopifyBrand,
+  ShopifyCategoryMenuItem,
+  ShopifyMainMenuCollections,
   ShopifyCollection,
   ShopifyCollectionWithProducts,
   ShopifyHeroBannerMetaobject,
@@ -87,13 +93,103 @@ export async function getCategoryCollections({
 }
 
 /**
+ * Category tiles defined by a Shopify menu's collection links. Returns []
+ * (not an error) while the menu doesn't exist yet, so callers hide the
+ * section instead of breaking the page.
+ */
+export async function getCategoryTilesFromMenu(
+  handle: string,
+): Promise<CategoryTile[]> {
+  const data = await shopifyFetch<{
+    menu: { items: ShopifyCategoryMenuItem[] } | null;
+  }>({
+    query: CATEGORY_MENU_QUERY,
+    variables: { handle },
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  return data.menu ? toCategoryTilesFromMenu(data.menu.items) : [];
+}
+
+/**
+ * Category tiles for the given collection handles, in that order. One cached
+ * request (collections are stable content); handles that don't exist or have
+ * no image are skipped.
+ */
+export async function getCategoryTilesByHandles(
+  handles: string[],
+): Promise<CategoryTile[]> {
+  const collections = await getCategoryCollections({ first: 100 });
+  return handles.flatMap((handle) => {
+    const tile = collections.find((collection) => collection.handle === handle);
+    return tile?.imageUrl ? [tile] : [];
+  });
+}
+
+/**
+ * Tiles for a collection page's category strip: the links in the same
+ * main-menu column as `handle` (with their collection images), else the
+ * fallback menu. Falls back too when that column has no tile with an image
+ * yet, so the page never shows an empty strip.
+ *
+ * For a *curation* column (see CATEGORY_SCOPED_MENU_COLUMNS) it also returns
+ * `categoryTiles`: the product categories, for a second row that narrows the
+ * curation's own products. Empty for every other column.
+ */
+export async function getCategoryTilesForCollection(
+  handle: string,
+  {
+    mainMenuHandle,
+    fallbackMenuHandle,
+    scopedColumns,
+    tileGroups,
+  }: {
+    mainMenuHandle: string;
+    fallbackMenuHandle: string;
+    scopedColumns: string[];
+    tileGroups: string[][];
+  },
+): Promise<{ tiles: CategoryTile[]; categoryTiles: CategoryTile[] }> {
+  const data = await shopifyFetch<{ menu: ShopifyMainMenuCollections | null }>({
+    query: MAIN_MENU_COLLECTIONS_QUERY,
+    variables: { handle: mainMenuHandle },
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  const column = data.menu ? findMenuColumnItems(data.menu, handle) : null;
+  const siblings = column ? toCategoryTilesFromMenu(column.items) : [];
+  const isCuration =
+    !!column && scopedColumns.includes(column.title.trim().toLowerCase());
+
+  // Order of precedence: the menu column, then a tile group (e.g. Gold), then
+  // the fallback menu — so a page already found in a column never changes.
+  const tileGroup =
+    siblings.length > 0
+      ? undefined
+      : tileGroups.find((group) => group.includes(handle));
+  const groupTiles = tileGroup
+    ? await getCategoryTilesByHandles(tileGroup)
+    : [];
+
+  const [tiles, categoryTiles] = await Promise.all([
+    siblings.length > 0
+      ? siblings
+      : groupTiles.length > 0
+        ? groupTiles
+        : getCategoryTilesFromMenu(fallbackMenuHandle),
+    isCuration ? getCategoryTilesFromMenu(fallbackMenuHandle) : [],
+  ]);
+  return { tiles, categoryTiles };
+}
+
+/**
  * Returns null when no collection has that handle (deleted, unpublished, or
  * a stale link in the Shopify nav menu) — callers should render a real
  * not-found state, not fall back to fake data.
  */
 export async function getCollectionByHandle(
   handle: string,
-  { first = 24 }: { first?: number } = {}
+  { first = 24 }: { first?: number } = {},
 ): Promise<Collection | null> {
   const data = await shopifyFetch<{
     collection: ShopifyCollectionWithProducts | null;
@@ -114,12 +210,14 @@ export async function getCollectionByHandle(
  */
 export async function getCollectionsByHandles(
   handles: string[],
-  { first = 1 }: { first?: number } = {}
+  { first = 1 }: { first?: number } = {},
 ): Promise<Collection[]> {
   const collections = await Promise.all(
-    handles.map((handle) => getCollectionByHandle(handle, { first }))
+    handles.map((handle) => getCollectionByHandle(handle, { first })),
   );
-  return collections.filter((collection): collection is Collection => collection !== null);
+  return collections.filter(
+    (collection): collection is Collection => collection !== null,
+  );
 }
 
 /**
@@ -201,6 +299,8 @@ export async function getSitemapEntries(): Promise<{
 
   return {
     products: data.products.edges.map((edge) => toSitemapEntry(edge.node)),
-    collections: data.collections.edges.map((edge) => toSitemapEntry(edge.node)),
+    collections: data.collections.edges.map((edge) =>
+      toSitemapEntry(edge.node),
+    ),
   };
 }

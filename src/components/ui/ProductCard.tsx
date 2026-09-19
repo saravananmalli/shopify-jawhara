@@ -7,6 +7,7 @@ import AddToCartButton from "@/components/ui/AddToCartButton";
 import WishlistButton from "@/components/ui/WishlistButton";
 import Chip from "@/components/ui/Chip";
 import { ArrowDownIcon, StarIcon, BagIcon } from "@/components/icons";
+import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
 
@@ -18,10 +19,12 @@ export default function ProductCard({ product }: { product: Product }) {
     ? Math.round((1 - product.price.amount / product.compareAtPrice.amount) * 100)
     : null;
 
+  const badge = getProductBadge(product.tags);
+
   return (
     <div className="group relative flex flex-col rounded-3xl border border-[#E6D7BE]/60 bg-white p-4 shadow-sm">
       <div className="relative">
-        <Chip className="absolute left-3 top-3 z-10">Dubai Bestseller</Chip>
+        {badge && <Chip className="absolute left-3 top-3 z-10">{badge}</Chip>}
 
         {/* Wishlist / quick-add — hidden until hover or keyboard focus,
             then pop outward into place (per the design brief: "out from

@@ -4,6 +4,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/store/cart";
 import { WishlistProvider } from "@/store/wishlist";
+import {
+  DIAMOND_CATEGORY_HANDLES,
+  GIFTS_PROMO_HANDLE,
+  GOLD_CATEGORY_HANDLES,
+  PEARL_CATEGORY_HANDLES,
+} from "@/config/catalog";
 import { siteUrl } from "@/config/site";
 import {
   getBrand,
@@ -12,35 +18,6 @@ import {
   getMenu,
 } from "@/services/shopify";
 import "./globals.css";
-
-/** Real Shopify collection handles powering the "GOLD", "DIAMONDS", and
- * "PEARLS" navs' image tiles — these must match whatever collections
- * actually exist in Shopify Admin (Products → Collections). Update these
- * lists if a collection is renamed. */
-const GOLD_CATEGORY_HANDLES = [
-  "gold-rings",
-  "gold-earrings",
-  "gold-pendant",
-  "gold-necklace",
-  "gold-bracelet",
-  "gold-bangles",
-  "gold-bars-coins",
-];
-const DIAMOND_CATEGORY_HANDLES = [
-  "diamond-rings",
-  "diamond-earrings",
-  "diamond-pendant",
-  "diamond-necklace",
-  "diamond-bracelet",
-  "diamond-bangles",
-];
-const PEARL_CATEGORY_HANDLES = [
-  "pearl-rings",
-  "pearl-earrings",
-  "pearl-pendant",
-  "pearl-necklace",
-  "pearl-bracelet",
-];
 
 // Also backs the `font-serif` utility (aliased to --font-sans in
 // globals.css) — every font on the site is Poppins, so italic style is
@@ -86,7 +63,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     getBrand(),
     getMenu("main-menu"),
     getMenu("footer"),
-    getCollectionByHandle("gift", { first: 1 }),
+    getCollectionByHandle(GIFTS_PROMO_HANDLE, { first: 1 }),
     getCollectionsByHandles(GOLD_CATEGORY_HANDLES),
     getCollectionsByHandles(DIAMOND_CATEGORY_HANDLES),
     getCollectionsByHandles(PEARL_CATEGORY_HANDLES),

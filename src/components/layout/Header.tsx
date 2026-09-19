@@ -104,7 +104,14 @@ export default function Header({
   const logoSrc = brand.logoUrl ?? FALLBACK_LOGO;
 
   return (
-    <header className="sticky top-0 z-40 bg-cream-50">
+    <header
+      className={`z-40 bg-cream-50 ${
+        // Collection pages pin their own filter bar instead of the header.
+        pathname === "/collections" || pathname.startsWith("/collections/")
+          ? "relative"
+          : "sticky top-0"
+      }`}
+    >
       {/* Top utility bar */}
       <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 px-4 py-2 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
         <div className="mx-auto flex max-w-8xl items-center justify-between">
@@ -229,11 +236,6 @@ export default function Header({
                   </span>
                 )}
               </span>
-              {itemCount > 0 && (
-                <span className="hidden text-[11px] text-brown-900/60 sm:block">
-                  {cart?.subtotal.formatted}
-                </span>
-              )}
             </button>
           </div>
         </div>

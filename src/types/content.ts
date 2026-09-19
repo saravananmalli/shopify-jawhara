@@ -20,6 +20,8 @@ export type CategoryTile = {
   handle: string;
   imageUrl: string | null;
   imageAlt: string;
+  /** Products in the current collection — only set for scoped category tiles. */
+  count?: number;
 };
 
 export type Collection = {

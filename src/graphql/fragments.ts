@@ -1,3 +1,4 @@
+import { PRODUCT_SPEC_FIELDS, PRODUCT_SPEC_NAMESPACE } from "@/config/product-specs";
 export const IMAGE_FRAGMENT = /* GraphQL */ `
   fragment ImageFields on Image {
     url
@@ -66,6 +67,24 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
   ${IMAGE_FRAGMENT}
 `;
 
+export const PRODUCT_FILTER_FRAGMENT = /* GraphQL */ `
+  fragment ProductFilterFields on Filter {
+    id
+    label
+    type
+    values {
+      id
+      label
+      count
+      input
+    }
+  }
+`;
+
+const SPEC_IDENTIFIERS = PRODUCT_SPEC_FIELDS.map(
+  (field) => `{namespace: "${PRODUCT_SPEC_NAMESPACE}", key: "${field.key}"}`
+).join(", ");
+
 /**
  * Product detail page only — everything ProductFields has, plus the
  * metafields/collections/variant SKU that page needs and nothing else
@@ -78,25 +97,9 @@ export const PRODUCT_DETAIL_FRAGMENT = /* GraphQL */ `
     designCode: metafield(namespace: "custom", key: "design_code") {
       value
     }
-    brand: metafield(namespace: "custom", key: "brand") {
-      value
-    }
-    metalType: metafield(namespace: "custom", key: "metal_type") {
-      value
-    }
-    diamondClarity: metafield(namespace: "custom", key: "diamond_clarity") {
-      value
-    }
-    diamondColor: metafield(namespace: "custom", key: "diamond_color") {
-      value
-    }
-    diamondCt: metafield(namespace: "custom", key: "diamond_ct") {
-      value
-    }
-    grossWeight: metafield(namespace: "custom", key: "gross_weight") {
-      value
-    }
-    color: metafield(namespace: "custom", key: "color") {
+    specs: metafields(identifiers: [${SPEC_IDENTIFIERS}]) {
+      key
+      type
       value
     }
     collections(first: 2) {

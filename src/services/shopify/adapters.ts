@@ -1,7 +1,13 @@
-import { formatMoney } from "@/utils/format";
+import { PRODUCT_SPEC_FIELDS } from "@/config/product-specs";
+import { formatMetafieldValue, formatMoney } from "@/utils/format";
 import type { Money } from "@/types/money";
 import type { Product, ProductDetail, ProductImage, ProductVariant } from "@/types/product";
 import type { Cart, CartLine } from "@/types/cart";
+import type {
+  CatalogFilter,
+  CatalogPage,
+  CatalogSortKey,
+} from "@/types/catalog";
 import type {
   Brand,
   CategoryTile,
@@ -15,8 +21,13 @@ import type {
 import type {
   ShopifyBrand,
   ShopifyCart,
+  ShopifyCatalogCollection,
+  ShopifyCatalogSearch,
+  ShopifyCategoryMenuItem,
+  ShopifyMainMenuCollections,
   ShopifyCollection,
   ShopifyCollectionWithProducts,
+  ShopifyFilter,
   ShopifyHeroBannerMetaobject,
   ShopifyImage,
   ShopifyMenuItem,
@@ -98,24 +109,26 @@ export function toProduct(product: ShopifyProduct): Product {
 }
 
 export function toProductDetail(product: ShopifyProductDetail): ProductDetail {
-  // SKU lives on the variant in Shopify's model, but the spec grid shows one
-  // static value (matching the reference design, which doesn't re-render
-  // the grid per variant) — the default/first variant's SKU.
-  const sku = product.variants.edges[0]?.node.sku ?? null;
+  const specValues = new Map(
+    product.specs.flatMap((spec) =>
+      spec ? [[spec.key, formatMetafieldValue(spec.type, spec.value)] as const] : []
+    )
+  );
+  // SKU: the product-level metafield if set, else the first variant's SKU
+  // (where Shopify natively keeps it). The grid shows one static value — it
+  // doesn't re-render per selected variant.
+  if (!specValues.get("sku")) {
+    const variantSku = product.variants.edges[0]?.node.sku;
+    if (variantSku) specValues.set("sku", variantSku);
+  }
 
   return {
     ...toProduct(product),
     designCode: product.designCode?.value ?? null,
-    specifications: {
-      brand: product.brand?.value ?? null,
-      sku,
-      metalType: product.metalType?.value ?? null,
-      diamondClarity: product.diamondClarity?.value ?? null,
-      diamondColor: product.diamondColor?.value ?? null,
-      diamondCt: product.diamondCt?.value ?? null,
-      grossWeight: product.grossWeight?.value ?? null,
-      color: product.color?.value ?? null,
-    },
+    specifications: PRODUCT_SPEC_FIELDS.flatMap((field) => {
+      const value = specValues.get(field.key);
+      return value ? [{ key: field.key, label: field.label, icon: field.icon ?? null, value }] : [];
+    }),
     // "frontpage" is Shopify's own auto-created "Home page" collection —
     // every product tends to belong to it, but it's not a real
     // merchandising category, so it doesn't belong in a breadcrumb.
@@ -289,4 +302,129 @@ export function sortTestimonialsByDisplayOrder(
 
 export function toSitemapEntry(node: ShopifySitemapNode): SitemapEntry {
   return { handle: node.handle, updatedAt: node.updatedAt ?? null };
+}
+
+const FILTER_TYPES = new Set(["LIST", "PRICE_RANGE", "BOOLEAN"]);
+
+export function toCatalogFilters(filters: ShopifyFilter[] = []): CatalogFilter[] {
+  return filters.flatMap((filter) => {
+    if (!FILTER_TYPES.has(filter.type) || filter.values.length === 0) return [];
+    return [
+      {
+        id: filter.id,
+        label: filter.label,
+        type: filter.type as CatalogFilter["type"],
+        values: filter.values.map((value) => ({
+          id: value.id,
+          label: value.label,
+          count: value.count,
+          input: JSON.stringify(JSON.parse(value.input)),
+        })),
+      },
+    ];
+  });
+}
+
+export const COLLECTION_SORTS: CatalogSortKey[] = [
+  "RECOMMENDED",
+  "BEST_SELLING",
+  "NEWEST",
+  "PRICE_ASC",
+  "PRICE_DESC",
+];
+export const SEARCH_SORTS: CatalogSortKey[] = ["RECOMMENDED", "PRICE_ASC", "PRICE_DESC"];
+
+export function toCatalogPageFromCollection(
+  collection: ShopifyCatalogCollection
+): CatalogPage {
+  const { products } = collection;
+  return {
+    collection: {
+      id: collection.id,
+      title: collection.title,
+      handle: collection.handle,
+      description: collection.description,
+    },
+    products: products.edges.map((edge) => toProduct(edge.node)),
+    filters: toCatalogFilters(products.filters),
+    totalCount: null,
+    hasNextPage: products.pageInfo.hasNextPage,
+    endCursor: products.pageInfo.endCursor,
+    supportedSorts: COLLECTION_SORTS,
+  };
+}
+
+function isProductNode(
+  node: ShopifyCatalogSearch["edges"][number]["node"]
+): node is ShopifyProduct {
+  return "id" in node;
+}
+
+export function toCatalogPageFromSearch(
+  search: ShopifyCatalogSearch,
+  collection: { title: string; handle: string }
+): CatalogPage {
+  return {
+    collection: { id: null, description: "", ...collection },
+    products: search.edges.flatMap((edge) =>
+      isProductNode(edge.node) ? [toProduct(edge.node)] : []
+    ),
+    filters: toCatalogFilters(search.productFilters),
+    totalCount: search.totalCount,
+    hasNextPage: search.pageInfo.hasNextPage,
+    endCursor: search.pageInfo.endCursor,
+    supportedSorts: SEARCH_SORTS,
+  };
+}
+
+/**
+ * The tile label is the menu item's own title (so merchants can rename it,
+ * e.g. "Necklaces & Pendants"). Items that aren't collections, or whose
+ * collection has no image, are skipped rather than rendered as blank tiles.
+ */
+export function toCategoryTilesFromMenu(items: ShopifyCategoryMenuItem[]): CategoryTile[] {
+  return items.flatMap((item) => {
+    const resource = item.resource;
+    if (!resource || !("handle" in resource) || !resource.image) return [];
+    return [
+      {
+        id: resource.id,
+        title: item.title,
+        handle: resource.handle,
+        imageUrl: resource.image.url,
+        imageAlt: resource.image.altText ?? item.title,
+      },
+    ];
+  });
+}
+
+/**
+ * The links in the first mega-menu column that contains `handle` (menu
+ * order decides when a collection appears in several), or null when it's in
+ * none. Includes the current collection itself so it shows as the selected tile.
+ *
+ * Only when no column has it, a flat menu (a top item whose children are all
+ * plain links, like "Our Collections") is tried — so pages already found in a
+ * column never change. The top item's title stands in for the column title.
+ */
+export function findMenuColumnItems(
+  menu: ShopifyMainMenuCollections,
+  handle: string
+): { title: string; items: ShopifyCategoryMenuItem[] } | null {
+  const isHandle = (item: ShopifyCategoryMenuItem) =>
+    !!item.resource && "handle" in item.resource && item.resource.handle === handle;
+
+  for (const top of menu.items) {
+    for (const column of top.items) {
+      if (column.items.some(isHandle)) return { title: column.title, items: column.items };
+    }
+  }
+
+  for (const top of menu.items) {
+    const isFlat = top.items.length > 0 && top.items.every((link) => link.items.length === 0);
+    if (isFlat && top.items.some(isHandle)) {
+      return { title: top.title, items: top.items };
+    }
+  }
+  return null;
 }

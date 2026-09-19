@@ -48,13 +48,8 @@ export type ShopifyProduct = {
 
 export type ShopifyProductDetail = ShopifyProduct & {
   designCode: ShopifyMetaobjectField;
-  brand: ShopifyMetaobjectField;
-  metalType: ShopifyMetaobjectField;
-  diamondClarity: ShopifyMetaobjectField;
-  diamondColor: ShopifyMetaobjectField;
-  diamondCt: ShopifyMetaobjectField;
-  grossWeight: ShopifyMetaobjectField;
-  color: ShopifyMetaobjectField;
+  // Order and nulls match the identifiers requested in PRODUCT_DETAIL_FRAGMENT.
+  specs: ({ key: string; type: string; value: string } | null)[];
   collections: { edges: { node: { title: string; handle: string } }[] };
   variants: {
     edges: { node: ShopifyProduct["variants"]["edges"][number]["node"] & { sku: string } }[];
@@ -157,4 +152,78 @@ export type ShopifyTestimonialMetaobject = {
 export type ShopifySitemapNode = {
   handle: string;
   updatedAt?: string | null;
+};
+
+export type ShopifyFilter = {
+  id: string;
+  label: string;
+  type: string;
+  values: { id: string; label: string; count: number; input: string }[];
+};
+
+type ShopifyPageInfo = { hasNextPage: boolean; endCursor: string | null };
+
+export type ShopifyCatalogCollection = {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  products: {
+    pageInfo: ShopifyPageInfo;
+    filters?: ShopifyFilter[];
+    edges: { node: ShopifyProduct }[];
+  };
+};
+
+export type ShopifyCatalogSearch = {
+  totalCount: number;
+  pageInfo: ShopifyPageInfo;
+  productFilters?: ShopifyFilter[];
+  // Search nodes are a union; the `... on Product` fragment yields {} for non-products.
+  edges: { node: ShopifyProduct | Record<string, never> }[];
+};
+
+export type ShopifyCategoryMenuItem = {
+  title: string;
+  // Empty object when the item links to something other than a collection.
+  resource:
+    | { id: string; handle: string; image: ShopifyImage | null }
+    | Record<string, never>
+    | null;
+};
+
+type ShopifyTagScanNode = {
+  id: string;
+  tags: string[];
+  collections: { nodes: { handle: string }[] };
+  priceRange: { minVariantPrice: { amount: string } };
+  compareAtPriceRange: { minVariantPrice: { amount: string } };
+};
+
+export type ShopifyTagScanCollection = {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  products: {
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    filters?: ShopifyFilter[];
+    nodes: ShopifyTagScanNode[];
+  };
+};
+
+export type ShopifyTagScanSearch = {
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  productFilters?: ShopifyFilter[];
+  // Search nodes are a union; non-products come back as {}.
+  nodes: (ShopifyTagScanNode | Record<string, never>)[];
+};
+
+export type ShopifyMainMenuCollections = {
+  items: {
+    title: string;
+    // Level 2 is a column heading (with `items`) or, in a flat menu, a link
+    // itself — hence `resource` here as well.
+    items: (ShopifyCategoryMenuItem & { items: ShopifyCategoryMenuItem[] })[];
+  }[];
 };

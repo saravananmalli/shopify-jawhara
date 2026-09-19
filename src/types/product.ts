@@ -41,20 +41,16 @@ export type Product = {
  * Products (namespace "custom"). Any field can be null if that product
  * hasn't had it filled in yet; the UI only renders the fields that exist.
  */
-export type ProductSpecifications = {
-  brand: string | null;
-  sku: string | null;
-  metalType: string | null;
-  diamondClarity: string | null;
-  diamondColor: string | null;
-  diamondCt: string | null;
-  grossWeight: string | null;
-  color: string | null;
+export type ProductSpecification = {
+  key: string;
+  label: string;
+  icon: string | null;
+  value: string;
 };
 
 /** Product detail page only — see PRODUCT_DETAIL_FRAGMENT. */
 export type ProductDetail = Product & {
   designCode: string | null;
-  specifications: ProductSpecifications;
+  specifications: ProductSpecification[];
   breadcrumb: { title: string; handle: string }[];
 };

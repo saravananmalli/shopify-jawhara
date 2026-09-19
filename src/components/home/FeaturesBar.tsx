@@ -1,11 +1,4 @@
-const FEATURES = [
-  { icon: "/brand/icons/jewellery certificate.svg", label: "Jewellery Certification" },
-  { icon: "/brand/icons/free shipping.svg", label: "Free Shipping Across UAE" },
-  { icon: "/brand/icons/Engraving.svg", label: "Complimentary Engraving" },
-  { icon: "/brand/icons/exchnage.svg", label: "15-Day Exchange Policy" },
-  { icon: "/brand/icons/jewellery maintance.svg", label: "Lifetime Jewellery Maintenance" },
-  { icon: "/brand/icons/Award winnnig.svg", label: "Award-Winning Jeweller" },
-];
+import { STORE_FEATURES } from "@/config/store-features";
 
 export default function FeaturesBar() {
   return (
@@ -15,7 +8,7 @@ export default function FeaturesBar() {
             where the row is guaranteed to fit on one line, since Tailwind's
             divide-x isn't wrap-aware and would add stray borders otherwise. */}
         <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 lg:flex-nowrap lg:justify-between lg:gap-x-0 lg:divide-x lg:divide-[#E8E2D7]">
-          {FEATURES.map(({ icon, label }) => (
+          {STORE_FEATURES.map(({ icon, label }) => (
             <div
               key={label}
               className="flex items-center gap-3 lg:px-6 lg:first:pl-0 lg:last:pr-0"

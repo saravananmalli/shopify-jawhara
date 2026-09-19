@@ -1,4 +1,9 @@
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
+
+/** The shared "Dubai Bestseller" chip look (colour, type, tracking) — one
+ * definition, sized separately by <Chip> and <ChipButton>. */
+const CHIP_STYLE =
+  "inline-flex items-center gap-1.5 rounded-full border font-sans text-[11px] font-semibold uppercase tracking-[2.2px]";
 
 /** Shared pill/badge style — reused wherever the "Dubai Bestseller" chip
  * color scheme appears (product cards, section eyebrows, ...) so it's
@@ -12,9 +17,39 @@ export default function Chip({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border border-[#E6D7BE] bg-cream-100 px-3 py-1.5 font-sans text-[11px] font-bold uppercase tracking-[2.2px] text-gold-600 ${className}`}
+      className={`${CHIP_STYLE} border-[#E6D7BE] bg-cream-100 px-2.5 py-1 text-gold-600 ${className}`}
     >
       {children}
     </span>
+  );
+}
+
+/**
+ * Interactive version of <Chip> for filters/toggles. `active` fills it with
+ * the primary gold; it's also exposed as `aria-pressed` so the state isn't
+ * conveyed by colour alone.
+ */
+export function ChipButton({
+  children,
+  active,
+  className = "",
+  ...props
+}: {
+  children: ReactNode;
+  active: boolean;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children">) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      className={`${CHIP_STYLE} px-3.5 py-2 transition-colors ${
+        active
+          ? "border-gold-600 bg-gold-600 text-white"
+          : "border-[#E6D7BE] bg-cream-100 text-gold-600 hover:border-gold-600"
+      } ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
   );
 }
