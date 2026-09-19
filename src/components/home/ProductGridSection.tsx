@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import ProductCard from "@/components/ui/ProductCard";
-import CarouselPagination from "@/components/ui/CarouselPagination";
+import ProductCarousel from "@/components/ui/ProductCarousel";
+import ProductShelf from "@/components/ui/ProductShelf";
 import { ChevronRightIcon } from "@/components/icons";
-import { useScrollCarousel } from "@/hooks/useScrollCarousel";
 import { getProducts, searchProducts } from "@/services/shopify";
 import type { Product } from "@/types/product";
 
@@ -52,9 +51,6 @@ export default function ProductGridSection({
       ? initialProducts
       : (fetchedProducts ?? []);
 
-  const { scrollRef, pageCount, activePage, scrollByPage, handleScroll } =
-    useScrollCarousel(products.length);
-
   useEffect(() => {
     const tab = tabs[activeTabIndex];
     // The "initial" tab reuses the `products` prop directly (see the
@@ -92,94 +88,60 @@ export default function ProductGridSection({
   }, [activeTabIndex]);
 
   return (
-    <section className="border-y border-[#E3D5BC]/60">
-      <div className="mx-auto max-w-8xl px-4 py-10">
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-700">
-              {eyebrow}
-            </p>
-            <h2 className="mt-1 font-sans text-3xl font-normal">{title}</h2>
-            <p className="mt-1 font-sans text-sm text-brown-900/60">
-              {subtitle}
-            </p>
-          </div>
-
-          <div className="flex flex-col items-end gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              {tabs.map((tab, i) => (
-                <button
-                  key={tab.label}
-                  type="button"
-                  onClick={() => setActiveTabIndex(i)}
-                  aria-pressed={i === activeTabIndex}
-                  className={`rounded-full px-3.5 py-1.5 font-sans text-xs font-medium transition-colors ${
-                    i === activeTabIndex
-                      ? "bg-gold-600 text-white"
-                      : "border border-gold-200 text-brown-900/70 hover:bg-cream-100"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <Link
-              href="/collections/all"
-              className="flex items-center gap-1 font-sans text-sm font-medium text-gold-700 hover:underline"
-            >
-              View All <ChevronRightIcon className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-
-        {error && (
-          <p role="alert" className="mb-4 font-sans text-sm text-error-700">
-            {error}
-          </p>
-        )}
-
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square animate-pulse rounded-2xl bg-cream-100"
-              />
+    <ProductShelf
+      eyebrow={eyebrow}
+      title={title}
+      subtitle={subtitle}
+      actions={
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {tabs.map((tab, i) => (
+              <button
+                key={tab.label}
+                type="button"
+                onClick={() => setActiveTabIndex(i)}
+                aria-pressed={i === activeTabIndex}
+                className={`rounded-full px-3.5 py-1.5 font-sans text-xs font-medium transition-colors ${
+                  i === activeTabIndex
+                    ? "bg-gold-600 text-white"
+                    : "border border-gold-200 text-brown-900/70 hover:bg-cream-100"
+                }`}
+              >
+                {tab.label}
+              </button>
             ))}
           </div>
-        ) : products.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-10 text-center font-sans text-sm text-brown-900/60">
-            No products match &ldquo;{tabs[activeTabIndex]?.label}&rdquo; yet.
-          </p>
-        ) : (
-          <>
-            <div
-              ref={scrollRef}
-              onScroll={handleScroll}
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="w-[calc(50%-8px)] shrink-0 snap-start lg:w-[calc(25%-12px)]"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
+          <Link
+            href="/collections/all"
+            className="flex items-center gap-1 font-sans text-sm font-medium text-gold-700 hover:underline"
+          >
+            View All <ChevronRightIcon className="h-4 w-4" />
+          </Link>
+        </div>
+      }
+    >
+      {error && (
+        <p role="alert" className="mb-4 font-sans text-sm text-error-700">
+          {error}
+        </p>
+      )}
 
-            {pageCount > 1 && (
-              <CarouselPagination
-                pageCount={pageCount}
-                activePage={activePage}
-                onPrev={() => scrollByPage(-1)}
-                onNext={() => scrollByPage(1)}
-                label="products"
-              />
-            )}
-          </>
-        )}
-      </div>
-    </section>
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="aspect-square animate-pulse rounded-2xl bg-cream-100"
+            />
+          ))}
+        </div>
+      ) : products.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-10 text-center font-sans text-sm text-brown-900/60">
+          No products match &ldquo;{tabs[activeTabIndex]?.label}&rdquo; yet.
+        </p>
+      ) : (
+        <ProductCarousel products={products} />
+      )}
+    </ProductShelf>
   );
 }

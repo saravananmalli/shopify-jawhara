@@ -6,14 +6,12 @@ import AddToCartButton from "@/components/ui/AddToCartButton";
 import AccordionItem from "@/components/ui/AccordionItem";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import WishlistButton from "@/components/ui/WishlistButton";
-import { ArrowDownIcon, StarIcon } from "@/components/icons";
+import { ArrowDownIcon, SparkleIcon, StarIcon } from "@/components/icons";
 import type { ProductDetail, ProductVariant } from "@/types/product";
 
 function matchesSelection(variant: ProductVariant, selection: Record<string, string>) {
   return variant.options.every((option) => selection[option.name] === option.value);
 }
-
-type SpecEntry = { icon: string; label: string; value: string };
 
 /**
  * Everything to the right of the gallery: title, reviews, price, design
@@ -26,10 +24,8 @@ type SpecEntry = { icon: string; label: string; value: string };
  */
 export default function ProductInfo({
   product,
-  specEntries,
 }: {
   product: ProductDetail;
-  specEntries: SpecEntry[];
 }) {
   const optionNames = [
     ...new Set(product.variants.flatMap((variant) => variant.options.map((o) => o.name))),
@@ -145,16 +141,21 @@ export default function ProductInfo({
           );
         })}
 
-      {specEntries.length > 0 && (
-        <div className="mt-5">
-          <AccordionItem title="Specification" defaultOpen>
+      {product.specifications.length > 0 && (
+        <div className="mt-5 rounded-xl bg-white px-4">
+          <AccordionItem
+            title="Specification"
+            icon={<SparkleIcon className="h-4 w-4 shrink-0 text-gold-600" />}
+            defaultOpen
+            divider={false}
+          >
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
-              {specEntries.map((entry) => (
-                <div key={entry.label} className="flex items-start gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element --
-                      local brand SVGs with baked-in fill colors; matches
-                      the existing FeaturesBar convention. */}
-                  <img src={entry.icon} alt="" aria-hidden className="h-6 w-6 shrink-0" />
+              {product.specifications.map((entry) => (
+                <div key={entry.key} className="flex items-start gap-2">
+                  {entry.icon && (
+                    // eslint-disable-next-line @next/next/no-img-element -- local brand icons with baked-in colors; matches the FeaturesBar convention.
+                    <img src={entry.icon} alt="" aria-hidden className="h-6 w-6 shrink-0" />
+                  )}
                   <div>
                     <p className="font-sans text-xs font-semibold text-gold-700">{entry.label}</p>
                     <p className="font-sans text-sm text-brown-900">{entry.value}</p>
@@ -165,14 +166,6 @@ export default function ProductInfo({
           </AccordionItem>
         </div>
       )}
-
-      <p
-        className={`mt-5 font-sans text-sm font-medium ${
-          available ? "text-success-500" : "text-error-500"
-        }`}
-      >
-        {available ? "In Stock" : "Out of Stock"}
-      </p>
 
       <div className="mt-4 flex items-center gap-3">
         {available && <QuantitySelector value={quantity} onChange={setQuantity} />}

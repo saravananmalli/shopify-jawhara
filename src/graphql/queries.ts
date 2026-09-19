@@ -1,4 +1,9 @@
-import { CART_FRAGMENT, PRODUCT_DETAIL_FRAGMENT, PRODUCT_FRAGMENT } from "@/graphql/fragments";
+import {
+  CART_FRAGMENT,
+  PRODUCT_DETAIL_FRAGMENT,
+  PRODUCT_FILTER_FRAGMENT,
+  PRODUCT_FRAGMENT,
+} from "@/graphql/fragments";
 
 export const PRODUCTS_QUERY = /* GraphQL */ `
   query Products($first: Int!, $sortKey: ProductSortKeys!) {
@@ -281,6 +286,283 @@ export const SITEMAP_QUERY = /* GraphQL */ `
         node {
           handle
           updatedAt
+        }
+      }
+    }
+  }
+`;
+
+export const PRODUCT_RECOMMENDATIONS_QUERY = /* GraphQL */ `
+  query ProductRecommendations($productId: ID!) {
+    productRecommendations(productId: $productId, intent: RELATED) {
+      ...ProductFields
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+`;
+
+export const PRODUCTS_BY_IDS_QUERY = /* GraphQL */ `
+  query ProductsByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Product {
+        ...ProductFields
+      }
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+`;
+
+/**
+ * `$withFilters` lets "load more" skip the (potentially large) facet list —
+ * only the first page of a given filter state needs it.
+ */
+export const CATALOG_COLLECTION_QUERY = /* GraphQL */ `
+  query CatalogCollection(
+    $handle: String!
+    $first: Int!
+    $after: String
+    $filters: [ProductFilter!]
+    $sortKey: ProductCollectionSortKeys!
+    $reverse: Boolean!
+    $withFilters: Boolean!
+  ) {
+    collection(handle: $handle) {
+      id
+      title
+      handle
+      description
+      products(
+        first: $first
+        after: $after
+        filters: $filters
+        sortKey: $sortKey
+        reverse: $reverse
+      ) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        filters @include(if: $withFilters) {
+          ...ProductFilterFields
+        }
+        edges {
+          node {
+            ...ProductFields
+          }
+        }
+      }
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_FILTER_FRAGMENT}
+`;
+
+/** Backs the "all products" page — Shopify has no `all` collection in the Storefront API. */
+export const CATALOG_SEARCH_QUERY = /* GraphQL */ `
+  query CatalogSearch(
+    $first: Int!
+    $after: String
+    $filters: [ProductFilter!]
+    $sortKey: SearchSortKeys!
+    $reverse: Boolean!
+    $withFilters: Boolean!
+  ) {
+    search(
+      query: ""
+      types: PRODUCT
+      first: $first
+      after: $after
+      productFilters: $filters
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      productFilters @include(if: $withFilters) {
+        ...ProductFilterFields
+      }
+      edges {
+        node {
+          ... on Product {
+            ...ProductFields
+          }
+        }
+      }
+    }
+  }
+  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_FILTER_FRAGMENT}
+`;
+
+/** Only collection-linked items carry an image; everything else resolves to null. */
+export const CATEGORY_MENU_QUERY = /* GraphQL */ `
+  query CategoryMenu($handle: String!) {
+    menu(handle: $handle) {
+      items {
+        title
+        resource {
+          ... on Collection {
+            id
+            handle
+            image {
+              url
+              altText
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Shopify ignores `tag` in the `filters` argument (only price, availability
+ * and Search & Discovery facets are honoured), and has no multi-range price
+ * or on-sale filter. Those are resolved by scanning a light per-product
+ * payload (id, tags, prices) and fetching the matching page afterwards.
+ */
+export const CATALOG_TAG_SCAN_COLLECTION_QUERY = /* GraphQL */ `
+  query CatalogTagScanCollection(
+    $handle: String!
+    $first: Int!
+    $after: String
+    $filters: [ProductFilter!]
+    $sortKey: ProductCollectionSortKeys!
+    $reverse: Boolean!
+    $withFilters: Boolean!
+  ) {
+    collection(handle: $handle) {
+      id
+      title
+      handle
+      description
+      products(
+        first: $first
+        after: $after
+        filters: $filters
+        sortKey: $sortKey
+        reverse: $reverse
+      ) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        filters @include(if: $withFilters) {
+          ...ProductFilterFields
+        }
+        nodes {
+          id
+          tags
+          collections(first: 20) {
+            nodes {
+              handle
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+            }
+          }
+          compareAtPriceRange {
+            minVariantPrice {
+              amount
+            }
+          }
+        }
+      }
+    }
+  }
+  ${PRODUCT_FILTER_FRAGMENT}
+`;
+
+export const CATALOG_TAG_SCAN_SEARCH_QUERY = /* GraphQL */ `
+  query CatalogTagScanSearch(
+    $first: Int!
+    $after: String
+    $filters: [ProductFilter!]
+    $sortKey: SearchSortKeys!
+    $reverse: Boolean!
+    $withFilters: Boolean!
+  ) {
+    search(
+      query: ""
+      types: PRODUCT
+      first: $first
+      after: $after
+      productFilters: $filters
+      sortKey: $sortKey
+      reverse: $reverse
+    ) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      productFilters @include(if: $withFilters) {
+        ...ProductFilterFields
+      }
+      nodes {
+        ... on Product {
+          id
+          tags
+          collections(first: 20) {
+            nodes {
+              handle
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+            }
+          }
+          compareAtPriceRange {
+            minVariantPrice {
+              amount
+            }
+          }
+        }
+      }
+    }
+  }
+  ${PRODUCT_FILTER_FRAGMENT}
+`;
+
+/**
+ * Top item → mega-menu column → link, or top item → link for a flat menu
+ * (e.g. "Our Collections"); each link's collection carries the tile image.
+ */
+export const MAIN_MENU_COLLECTIONS_QUERY = /* GraphQL */ `
+  query MainMenuCollections($handle: String!) {
+    menu(handle: $handle) {
+      items {
+        title
+        items {
+          title
+          resource {
+            ... on Collection {
+              id
+              handle
+              image {
+                url
+                altText
+              }
+            }
+          }
+          items {
+            title
+            resource {
+              ... on Collection {
+                id
+                handle
+                image {
+                  url
+                  altText
+                }
+              }
+            }
+          }
         }
       }
     }

@@ -8,15 +8,18 @@ export default function CarouselPagination({
   onPrev,
   onNext,
   label,
+  className = "mx-auto mt-4 max-w-8xl px-4",
 }: {
   pageCount: number;
   activePage: number;
   onPrev: () => void;
   onNext: () => void;
   label: string;
+  /** Outer wrapper classes — override when the parent already provides the gutter. */
+  className?: string;
 }) {
   return (
-    <div className="mx-auto mt-4 flex max-w-8xl items-center justify-between px-4">
+    <div className={`flex items-center justify-between ${className}`}>
       <div className="flex items-center gap-1.5">
         {Array.from({ length: pageCount }).map((_, i) => (
           <span

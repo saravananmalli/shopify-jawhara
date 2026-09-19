@@ -3,7 +3,10 @@ export {
   getProducts,
   getProductByHandle,
   searchProducts,
+  getRelatedProducts,
+  getProductsByIds,
 } from "@/services/shopify/product-service";
+export { getCatalogPage, withCategoryCounts } from "@/services/shopify/catalog-service";
 export {
   createCart,
   addCartLines,
@@ -15,6 +18,9 @@ export {
   getBrand,
   getMenu,
   getCategoryCollections,
+  getCategoryTilesFromMenu,
+  getCategoryTilesByHandles,
+  getCategoryTilesForCollection,
   getCollectionByHandle,
   getCollectionsByHandles,
   getHeroBanners,
