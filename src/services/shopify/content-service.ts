@@ -11,6 +11,7 @@ import {
   toCategoryTilesFromMenu,
   toCollection,
   toHeroBanner,
+  toContentPage,
   toNavLinks,
   withDefaultLanguageKeys,
   toOccasion,
@@ -27,6 +28,8 @@ import {
   HERO_BANNERS_QUERY,
   MENU_QUERY,
   OCCASIONS_QUERY,
+  PAGE_QUERY,
+  SHOP_POLICIES_QUERY,
   SITEMAP_QUERY,
   STORE_LOCATIONS_QUERY,
   TESTIMONIALS_QUERY,
@@ -35,6 +38,7 @@ import type {
   Brand,
   CategoryTile,
   Collection,
+  ContentPage,
   HeroBanner,
   NavLink,
   Occasion,
@@ -51,6 +55,8 @@ import type {
   ShopifyHeroBannerMetaobject,
   ShopifyMenuItem,
   ShopifyOccasionMetaobject,
+  ShopifyPage,
+  ShopifyShopPolicies,
   ShopifySitemapNode,
   ShopifyStoreLocationMetaobject,
   ShopifyTestimonialMetaobject,
@@ -408,4 +414,51 @@ export async function getSitemapEntries(locale: Locale): Promise<{
       toSitemapEntry(edge.node),
     ),
   };
+}
+
+/**
+ * An Online Store page by handle, or null when it is missing or empty —
+ * the route then 404s instead of showing invented content. Shopify translates
+ * the title/body for the request's language (falls back to English).
+ */
+export async function getPage(handle: string, locale: Locale): Promise<ContentPage | null> {
+  const data = await shopifyFetch<{ page: ShopifyPage | null }>({
+    query: PAGE_QUERY,
+    variables: { handle },
+    locale,
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+  // An empty page (Admin creates them blank) has nothing to show — treat it
+  // like a missing one rather than render a title over a blank screen.
+  return data.page?.body.trim() ? toContentPage(data.page, data.page.seo) : null;
+}
+
+/** Shop policy handles the Storefront API exposes, mapped to their `shop` field. */
+export const POLICY_HANDLES = [
+  "privacy-policy",
+  "refund-policy",
+  "shipping-policy",
+  "terms-of-service",
+] as const;
+export type PolicyHandle = (typeof POLICY_HANDLES)[number];
+
+const POLICY_FIELD = {
+  "privacy-policy": "privacyPolicy",
+  "refund-policy": "refundPolicy",
+  "shipping-policy": "shippingPolicy",
+  "terms-of-service": "termsOfService",
+} as const satisfies Record<PolicyHandle, keyof ShopifyShopPolicies["shop"]>;
+
+/** A shop policy, or null while it is empty in Admin → Settings → Policies. */
+export async function getShopPolicy(
+  handle: PolicyHandle,
+  locale: Locale,
+): Promise<ContentPage | null> {
+  const data = await shopifyFetch<ShopifyShopPolicies>({
+    query: SHOP_POLICIES_QUERY,
+    locale,
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+  const policy = data.shop[POLICY_FIELD[handle]];
+  return policy?.body ? toContentPage({ ...policy, handle }) : null;
 }

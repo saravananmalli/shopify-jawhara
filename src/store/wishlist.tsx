@@ -42,6 +42,8 @@ function isWishlistItem(value: unknown): value is WishlistItem {
 
 type WishlistContextValue = {
   items: WishlistItem[];
+  /** False until localStorage has been read — "empty" isn't known before that. */
+  hydrated: boolean;
   isInWishlist: (productId: string) => boolean;
   toggleItem: (product: Product) => void;
 };
@@ -108,8 +110,8 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ items, isInWishlist, toggleItem }),
-    [items, isInWishlist, toggleItem],
+    () => ({ items, hydrated, isInWishlist, toggleItem }),
+    [items, hydrated, isInWishlist, toggleItem],
   );
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;

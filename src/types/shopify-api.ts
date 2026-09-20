@@ -248,3 +248,25 @@ export type ShopifyMainMenuCollections = {
     items: (ShopifyCategoryMenuItem & { items: ShopifyCategoryMenuItem[] })[];
   }[];
 };
+
+export type ShopifyPage = {
+  handle: string;
+  title: string;
+  body: string;
+  seo: { title: string | null; description: string | null } | null;
+};
+
+export type ShopifyShopPolicy = {
+  handle: string;
+  title: string;
+  body: string;
+} | null;
+
+export type ShopifyShopPolicies = {
+  shop: {
+    privacyPolicy: ShopifyShopPolicy;
+    refundPolicy: ShopifyShopPolicy;
+    shippingPolicy: ShopifyShopPolicy;
+    termsOfService: ShopifyShopPolicy;
+  };
+};

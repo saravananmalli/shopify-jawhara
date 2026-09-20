@@ -651,3 +651,46 @@ export const REVIEW_PRODUCTS_QUERY = /* GraphQL */ `
     }
   }
 `;
+
+/** Online Store page by handle (Admin → Online Store → Pages). `body` is HTML. */
+export const PAGE_QUERY = /* GraphQL */ `
+  query Page($handle: String!) {
+    page(handle: $handle) {
+      handle
+      title
+      body
+      seo {
+        title
+        description
+      }
+    }
+  }
+`;
+
+/** Shop policies (Admin → Settings → Policies). Any of them may be null. */
+export const SHOP_POLICIES_QUERY = /* GraphQL */ `
+  query ShopPolicies {
+    shop {
+      privacyPolicy {
+        handle
+        title
+        body
+      }
+      refundPolicy {
+        handle
+        title
+        body
+      }
+      shippingPolicy {
+        handle
+        title
+        body
+      }
+      termsOfService {
+        handle
+        title
+        body
+      }
+    }
+  }
+`;
