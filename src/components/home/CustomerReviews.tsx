@@ -17,7 +17,7 @@ export default async function CustomerReviews({ reviews }: { reviews: Review[] }
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
             {t.eyebrow}
           </p>
-          <h2 id="home-reviews-heading" className="mt-1 font-sans text-3xl font-normal text-gold-600">
+          <h2 id="home-reviews-heading" className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-3xl">
             {t.title}
           </h2>
           <p className="mt-1 font-sans text-sm text-brown-900/60">

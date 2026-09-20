@@ -106,8 +106,8 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       dir={dir}
       className={`${latin.variable} ${locale === "ar" ? arabic.variable : ""} h-full antialiased`}
     >
-      {/* Bottom padding keeps the footer clear of the phone tab bar (4rem tall). */}
-      <body className="min-h-full flex flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] text-brown-900 md:pb-0">
+      {/* Bottom padding keeps the footer clear of the phone tab bar (about 4.25rem tall). */}
+      <body className="min-h-full flex flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-brown-900 md:pb-0">
         <LocaleProvider locale={locale} dictionary={dictionary}>
         <CartProvider>
           <WishlistProvider>

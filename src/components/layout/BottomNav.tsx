@@ -71,7 +71,7 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
           holds the cart drawer and mobile menu, which must cover this bar. */}
       <nav
         aria-label={t.label}
-        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-black/[0.08] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] md:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-black/[0.08] bg-white pt-2.5 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] md:hidden"
       >
         <Link
           href="/"

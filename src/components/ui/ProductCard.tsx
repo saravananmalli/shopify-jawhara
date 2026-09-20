@@ -8,7 +8,7 @@ import AddToCartButton from "@/components/ui/AddToCartButton";
 import WishlistButton from "@/components/ui/WishlistButton";
 import Chip from "@/components/ui/Chip";
 import RatingStars from "@/components/ui/RatingStars";
-import { ArrowDownIcon, BagIcon } from "@/components/icons";
+import { ArrowDownIcon, BagIcon, StarIcon } from "@/components/icons";
 import { useDeliveryEstimate } from "@/store/delivery";
 import { useDictionary, useLocale } from "@/store/locale";
 import { formatNumber } from "@/utils/format";
@@ -45,7 +45,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="group relative flex h-full flex-col rounded-2xl border border-[#E6D7BE]/60 bg-white p-2.5 shadow-sm sm:rounded-3xl sm:p-3.5"
+      className="group relative flex h-full flex-col rounded-2xl border border-[#E6D7BE]/60 bg-white p-2 shadow-sm min-[400px]:p-2.5 sm:rounded-3xl sm:p-3.5"
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
@@ -132,12 +132,12 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             {discountPercent}%
           </span>
         )}
-        <span className="flex items-center gap-0.5 text-base font-bold text-brown-900 rtl:flex-row-reverse sm:text-[18px]">
+        <span className="flex items-center gap-0.5 text-sm font-bold text-brown-900 rtl:flex-row-reverse sm:text-[18px]">
           <DirhamSymbol size="0.85em" />
           {formatNumber(product.price.amount, locale)}
         </span>
         {product.compareAtPrice && (
-          <span className="flex items-center gap-0.5 text-base text-[#7A7369] line-through rtl:flex-row-reverse">
+          <span className="flex items-center gap-0.5 text-sm text-[#7A7369] line-through rtl:flex-row-reverse sm:text-base">
             <DirhamSymbol size="0.75em" />
             {formatNumber(product.compareAtPrice.amount, locale)}
           </span>
@@ -145,16 +145,24 @@ export default memo(function ProductCard({ product }: { product: Product }) {
       </div>
 
       <Link href={`/products/${product.handle}`}>
-        <h3 dir="auto" className="mt-1.5 line-clamp-2 min-h-[2.5em] font-sans text-[13px] leading-snug text-brown-900 sm:mt-2 sm:text-[14px]">
+        <h3 dir="auto" className="mt-1.5 line-clamp-1 font-sans text-[13px] leading-snug text-brown-900 sm:mt-2 sm:line-clamp-2 sm:min-h-[2.5em] sm:text-[14px]">
           {product.title}
         </h3>
       </Link>
 
-      <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1.5 pt-2 font-sans text-sm">
+      <div className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-1.5 pt-2 font-sans text-sm sm:gap-x-2">
         {product.rating && (
           <span className="flex items-center gap-1">
-            <RatingStars rating={product.rating.average} size="md" />
-            <span className="font-normal text-brown-900/40">({product.rating.count})</span>
+            {/* Phones: one star and the review count — five stars take a whole
+                row of a narrow card. From sm the full row and count return. */}
+            <span aria-hidden className="flex items-center gap-1 sm:hidden">
+              <StarIcon className="size-3.5 text-review-star" />
+              <span className="font-normal text-brown-900/40">({product.rating.count})</span>
+            </span>
+            <span aria-hidden className="hidden items-center gap-1 sm:flex">
+              <RatingStars rating={product.rating.average} size="md" />
+              <span className="font-normal text-brown-900/40">({product.rating.count})</span>
+            </span>
             <span className="sr-only">
               {formatMessage(t.ratedFromReviews, {
                 rating: product.rating.average,
@@ -164,7 +172,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
           </span>
         )}
         {delivery && (
-          <span className="ms-auto max-w-full rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-2.5 py-1 text-[11px] font-medium leading-tight text-white sm:px-3 sm:text-xs">
+          <span className="ms-auto max-w-full rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-1.5 py-1 text-[11px] font-medium leading-tight text-white sm:px-3 sm:text-xs">
             {delivery.label}
           </span>
         )}
