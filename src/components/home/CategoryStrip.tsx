@@ -64,7 +64,7 @@ export default function CategoryStrip({
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pe-(--page-gutter) [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-0 pe-(--page-gutter) sm:mt-6 sm:pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {/* A real flex child, not container padding — padding-inline-start
                 on a scrollable flex container gets treated as already-scrolled
