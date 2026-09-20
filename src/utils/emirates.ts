@@ -40,3 +40,16 @@ export function nearestEmirate(coords: { lat: number; lng: number }): Emirate {
       : closest
   );
 }
+
+/** Beyond this from every emirate's centre the shopper is outside the UAE (or
+ * in the desert), so a nearest-emirate guess would promise the wrong delivery. */
+const MAX_MATCH_DISTANCE_KM = 250;
+
+export function emirateFromCoords(coords: { lat: number; lng: number }): Emirate | null {
+  const nearest = nearestEmirate(coords);
+  return haversineDistanceKm(coords, nearest) <= MAX_MATCH_DISTANCE_KM ? nearest : null;
+}
+
+export function isEmirateName(value: unknown): value is string {
+  return typeof value === "string" && UAE_EMIRATES.some((e) => e.name === value);
+}

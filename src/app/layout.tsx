@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import LocationPrompt from "@/components/layout/LocationPrompt";
 import { CartProvider } from "@/store/cart";
+import { DeliveryProvider } from "@/store/delivery";
 import { WishlistProvider } from "@/store/wishlist";
 import {
   DIAMOND_CATEGORY_HANDLES,
@@ -77,16 +79,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col text-brown-900">
         <CartProvider>
           <WishlistProvider>
-            <Header
-              brand={brand}
-              navLinks={headerNav}
-              giftsPromoCollection={giftsPromoCollection}
-              goldCategories={goldCategories}
-              diamondCategories={diamondCategories}
-              pearlCategories={pearlCategories}
-            />
-            <main className="flex-1">{children}</main>
-            <Footer brand={brand} footerNav={footerNav} />
+            <DeliveryProvider>
+              <Header
+                brand={brand}
+                navLinks={headerNav}
+                giftsPromoCollection={giftsPromoCollection}
+                goldCategories={goldCategories}
+                diamondCategories={diamondCategories}
+                pearlCategories={pearlCategories}
+              />
+              <main className="flex-1">{children}</main>
+              <Footer brand={brand} footerNav={footerNav} />
+              <LocationPrompt />
+            </DeliveryProvider>
           </WishlistProvider>
         </CartProvider>
       </body>
