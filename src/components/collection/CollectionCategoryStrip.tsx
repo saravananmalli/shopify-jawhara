@@ -108,7 +108,7 @@ export default function CollectionCategoryStrip({
                     </div>
                   </div>
                   <p
-                    className={`mt-2 text-center font-sans text-[15px] ${isCurrent ? "text-gold-600" : "text-brown-900"}`}
+                    className={`mt-2 text-center font-sans text-[15px] ${isCurrent ? "font-medium text-gold-600" : "text-brown-900"}`}
                   >
                     {category.title}
                   </p>

@@ -53,6 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(siteUrl),
     title: meta.siteTitle,
     description: meta.siteDescription,
+    icons: { icon: { url: "/favicon.svg", type: "image/svg+xml" } },
     openGraph: {
       title: meta.siteTitle,
       description: meta.siteDescription,
