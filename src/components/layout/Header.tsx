@@ -261,7 +261,7 @@ export default function Header({
             onClick={openLocation}
             onPointerEnter={loadLocationModal}
             onFocus={loadLocationModal}
-            className="flex min-h-11 min-w-0 items-center gap-2 text-start"
+            className="flex min-h-11 min-w-0 items-center text-start text-gold-600 hover:text-gold-700"
           >
             <Image
               src="/brand/icons/location.webp"
@@ -270,11 +270,11 @@ export default function Header({
               height={24}
               className="h-6 w-6 shrink-0"
             />
-            <span className="flex min-w-0 flex-col gap-0.5">
-              <span className="font-sans text-xs leading-none text-brown-900/60">
+            <span className="flex min-w-0 flex-col items-start gap-1">
+              <span className="font-sans text-[10px] font-semibold uppercase leading-none tracking-widest text-gold-800">
                 {t.header.deliverTo}
               </span>
-              <span className="flex items-center gap-1 text-sm font-semibold leading-tight text-brown-900">
+              <span className="flex items-center gap-1 text-sm font-semibold leading-none">
                 <span className="truncate">{deliveryLabel}</span>
                 <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
               </span>
