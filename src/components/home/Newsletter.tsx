@@ -20,7 +20,7 @@ export default function Newsletter() {
           <p className="text-xs font-semibold uppercase tracking-widest text-gold-800">
             {t.eyebrow}
           </p>
-          <h2 className="mt-1 font-serif text-2xl text-gold-600">
+          <h2 className="mt-1 font-serif text-2xl text-gold-600 sm:text-[28px]">
             {t.title}
           </h2>
           <p className="mt-1 max-w-md text-sm text-brown-900/60">
