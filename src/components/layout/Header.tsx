@@ -117,16 +117,16 @@ export default function Header({
       }`}
     >
       {/* Top utility bar */}
-      <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 py-2 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
+      <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 py-1.5 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
         <div className="page-container flex items-center justify-between">
-          <span className="flex items-center gap-1.5 font-medium">
-            {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
-            <img src="/brand/icons/badge-white.svg" alt="" aria-hidden className="h-5 w-5" />
-            {t.header.heritage}
-          </span>
+          {/* The heritage line lives in the category nav (2xl) and the mobile menu. */}
+          <Link href="/pages/contact" className="flex items-center gap-1.5 font-medium hover:underline">
+            <NavIcon name="support" tinted className="h-5 w-5" />
+            {t.header.customerService}
+          </Link>
           <AnnouncementTicker />
           <span className="flex items-center gap-3">
-            <Link href="/stores" className="flex items-center gap-1.5">
+            <Link href="/stores" className="flex items-center gap-1.5 hover:underline">
               <Image
                 src="/brand/icons/store.webp"
                 alt=""
@@ -143,7 +143,7 @@ export default function Header({
       </div>
 
       {/* Main row: search / logo / account */}
-      <div className="border-b border-gold-100 bg-white py-3 sm:py-4 [@media(min-width:1024px)_and_(max-height:800px)]:py-2.5">
+      <div className="border-b border-gold-100 bg-white py-2">
         <div className="page-container flex items-center justify-between gap-4">
           {/* flex-1 like the right-hand cluster, so the logo sits centred. */}
           <div className="flex flex-1 lg:hidden">
