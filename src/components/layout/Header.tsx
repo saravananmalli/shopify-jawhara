@@ -106,11 +106,13 @@ export default function Header({
 
   return (
     <header
-      className={`z-40 bg-cream-50 ${
-        // Collection pages pin their own filter bar instead of the header.
+      className={`sticky top-(--header-top) z-40 bg-cream-50 transition-[top] duration-300 ease-luxury ${
+        // On desktop, collection pages pin their own filter bar instead of the
+        // header. On phones the header is sticky everywhere so it can slide
+        // back in on scroll up.
         pathname === "/collections" || pathname.startsWith("/collections/")
-          ? "relative"
-          : "sticky top-0"
+          ? "md:relative"
+          : ""
       }`}
     >
       {/* Top utility bar */}

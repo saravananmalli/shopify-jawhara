@@ -3,6 +3,7 @@ import { Noto_Kufi_Arabic, Poppins } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
+import NavAutoHide from "@/components/layout/NavAutoHide";
 import LocationPrompt from "@/components/layout/LocationPrompt";
 import { CartProvider } from "@/store/cart";
 import { LocaleProvider } from "@/store/locale";
@@ -124,6 +125,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <Footer brand={brand} footerNav={footerNav} />
               <LocationPrompt />
               <BottomNav categories={shopCategories} />
+              <NavAutoHide />
             </DeliveryProvider>
           </WishlistProvider>
         </CartProvider>

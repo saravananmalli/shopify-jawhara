@@ -171,7 +171,7 @@ export default function CollectionBrowser({
       {/* Pinned to the top while the product grid scrolls — the site header
           is static on collection pages, so this is the only sticky bar. The
           opaque background hides cards passing underneath. */}
-      <div className="sticky top-0 z-30 mt-2 bg-cream-50 pt-3">
+      <div className="sticky top-(--sticky-top) z-30 mt-2 bg-cream-50 pt-3 transition-[top] duration-300 ease-luxury">
         {/* One swipeable row on phones (bleeding to the screen edges) instead
             of wrapping onto a second line; wraps normally from sm. */}
         <div className="-mx-(--page-gutter) flex scroll-px-(--page-gutter) snap-x items-center gap-2 overflow-x-auto px-(--page-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
