@@ -35,7 +35,7 @@ export default function ShopByOccasionSection({
     <section
       ref={sectionRef}
       aria-labelledby="shop-by-occasion-heading"
-      className="bg-cream-100 py-14 md:h-(--section-h) md:py-0"
+      className="bg-cream-100 py-6 sm:py-14 md:h-(--section-h) md:py-0"
     >
       {/* Below md this is an ordinary vertical stack; from md up it pins under
           the header while the hook slides the track sideways. */}

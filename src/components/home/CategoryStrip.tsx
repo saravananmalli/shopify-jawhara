@@ -103,6 +103,7 @@ export default function CategoryStrip({
             onPrev={() => scrollByPage(-1)}
             onNext={() => scrollByPage(1)}
             label={t.common.categories}
+            className="page-container mt-2 sm:mt-4"
           />
         </>
       )}

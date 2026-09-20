@@ -93,6 +93,7 @@ export default async function Home() {
         subtitle={t.masterpieces.subtitle}
         tabs={masterpieceTabs(t.masterpieces.tabs)}
         products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
+        tightOnPhone
       />
       <AtelierSection
         image={
