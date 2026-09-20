@@ -29,6 +29,7 @@ export {
   getHeroBanners,
   getOccasions,
   getPage,
+  getMenuCollectionTiles,
   getShopPolicy,
   POLICY_HANDLES,
   type PolicyHandle,

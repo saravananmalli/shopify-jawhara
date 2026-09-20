@@ -462,3 +462,37 @@ export async function getShopPolicy(
   const policy = data.shop[POLICY_FIELD[handle]];
   return policy?.body ? toContentPage({ ...policy, handle }) : null;
 }
+
+/**
+ * For each top-level item of a Shopify menu, its direct children that link to
+ * a collection (title as the menu names it, plus the collection's image when it
+ * has one) — index-aligned with `getMenu`'s result. Children that aren't linked
+ * to a collection yet are dropped, so nothing in the UI is a dead link.
+ */
+export async function getMenuCollectionTiles(
+  handle: string,
+  locale: Locale,
+): Promise<CategoryTile[][]> {
+  const data = await shopifyFetch<{ menu: ShopifyMainMenuCollections | null }>({
+    query: MAIN_MENU_COLLECTIONS_QUERY,
+    variables: { handle },
+    locale,
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  return (data.menu?.items ?? []).map((top) =>
+    top.items.flatMap((item) => {
+      const resource = item.resource;
+      if (!resource || !("handle" in resource)) return [];
+      return [
+        {
+          id: resource.id,
+          title: item.title,
+          handle: resource.handle,
+          imageUrl: resource.image?.url ?? null,
+          imageAlt: resource.image?.altText ?? item.title,
+        },
+      ];
+    }),
+  );
+}

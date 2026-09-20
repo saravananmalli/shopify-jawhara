@@ -20,7 +20,7 @@ import { siteUrl } from "@/config/site";
 import { localeConfig, locales } from "@/config/i18n";
 import { getLocale } from "@/utils/get-locale";
 import { getDictionary } from "@/dictionaries";
-import { getBrand, getCollectionGroups, getMenu } from "@/services/shopify";
+import { getBrand, getCollectionGroups, getMenu, getMenuCollectionTiles } from "@/services/shopify";
 import "../globals.css";
 
 // Also backs the `font-serif` utility (aliased to --font-sans in
@@ -80,6 +80,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     brand,
     headerNav,
     footerNav,
+    mainMenuCollectionTiles,
     {
       gifts: [giftsPromoCollection = null],
       gold: goldCategories,
@@ -91,6 +92,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     getBrand(locale),
     getMenu("main-menu", locale),
     getMenu("footer", locale),
+    // Collection-linked children (with images) of each main-menu item, for the
+    // phone Collections sheet — the same cached menu request the header uses.
+    getMenuCollectionTiles("main-menu", locale),
     // One request for every mega-menu collection, not one per handle.
     getCollectionGroups({
       gifts: [GIFTS_PROMO_HANDLE],
@@ -100,6 +104,11 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       categories: SHOP_BY_CATEGORY_HANDLES,
     }, locale),
   ]);
+
+  // Tiles line up with the header links by position; the "Our Collections" item is
+  // recognised by its default-language key so this works in Arabic too.
+  const ourCollectionsIndex = headerNav.findIndex((link) => link.key === "our collections");
+  const ourCollectionTiles = mainMenuCollectionTiles[ourCollectionsIndex] ?? [];
 
   return (
     <html
@@ -126,6 +135,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <LocationPrompt />
               <BottomNav
                 categories={shopCategories}
+                collectionTiles={ourCollectionTiles}
                 ourCollectionsUrl={headerNav.find((link) => link.key === "our collections")?.url ?? "/collections"}
               />
               <NavAutoHide />
