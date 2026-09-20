@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import MenuLink from "@/components/layout/MenuLink";
+import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon, ChevronRightIcon, CheckIcon } from "@/components/icons";
 import DepartmentFlyoutRow from "@/components/layout/DepartmentFlyoutRow";
 import DirhamText from "@/components/ui/DirhamText";
+import { useMenuIntent } from "@/hooks/useMenuIntent";
 import type { NavLink } from "@/types/content";
 
 const GUARANTEES = [
@@ -38,8 +41,11 @@ export default function JewelleryMegaMenu({
   );
   const otherColumns = link.items.filter((column) => column !== departmentColumn);
 
+  const { armed, intentProps } = useMenuIntent();
+
   return (
     <li
+      {...intentProps}
       className="group"
       onKeyDown={(e) => {
         if (e.key === "Escape") {
@@ -61,7 +67,7 @@ export default function JewelleryMegaMenu({
       </Link>
 
       {hasColumns && (
-        <div className="invisible absolute inset-x-0 top-full z-50 opacity-0 transition-[opacity,visibility] duration-200 ease-luxury group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
             <div className="mx-auto flex max-w-8xl gap-10 px-4 py-6">
               <div className="w-56 shrink-0 border-r border-gold-100 pr-6">
@@ -91,33 +97,33 @@ export default function JewelleryMegaMenu({
                     Book a bespoke showroom viewing or private video consultation
                     with our gemologists.
                   </p>
-                  <Link
+                  <MenuLink
                     href="/pages/boutiques"
                     className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-gold-700 hover:underline"
                   >
                     Book Private Viewing <ChevronRightIcon className="h-3 w-3" />
-                  </Link>
+                  </MenuLink>
                 </div>
               </div>
 
               {otherColumns.map((column) => (
                 <div key={column.title} className="min-w-[140px] flex-1">
-                  <Link
+                  <MenuLink
                     href={column.url}
                     className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
                   >
                     <DirhamText text={column.title} />
-                  </Link>
+                  </MenuLink>
                   {column.items.length > 0 && (
                     <ul className="flex flex-col gap-2.5">
                       {column.items.map((leaf) => (
                         <li key={leaf.title}>
-                          <Link
+                          <MenuLink
                             href={leaf.url}
                             className="text-sm text-brown-900/80 transition-colors hover:text-gold-700"
                           >
                             <DirhamText text={leaf.title} />
-                          </Link>
+                          </MenuLink>
                         </li>
                       ))}
                     </ul>
@@ -136,15 +142,15 @@ export default function JewelleryMegaMenu({
                   </span>
                 ))}
               </p>
-              <Link
+              <MenuLink
                 href="/collections"
                 className="whitespace-nowrap text-xs font-semibold text-gold-700 hover:underline"
               >
                 View All Creations &rarr;
-              </Link>
+              </MenuLink>
             </div>
           </div>
-        </div>
+        </MenuPanel>
       )}
     </li>
   );

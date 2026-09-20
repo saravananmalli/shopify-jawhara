@@ -41,6 +41,17 @@
   --color-error-500: #d41e3a; /* $error-color / $accent-red */
   --color-error-700: #8f1423; /* computed, darker than error-500 */
 
+  /* Customer reviews section — values from the production site's
+     _variables.scss ($star-gold, $verfied-bg, $border-gray, ...). */
+  --color-review-star: #ffd700; /* $star-gold */
+  --color-review-star-deep: #d6b600; /* $star-gold, 8% darker (bar gradient end) */
+  --color-review-verified: #ffcc00; /* $verfied-bg */
+  --color-review-border: #d1d1d1; /* $border-gray */
+  --color-review-avatar: #efefef; /* $bg-light-gray */
+  --color-review-track: #e8e8e8; /* $border-light */
+  --color-review-muted: #898989; /* $text-gray */
+  --color-review-faint: #9b9b9b; /* $text-light */
+
   /* Motion (rule #18) */
   --motion-fast: 180ms;
   --motion-normal: 300ms;
@@ -72,6 +83,9 @@
      site is Poppins. Keeps the `font-serif` utility (used in several
      components for italic accents) working without touching each one. */
   --font-serif: var(--font-sans);
+  /* The real serif used by the reviews heading and average (production
+     $font-serif) — the site's `font-serif` utility is Poppins, see above. */
+  --font-heading-serif: Georgia, "Times New Roman", serif;
 
   --color-cream-50: var(--color-cream-50);
   --color-cream-100: var(--color-cream-100);
@@ -90,6 +104,15 @@
 
   --color-maroon-500: var(--color-maroon-500);
   --color-maroon-600: var(--color-maroon-600);
+
+  --color-review-star: var(--color-review-star);
+  --color-review-star-deep: var(--color-review-star-deep);
+  --color-review-verified: var(--color-review-verified);
+  --color-review-border: var(--color-review-border);
+  --color-review-avatar: var(--color-review-avatar);
+  --color-review-track: var(--color-review-track);
+  --color-review-muted: var(--color-review-muted);
+  --color-review-faint: var(--color-review-faint);
 
   --color-success-50: var(--color-success-50);
   --color-success-500: var(--color-success-500);

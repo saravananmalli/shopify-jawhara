@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import MenuLink from "@/components/layout/MenuLink";
 import { ChevronRightIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import type { NavLink } from "@/types/content";
@@ -24,7 +24,7 @@ export default function DepartmentFlyoutRow({
 
   return (
     <li className={hasFlyout ? "group/row relative" : undefined}>
-      <Link
+      <MenuLink
         href={item.url}
         aria-haspopup={hasFlyout ? "true" : undefined}
         className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
@@ -37,29 +37,29 @@ export default function DepartmentFlyoutRow({
         {(highlighted || hasFlyout) && (
           <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-gold-600" />
         )}
-      </Link>
+      </MenuLink>
 
       {hasFlyout && (
         <div className="invisible absolute left-full top-0 z-10 pl-3 opacity-0 transition-[opacity,visibility] duration-200 ease-luxury group-hover/row:visible group-hover/row:opacity-100 group-focus-within/row:visible group-focus-within/row:opacity-100">
           <div className="flex min-w-[480px] gap-10 rounded-r-2xl border border-gold-100 bg-white p-6 shadow-xl">
             {item.items.map((column) => (
               <div key={column.title} className="min-w-[140px] flex-1">
-                <Link
+                <MenuLink
                   href={column.url}
                   className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
                 >
                   <DirhamText text={column.title} />
-                </Link>
+                </MenuLink>
                 {column.items.length > 0 && (
                   <ul className="flex flex-col gap-2.5">
                     {column.items.map((leaf) => (
                       <li key={leaf.title}>
-                        <Link
+                        <MenuLink
                           href={leaf.url}
                           className="text-sm text-brown-900/80 transition-colors hover:text-gold-700"
                         >
                           <DirhamText text={leaf.title} />
-                        </Link>
+                        </MenuLink>
                       </li>
                     ))}
                   </ul>

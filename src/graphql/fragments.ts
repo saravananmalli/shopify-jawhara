@@ -16,6 +16,12 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     description
     availableForSale
     tags
+    rating: metafield(namespace: "reviews", key: "rating") {
+      value
+    }
+    ratingCount: metafield(namespace: "reviews", key: "rating_count") {
+      value
+    }
     featuredImage {
       ...ImageFields
     }
@@ -43,6 +49,72 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
       }
     }
     variants(first: 25) {
+      edges {
+        node {
+          id
+          title
+          availableForSale
+          price {
+            amount
+            currencyCode
+          }
+          compareAtPrice {
+            amount
+            currencyCode
+          }
+          selectedOptions {
+            name
+            value
+          }
+        }
+      }
+    }
+  }
+  ${IMAGE_FRAGMENT}
+`;
+
+/**
+ * List views (homepage shelves, search, collection grids, carousels). A card
+ * only shows the featured photo, a hover photo, price, first-variant quick-add
+ * and rating, so this stays far smaller than ProductFields (8 images, 25
+ * variants, description) — the difference is large across a 24-card page.
+ */
+export const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `
+  fragment ProductCardFields on Product {
+    id
+    handle
+    title
+    availableForSale
+    tags
+    rating: metafield(namespace: "reviews", key: "rating") {
+      value
+    }
+    ratingCount: metafield(namespace: "reviews", key: "rating_count") {
+      value
+    }
+    featuredImage {
+      ...ImageFields
+    }
+    images(first: 2) {
+      edges {
+        node {
+          ...ImageFields
+        }
+      }
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 1) {
       edges {
         node {
           id

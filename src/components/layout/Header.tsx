@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,9 +17,8 @@ import {
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import CartDrawer from "@/components/layout/CartDrawer";
-import LocationModal from "@/components/layout/LocationModal";
-import SearchOverlay from "@/components/layout/SearchOverlay";
+import { useLazyDialog } from "@/hooks/useLazyDialog";
+import { AnnouncementTicker, SearchHint } from "@/components/layout/HeaderTickers";
 import MegaMenuItem from "@/components/layout/MegaMenuItem";
 import JewelleryMegaMenu from "@/components/layout/JewelleryMegaMenu";
 import GiftsMegaMenu from "@/components/layout/GiftsMegaMenu";
@@ -27,6 +27,15 @@ import ImageCategoryMegaMenu from "@/components/layout/ImageCategoryMegaMenu";
 import MobileNavItem from "@/components/layout/MobileNavItem";
 import { getShopifyImageUrl, isUntrustedRemoteImage } from "@/utils/shopify-image";
 import type { Brand, Collection, NavLink } from "@/types/content";
+
+// Dialogs nobody sees on first paint: loaded on first open (or on hover/focus
+// of their trigger) rather than shipped in every page's initial JS.
+const loadCartDrawer = () => import("@/components/layout/CartDrawer");
+const loadSearchOverlay = () => import("@/components/layout/SearchOverlay");
+const loadLocationModal = () => import("@/components/layout/LocationModal");
+const CartDrawer = dynamic(loadCartDrawer);
+const SearchOverlay = dynamic(loadSearchOverlay);
+const LocationModal = dynamic(loadLocationModal);
 
 // 2x the rendered logo size (desktop 150x70, mobile drawer 110x51).
 const LOGO_IMAGE_WIDTH_DESKTOP = 320;
@@ -37,24 +46,6 @@ const FALLBACK_LOGO = "/brand/jawhara-logo.png";
 const FALLBACK_NAV: NavLink[] = [
   { title: "All Products", url: "/collections/all", items: [] },
 ];
-
-const ANNOUNCEMENTS = [
-  "4-Hr Delivery in Dubai on Select Pieces",
-  "Extra 10% OFF Selected Jewellery. Discount auto-applied at checkout.",
-  "Free Delivery Across UAE",
-];
-const ANNOUNCEMENT_INTERVAL_MS = 4000;
-
-const SEARCH_SUGGESTIONS = [
-  "Ring",
-  "Pendant",
-  "Necklace",
-  "Earring",
-  "Bangle",
-  "Gold Necklace",
-  "Wedding Ring",
-];
-const SEARCH_SUGGESTION_INTERVAL_MS = 2200;
 
 export default function Header({
   brand,
@@ -73,32 +64,25 @@ export default function Header({
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const { cart, openCart } = useCart();
+  const { cart, isOpen: cartOpen, openCart } = useCart();
   const itemCount = cart?.totalQuantity ?? 0;
   const { items: wishlistItems } = useWishlist();
   const wishlistCount = wishlistItems.length;
   const pathname = usePathname();
-  const [announcementIndex, setAnnouncementIndex] = useState(0);
   const [locationOpen, setLocationOpen] = useState(false);
   const [emirate, setEmirate] = useState("Dubai");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [suggestionIndex, setSuggestionIndex] = useState(0);
 
-  useFocusTrap(mobileMenuRef, mobileOpen, () => setMobileOpen(false));
+  // Stable identities: useFocusTrap re-runs (and re-focuses) when onClose changes.
+  const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+  const closeLocation = useCallback(() => setLocationOpen(false), []);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setAnnouncementIndex((i) => (i + 1) % ANNOUNCEMENTS.length);
-    }, ANNOUNCEMENT_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, []);
+  useFocusTrap(mobileMenuRef, mobileOpen, closeMobileMenu);
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setSuggestionIndex((i) => (i + 1) % SEARCH_SUGGESTIONS.length);
-    }, SEARCH_SUGGESTION_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, []);
+  const cartDialog = useLazyDialog(cartOpen);
+  const searchDialog = useLazyDialog(searchOpen);
+  const locationDialog = useLazyDialog(locationOpen);
 
   const links = navLinks.length > 0 ? navLinks : FALLBACK_NAV;
   const logoSrc = brand.logoUrl ?? FALLBACK_LOGO;
@@ -119,12 +103,7 @@ export default function Header({
             <AwardIcon className="h-3.5 w-3.5" />
             HERITAGE SINCE 1907
           </span>
-          <span
-            key={announcementIndex}
-            className="animate-announcement-fade truncate px-4 text-center font-medium"
-          >
-            {ANNOUNCEMENTS[announcementIndex]}
-          </span>
+          <AnnouncementTicker />
           <span className="flex items-center gap-3">
             <Link href="/pages/boutiques" className="flex items-center gap-1.5">
               <Image
@@ -156,6 +135,8 @@ export default function Header({
           <div className="hidden flex-1 items-center gap-3 lg:flex">
             <button
               onClick={() => setLocationOpen(true)}
+              onPointerEnter={loadLocationModal}
+              onFocus={loadLocationModal}
               className="flex shrink-0 flex-col items-start gap-0.5 px-1 py-1 text-brown-900/80 hover:text-gold-700"
             >
               <span className="text-[10px] uppercase tracking-wide text-brown-900/50">
@@ -175,18 +156,14 @@ export default function Header({
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
+              onPointerEnter={loadSearchOverlay}
+              onFocus={loadSearchOverlay}
               className="flex w-full max-w-52 items-center gap-1.5 overflow-hidden rounded-full border border-gold-100 bg-white px-3 py-1.5 text-left"
               aria-haspopup="dialog"
             >
               <SearchIcon className="h-3.5 w-3.5 shrink-0 text-gold-700" />
               <span className="truncate text-sm text-brown-900/40">
-                Search for{" "}
-                <span
-                  key={suggestionIndex}
-                  className="animate-announcement-fade inline-block text-brown-900/70"
-                >
-                  &ldquo;{SEARCH_SUGGESTIONS[suggestionIndex]}&rdquo;
-                </span>
+                <SearchHint />
               </span>
             </button>
           </div>
@@ -225,6 +202,8 @@ export default function Header({
             </Link>
             <button
               onClick={openCart}
+              onPointerEnter={loadCartDrawer}
+              onFocus={loadCartDrawer}
               className="flex items-center gap-2"
               aria-label={`Open bag, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
             >
@@ -312,7 +291,7 @@ export default function Header({
       >
         <div
           className="absolute inset-0 bg-black/40"
-          onClick={() => setMobileOpen(false)}
+          onClick={closeMobileMenu}
         />
         <div
           ref={mobileMenuRef}
@@ -347,13 +326,7 @@ export default function Header({
           >
             <SearchIcon className="h-4 w-4 shrink-0 text-gold-700" />
             <span className="truncate text-sm text-brown-900/40">
-              Search for{" "}
-              <span
-                key={suggestionIndex}
-                className="animate-announcement-fade inline-block text-brown-900/70"
-              >
-                &ldquo;{SEARCH_SUGGESTIONS[suggestionIndex]}&rdquo;
-              </span>
+              <SearchHint />
             </span>
           </button>
           <ul className="flex flex-col gap-1 text-sm">
@@ -368,14 +341,21 @@ export default function Header({
         </div>
       </div>
 
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <CartDrawer />
-      <LocationModal
-        open={locationOpen}
-        onClose={() => setLocationOpen(false)}
-        selected={emirate}
-        onSelect={setEmirate}
-      />
+      {searchDialog.mounted && (
+        <SearchOverlay
+          open={searchDialog.visible}
+          onClose={closeSearch}
+        />
+      )}
+      {cartDialog.mounted && <CartDrawer visible={cartDialog.visible} />}
+      {locationDialog.mounted && (
+        <LocationModal
+          open={locationDialog.visible}
+          onClose={closeLocation}
+          selected={emirate}
+          onSelect={setEmirate}
+        />
+      )}
     </header>
   );
 }

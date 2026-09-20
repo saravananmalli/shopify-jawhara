@@ -1,5 +1,6 @@
 import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
+import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
 import { getRelatedProducts } from "@/services/shopify";
 
 export default async function RelatedProducts({ productId }: { productId: string }) {
@@ -24,12 +25,7 @@ export default async function RelatedProducts({ productId }: { productId: string
 export function RelatedProductsSkeleton() {
   return (
     <ProductShelf title="You May Also Like">
-      <div role="status" aria-busy="true" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <span className="sr-only">Loading related products…</span>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="aspect-square animate-pulse rounded-2xl bg-cream-100" />
-        ))}
-      </div>
+      <ProductCarouselSkeleton label="Loading related products…" />
     </ProductShelf>
   );
 }

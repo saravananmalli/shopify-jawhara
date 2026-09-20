@@ -17,7 +17,7 @@ export async function getCollectionMetadata({
   const collection =
     handle === ALL_PRODUCTS_HANDLE
       ? null
-      : await getCollectionByHandle(handle, { first: 1 });
+      : await getCollectionByHandle(handle);
 
   if (!collection && handle !== ALL_PRODUCTS_HANDLE) {
     return {

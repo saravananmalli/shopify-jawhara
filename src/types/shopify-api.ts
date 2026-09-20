@@ -16,18 +16,20 @@ export type ShopifyImage = {
   height?: number;
 };
 
-export type ShopifyProduct = {
+/** What list views request (PRODUCT_CARD_FRAGMENT). */
+export type ShopifyProductCard = {
   id: string;
   handle: string;
   title: string;
-  description: string;
   availableForSale: boolean;
   tags: string[];
+  /** Judge.me's `reviews` metafields; null until a product has a published review. */
+  rating: { value: string } | null;
+  ratingCount: { value: string } | null;
   featuredImage: ShopifyImage | null;
   images: { edges: { node: ShopifyImage }[] };
   priceRange: {
     minVariantPrice: ShopifyMoney;
-    maxVariantPrice: ShopifyMoney;
   };
   compareAtPriceRange: {
     minVariantPrice: ShopifyMoney;
@@ -44,6 +46,11 @@ export type ShopifyProduct = {
       };
     }[];
   };
+};
+
+/** Full product (PRODUCT_FRAGMENT) — the detail page's base. */
+export type ShopifyProduct = ShopifyProductCard & {
+  description: string;
 };
 
 export type ShopifyProductDetail = ShopifyProduct & {
@@ -101,9 +108,8 @@ export type ShopifyCollection = {
   image: ShopifyImage | null;
 };
 
-export type ShopifyCollectionWithProducts = ShopifyCollection & {
+export type ShopifyCollectionHeader = ShopifyCollection & {
   description: string;
-  products: { edges: { node: ShopifyProduct }[] };
 };
 
 export type ShopifyMetaobjectField<T = string | null> = { value: T } | null;
@@ -171,7 +177,7 @@ export type ShopifyCatalogCollection = {
   products: {
     pageInfo: ShopifyPageInfo;
     filters?: ShopifyFilter[];
-    edges: { node: ShopifyProduct }[];
+    edges: { node: ShopifyProductCard }[];
   };
 };
 
@@ -180,7 +186,7 @@ export type ShopifyCatalogSearch = {
   pageInfo: ShopifyPageInfo;
   productFilters?: ShopifyFilter[];
   // Search nodes are a union; the `... on Product` fragment yields {} for non-products.
-  edges: { node: ShopifyProduct | Record<string, never> }[];
+  edges: { node: ShopifyProductCard | Record<string, never> }[];
 };
 
 export type ShopifyCategoryMenuItem = {

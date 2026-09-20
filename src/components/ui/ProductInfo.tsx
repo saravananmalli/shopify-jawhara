@@ -6,8 +6,10 @@ import AddToCartButton from "@/components/ui/AddToCartButton";
 import AccordionItem from "@/components/ui/AccordionItem";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import WishlistButton from "@/components/ui/WishlistButton";
-import { ArrowDownIcon, SparkleIcon, StarIcon } from "@/components/icons";
+import RatingStars from "@/components/ui/RatingStars";
+import { ArrowDownIcon, SparkleIcon } from "@/components/icons";
 import type { ProductDetail, ProductVariant } from "@/types/product";
+import type { RatingSummary } from "@/types/review";
 
 function matchesSelection(variant: ProductVariant, selection: Record<string, string>) {
   return variant.options.every((option) => selection[option.name] === option.value);
@@ -24,8 +26,11 @@ function matchesSelection(variant: ProductVariant, selection: Record<string, str
  */
 export default function ProductInfo({
   product,
+  rating,
 }: {
   product: ProductDetail;
+  /** Real Judge.me rating from Shopify; null/undefined hides the row. */
+  rating?: RatingSummary | null;
 }) {
   const optionNames = [
     ...new Set(product.variants.flatMap((variant) => variant.options.map((o) => o.name))),
@@ -56,17 +61,18 @@ export default function ProductInfo({
     <div>
       <h1 className="font-sans text-[20px] font-semibold text-brown-900">{product.title}</h1>
 
-      {/* Placeholder rating — no reviews app/data source exists in this
-          project yet. Kept per client request; swap for real review data
-          once that integration is wired in. */}
-      <div className="mt-3 flex items-center gap-2 font-sans text-sm">
-        <span className="flex items-center gap-0.5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <StarIcon key={i} className="h-5 w-5 text-warning-500" />
-          ))}
-        </span>
-        <span className="text-brown-900/60">(1 customer review)</span>
-      </div>
+      {rating && (
+        <div className="mt-3 flex items-center gap-2 font-sans">
+          <RatingStars rating={rating.average} size="md" />
+          <a
+            href="#customer-reviews"
+            className="text-xs text-brown-900 underline underline-offset-2 transition-colors hover:text-gold-600"
+          >
+            ({rating.count} customer {rating.count === 1 ? "review" : "reviews"})
+          </a>
+          <span className="sr-only">Rated {rating.average} out of 5</span>
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap items-center gap-3 font-sans">
         {discountPercent !== null && discountPercent > 0 && (

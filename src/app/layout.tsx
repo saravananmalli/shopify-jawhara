@@ -11,12 +11,7 @@ import {
   PEARL_CATEGORY_HANDLES,
 } from "@/config/catalog";
 import { siteUrl } from "@/config/site";
-import {
-  getBrand,
-  getCollectionByHandle,
-  getCollectionsByHandles,
-  getMenu,
-} from "@/services/shopify";
+import { getBrand, getCollectionGroups, getMenu } from "@/services/shopify";
 import "./globals.css";
 
 // Also backs the `font-serif` utility (aliased to --font-sans in
@@ -55,18 +50,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     brand,
     headerNav,
     footerNav,
-    giftsPromoCollection,
-    goldCategories,
-    diamondCategories,
-    pearlCategories,
+    {
+      gifts: [giftsPromoCollection = null],
+      gold: goldCategories,
+      diamond: diamondCategories,
+      pearl: pearlCategories,
+    },
   ] = await Promise.all([
     getBrand(),
     getMenu("main-menu"),
     getMenu("footer"),
-    getCollectionByHandle(GIFTS_PROMO_HANDLE, { first: 1 }),
-    getCollectionsByHandles(GOLD_CATEGORY_HANDLES),
-    getCollectionsByHandles(DIAMOND_CATEGORY_HANDLES),
-    getCollectionsByHandles(PEARL_CATEGORY_HANDLES),
+    // One request for every mega-menu collection, not one per handle.
+    getCollectionGroups({
+      gifts: [GIFTS_PROMO_HANDLE],
+      gold: GOLD_CATEGORY_HANDLES,
+      diamond: DIAMOND_CATEGORY_HANDLES,
+      pearl: PEARL_CATEGORY_HANDLES,
+    }),
   ]);
 
   return (

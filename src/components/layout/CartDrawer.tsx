@@ -10,18 +10,18 @@ import { getShopifyImageUrl } from "@/utils/shopify-image";
 // 2x the fixed 80x80 thumbnail.
 const CART_LINE_IMAGE_WIDTH = 192;
 
-export default function CartDrawer() {
-  const { cart, isOpen, closeCart, updateItem, removeItem, isLoading, error, dismissError } =
+export default function CartDrawer({ visible }: { visible: boolean }) {
+  const { cart, closeCart, updateItem, removeItem, isLoading, error, dismissError } =
     useCart();
   const drawerRef = useRef<HTMLDivElement>(null);
   const lines = cart?.lines ?? [];
 
-  useFocusTrap(drawerRef, isOpen, closeCart);
+  useFocusTrap(drawerRef, visible, closeCart);
 
   return (
     <div
       className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury ${
-        isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        visible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
       <div className="absolute inset-0 bg-black/40" onClick={closeCart} />
@@ -31,7 +31,7 @@ export default function CartDrawer() {
         aria-modal="true"
         aria-label="Shopping bag"
         className={`absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-cream-50 shadow-xl transition-transform duration-300 ease-luxury ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+          visible ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between border-b border-gold-100 px-5 py-4">

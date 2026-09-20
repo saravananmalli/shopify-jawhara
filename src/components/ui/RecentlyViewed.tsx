@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
+import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
 import { getProductsByIds } from "@/services/shopify";
 import type { Product } from "@/types/product";
 
@@ -74,12 +75,7 @@ export default function RecentlyViewed({ currentProductId }: { currentProductId:
   return (
     <ProductShelf title="Recently Viewed">
       {status === "loading" && (
-        <div role="status" aria-busy="true" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <span className="sr-only">Loading recently viewed products…</span>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="aspect-square animate-pulse rounded-2xl bg-cream-100" />
-          ))}
-        </div>
+        <ProductCarouselSkeleton label="Loading recently viewed products…" />
       )}
       {status === "error" && (
         <p role="alert" className="font-sans text-sm text-error-700">

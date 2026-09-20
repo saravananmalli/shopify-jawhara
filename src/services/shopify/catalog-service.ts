@@ -17,6 +17,7 @@ import {
   ALL_PRODUCTS_HANDLE,
   ALL_PRODUCTS_TITLE,
   CATALOG_PAGE_SIZE,
+  PRODUCT_REVALIDATE_SECONDS,
 } from "@/config/catalog";
 import { toProductFilterInputs } from "@/utils/catalog-params";
 import {
@@ -66,7 +67,8 @@ const SEARCH_SORT: Record<
  * One page of a collection's products, with real Shopify facets and paging.
  * Returns null for an unknown collection handle — except "all", which has no
  * Storefront collection and is served from `search` so the catch-all page
- * still works. Not cached: availability and price must stay fresh.
+ * still works. Cached briefly (PRODUCT_REVALIDATE_SECONDS) so repeat visits,
+ * back-navigation and sort/filter toggles don't each hit Shopify.
  */
 export async function getCatalogPage(
   args: Parameters<typeof getCatalogPageCore>[0],
@@ -124,6 +126,7 @@ async function getCatalogPageCore({
       withFilters,
       ...COLLECTION_SORT[sort],
     },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   if (data.collection) return toCatalogPageFromCollection(data.collection);
@@ -138,6 +141,7 @@ async function getCatalogPageCore({
       withFilters,
       ...SEARCH_SORT[sort],
     },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   return toCatalogPageFromSearch(search.search, {
@@ -420,6 +424,7 @@ async function getCustomFilteredCatalogPage({
     filters: toProductFilterInputs(custom.rest),
     sort,
     withFilters,
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
   if (!scan) return null;
 

@@ -21,6 +21,7 @@ export const PRODUCT_SPEC_FIELDS: readonly ProductSpecField[] = [
   // Shopify Admin names differ from the keys: Metal Type = `metal`,
   // Diamond Clarity = `purity`, Diamond Color = `gemstone`, Diamond Ct = `specifications`.
   { key: "metal", label: "Metal Type", icon: "/brand/icons/metal-type.png" },
+  { key: "color", label: "Color", icon: "/brand/icons/color.png" },
   { key: "purity", label: "Diamond Clarity", icon: "/brand/icons/diamond-clarity.png" },
   { key: "gemstone", label: "Diamond Color", icon: "/brand/icons/diamond-color.png" },
   { key: "specifications", label: "Diamond Ct", icon: "/brand/icons/diamond-ct.png" },

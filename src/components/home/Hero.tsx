@@ -8,8 +8,8 @@ import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import { getShopifyImageUrl, isUntrustedRemoteImage, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { HeroBanner } from "@/types/content";
 
-// Full-bleed 100vw hero on large, high-DPI desktops.
-const HERO_IMAGE_WIDTH = 2400;
+// Full-bleed 100vw hero; 1920 is the largest width next.config.ts serves.
+const HERO_IMAGE_WIDTH = 1920;
 
 /** Used only until a "hero_banner" metaobject entry exists in Shopify Admin. */
 const FALLBACK_SLIDES: HeroBanner[] = [
@@ -107,11 +107,17 @@ function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolea
 }
 
 const AUTO_ROTATE_INTERVAL_MS = 5000;
+// Mount the next slide's photo this long after the current one, so it is ready
+// before the rotation but never competes with the first slide (the LCP image).
+const PRELOAD_NEXT_DELAY_MS = 2000;
 
 export default function Hero({ banners }: { banners: HeroBanner[] }) {
   const slides = banners.length > 0 ? banners : FALLBACK_SLIDES;
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  // Slides whose <Image> is mounted. Rendering every slide up front would
+  // download all of their large photos at load even though only one shows.
+  const [mounted, setMounted] = useState<ReadonlySet<number>>(() => new Set([0]));
 
   const go = (delta: number) =>
     setIndex((prev) => (prev + delta + slides.length) % slides.length);
@@ -126,23 +132,36 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
     return () => clearInterval(id);
   }, [slides.length, isPaused]);
 
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const next = (index + 1) % slides.length;
+    const id = setTimeout(
+      () => setMounted((prev) => (prev.has(next) ? prev : new Set(prev).add(next))),
+      PRELOAD_NEXT_DELAY_MS,
+    );
+    return () => clearTimeout(id);
+  }, [index, slides.length]);
+
   return (
     <section
       className="relative h-[420px] w-full overflow-hidden sm:h-[600px]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {slides.map((slide, i) => (
-        <div
-          key={slide.id}
-          aria-hidden={i !== index}
-          className={`absolute inset-0 transition-opacity duration-700 ease-luxury ${
-            i === index ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
-        >
-          <SlideContent slide={slide} priority={i === 0} />
-        </div>
-      ))}
+      {slides.map((slide, i) => {
+        if (i !== index && !mounted.has(i)) return null;
+        return (
+          <div
+            key={slide.id}
+            aria-hidden={i !== index}
+            className={`absolute inset-0 transition-opacity duration-700 ease-luxury ${
+              i === index ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          >
+            <SlideContent slide={slide} priority={i === 0} />
+          </div>
+        );
+      })}
 
       {slides.length > 1 && (
         <>
