@@ -185,7 +185,7 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
 
   return (
     <section
-      className={`relative w-full touch-pan-y overflow-hidden sm:aspect-auto sm:h-[42vw] sm:max-h-[calc(100svh-12rem)] sm:min-h-60 lg:max-h-[calc(100svh-440px)] lg:min-h-[460px] ${
+      className={`relative w-full touch-pan-y overflow-hidden sm:aspect-auto sm:h-[42vw] sm:max-h-[calc(100svh-12rem)] sm:min-h-60 lg:max-h-[calc(100svh-400px)] lg:min-h-[500px] ${
         showWholeBanner ? BANNER_ASPECT : "h-[clamp(13rem,58vw,16rem)]"
       }`}
       onMouseEnter={() => setIsPaused(true)}
