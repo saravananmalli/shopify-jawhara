@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
+import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
 import { ChevronRightIcon } from "@/components/icons";
 import { getProducts, searchProducts } from "@/services/shopify";
 import type { Product } from "@/types/product";
@@ -127,14 +128,7 @@ export default function ProductGridSection({
       )}
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square animate-pulse rounded-2xl bg-cream-100"
-            />
-          ))}
-        </div>
+        <ProductCarouselSkeleton />
       ) : products.length === 0 ? (
         <p className="rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-10 text-center font-sans text-sm text-brown-900/60">
           No products match &ldquo;{tabs[activeTabIndex]?.label}&rdquo; yet.

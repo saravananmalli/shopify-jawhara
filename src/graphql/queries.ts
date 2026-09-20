@@ -2,7 +2,7 @@ import {
   CART_FRAGMENT,
   PRODUCT_DETAIL_FRAGMENT,
   PRODUCT_FILTER_FRAGMENT,
-  PRODUCT_FRAGMENT,
+  PRODUCT_CARD_FRAGMENT,
 } from "@/graphql/fragments";
 
 export const PRODUCTS_QUERY = /* GraphQL */ `
@@ -10,12 +10,12 @@ export const PRODUCTS_QUERY = /* GraphQL */ `
     products(first: $first, sortKey: $sortKey) {
       edges {
         node {
-          ...ProductFields
+          ...ProductCardFields
         }
       }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
 `;
 
 export const SEARCH_PRODUCTS_QUERY = /* GraphQL */ `
@@ -23,12 +23,12 @@ export const SEARCH_PRODUCTS_QUERY = /* GraphQL */ `
     products(first: $first, query: $query) {
       edges {
         node {
-          ...ProductFields
+          ...ProductCardFields
         }
       }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
 `;
 
 export const PRODUCT_BY_HANDLE_QUERY = /* GraphQL */ `
@@ -105,27 +105,34 @@ export const MENU_QUERY = /* GraphQL */ `
   }
 `;
 
-export const COLLECTION_BY_HANDLE_QUERY = /* GraphQL */ `
-  query CollectionByHandle($handle: String!, $first: Int!) {
-    collection(handle: $handle) {
+/**
+ * Collection headers (title, description, image) for several handles in one
+ * round trip. Deliberately no products: nav tiles, category strips and the
+ * metadata head only need the image and title, and a collection's products
+ * were the bulk of the payload.
+ */
+export function buildCollectionsByHandlesQuery(count: number) {
+  const variables = Array.from({ length: count }, (_, i) => `$h${i}: String!`);
+  const fields = Array.from(
+    { length: count },
+    (_, i) => `c${i}: collection(handle: $h${i}) { ...CollectionHeader }`,
+  );
+  return /* GraphQL */ `
+    query CollectionsByHandles(${variables.join(", ")}) {
+      ${fields.join("\n      ")}
+    }
+    fragment CollectionHeader on Collection {
       id
       title
       handle
       description
       image {
-        ...ImageFields
-      }
-      products(first: $first) {
-        edges {
-          node {
-            ...ProductFields
-          }
-        }
+        url
+        altText
       }
     }
-  }
-  ${PRODUCT_FRAGMENT}
-`;
+  `;
+}
 
 export const COLLECTIONS_QUERY = /* GraphQL */ `
   query Collections($first: Int!) {
@@ -295,21 +302,21 @@ export const SITEMAP_QUERY = /* GraphQL */ `
 export const PRODUCT_RECOMMENDATIONS_QUERY = /* GraphQL */ `
   query ProductRecommendations($productId: ID!) {
     productRecommendations(productId: $productId, intent: RELATED) {
-      ...ProductFields
+      ...ProductCardFields
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
 `;
 
 export const PRODUCTS_BY_IDS_QUERY = /* GraphQL */ `
   query ProductsByIds($ids: [ID!]!) {
     nodes(ids: $ids) {
       ... on Product {
-        ...ProductFields
+        ...ProductCardFields
       }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
 `;
 
 /**
@@ -347,13 +354,13 @@ export const CATALOG_COLLECTION_QUERY = /* GraphQL */ `
         }
         edges {
           node {
-            ...ProductFields
+            ...ProductCardFields
           }
         }
       }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
   ${PRODUCT_FILTER_FRAGMENT}
 `;
 
@@ -387,13 +394,13 @@ export const CATALOG_SEARCH_QUERY = /* GraphQL */ `
       edges {
         node {
           ... on Product {
-            ...ProductFields
+            ...ProductCardFields
           }
         }
       }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_CARD_FRAGMENT}
   ${PRODUCT_FILTER_FRAGMENT}
 `;
 
@@ -563,6 +570,22 @@ export const MAIN_MENU_COLLECTIONS_QUERY = /* GraphQL */ `
               }
             }
           }
+        }
+      }
+    }
+  }
+`;
+
+export const REVIEW_PRODUCTS_QUERY = /* GraphQL */ `
+  query ReviewProducts($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Product {
+        id
+        handle
+        title
+        featuredImage {
+          url
+          altText
         }
       }
     }

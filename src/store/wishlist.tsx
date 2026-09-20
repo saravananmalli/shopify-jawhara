@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import type { Product } from "@/types/product";
@@ -76,11 +77,12 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  return (
-    <WishlistContext.Provider value={{ items, isInWishlist, toggleItem }}>
-      {children}
-    </WishlistContext.Provider>
+  const value = useMemo(
+    () => ({ items, isInWishlist, toggleItem }),
+    [items, isInWishlist, toggleItem],
   );
+
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
 
 export function useWishlist() {

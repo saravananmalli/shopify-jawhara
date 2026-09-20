@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -115,24 +116,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [cart]
   );
 
-  return (
-    <CartContext.Provider
-      value={{
-        cart,
-        isOpen,
-        isLoading,
-        error,
-        openCart: () => setIsOpen(true),
-        closeCart: () => setIsOpen(false),
-        dismissError: () => setError(null),
-        addItem,
-        updateItem,
-        removeItem,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+  const dismissError = useCallback(() => setError(null), []);
+
+  // Memoised so the many AddToCartButtons on a listing page re-render only
+  // when cart state actually changes, not whenever the provider re-renders.
+  const value = useMemo(
+    () => ({
+      cart,
+      isOpen,
+      isLoading,
+      error,
+      openCart,
+      closeCart,
+      dismissError,
+      addItem,
+      updateItem,
+      removeItem,
+    }),
+    [cart, isOpen, isLoading, error, openCart, closeCart, dismissError, addItem, updateItem, removeItem],
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {

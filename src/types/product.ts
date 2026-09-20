@@ -1,4 +1,5 @@
 import type { Money } from "@/types/money";
+import type { RatingSummary } from "@/types/review";
 
 export type ProductImage = {
   url: string;
@@ -34,6 +35,8 @@ export type Product = {
   defaultVariant: ProductVariant | null;
   variants: ProductVariant[];
   tags: string[];
+  /** Null when the product has no published review. */
+  rating: RatingSummary | null;
 };
 
 /**

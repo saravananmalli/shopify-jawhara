@@ -22,9 +22,14 @@ export {
   getCategoryTilesByHandles,
   getCategoryTilesForCollection,
   getCollectionByHandle,
+  getCollectionGroups,
   getCollectionsByHandles,
   getHeroBanners,
   getOccasions,
   getTestimonials,
   getSitemapEntries,
 } from "@/services/shopify/content-service";
+export {
+  getLatestReviews,
+  getProductReviews,
+} from "@/services/shopify/review-service";

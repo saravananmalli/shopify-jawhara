@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import MenuLink from "@/components/layout/MenuLink";
+import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
+import { useMenuIntent } from "@/hooks/useMenuIntent";
 import type { NavLink } from "@/types/content";
 
 /**
@@ -19,8 +22,11 @@ export default function OurCollectionsMegaMenu({
 }) {
   const hasContent = link.items.length > 0;
 
+  const { armed, intentProps } = useMenuIntent();
+
   return (
     <li
+      {...intentProps}
       className="group"
       onKeyDown={(e) => {
         if (e.key === "Escape") {
@@ -42,21 +48,21 @@ export default function OurCollectionsMegaMenu({
       </Link>
 
       {hasContent && (
-        <div className="invisible absolute inset-x-0 top-full z-50 opacity-0 transition-[opacity,visibility] duration-200 ease-luxury group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
             <div className="mx-auto grid max-w-8xl grid-cols-6 gap-x-8 gap-y-5 px-4 py-6">
               {link.items.map((item) => (
-                <Link
+                <MenuLink
                   key={item.title}
                   href={item.url}
                   className="text-sm font-medium text-brown-900 transition-colors hover:text-gold-700"
                 >
                   <DirhamText text={item.title} />
-                </Link>
+                </MenuLink>
               ))}
             </div>
           </div>
-        </div>
+        </MenuPanel>
       )}
     </li>
   );

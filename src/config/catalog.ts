@@ -2,6 +2,14 @@ import type { CatalogSortKey } from "@/types/catalog";
 
 export const CATALOG_PAGE_SIZE = 24;
 
+/**
+ * How long product, listing and search responses may be reused (Next data
+ * cache on the server, in-memory in the browser). Price and availability shown
+ * on a card can therefore lag Shopify by up to this long; adding to the bag is
+ * never cached and Shopify re-checks stock there, so it can't oversell.
+ */
+export const PRODUCT_REVALIDATE_SECONDS = 60;
+
 /** Shopify's automatic "all products" URL — not exposed by the Storefront
  * API, so the catalog service falls back to `search` for it. */
 export const ALL_PRODUCTS_HANDLE = "all";

@@ -1,5 +1,3 @@
-import type { Product } from "@/types/product";
-
 export type NavLink = {
   title: string;
   url: string;
@@ -31,7 +29,6 @@ export type Collection = {
   description: string;
   imageUrl: string | null;
   imageAlt: string;
-  products: Product[];
 };
 
 export type HeroBanner = {

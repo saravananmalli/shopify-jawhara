@@ -4,12 +4,13 @@ import FeaturesBar from "@/components/home/FeaturesBar";
 import ProductGridSection, { type ProductTab } from "@/components/home/ProductGridSection";
 import HorlogerieSection from "@/components/home/HorlogerieSection";
 import ShopByOccasionSection from "@/components/home/ShopByOccasionSection";
+import CustomerReviews from "@/components/home/CustomerReviews";
 import Testimonials from "@/components/home/Testimonials";
 import Newsletter from "@/components/home/Newsletter";
 import {
-  getCollectionByHandle,
-  getCollectionsByHandles,
+  getCollectionGroups,
   getHeroBanners,
+  getLatestReviews,
   getOccasions,
   getProducts,
   getTestimonials,
@@ -45,15 +46,29 @@ const TRENDING_TABS: ProductTab[] = [
   { label: "Trending UAE Gifts", mode: "query", query: "tag:trending" },
 ];
 
+/** The homepage is statically generated; its shelves refresh on this
+ * schedule (a full-page regeneration each minute would be wasted work). */
+const HOME_REVALIDATE_SECONDS = 600;
+
 export default async function Home() {
-  const [products, categories, heroBanners, horlogerieCollection, occasions, testimonials] = await Promise.all([
-    getProducts({ first: 8 }),
-    getCollectionsByHandles(SHOP_BY_CATEGORY_HANDLES),
-    getHeroBanners(),
-    getCollectionByHandle("horlogerie"),
-    getOccasions(),
-    getTestimonials(),
-  ]);
+  const [products, collections, heroBanners, occasions, testimonials, reviews] =
+    await Promise.all([
+      getProducts({ first: 8, revalidate: HOME_REVALIDATE_SECONDS }),
+      getCollectionGroups({
+        categories: SHOP_BY_CATEGORY_HANDLES,
+        horlogerie: ["horlogerie"],
+      }),
+      getHeroBanners(),
+      getOccasions(),
+      getTestimonials(),
+      // A reviews outage must not take the homepage down.
+      getLatestReviews().catch((error) => {
+        console.error("Failed to load homepage reviews", error);
+        return [];
+      }),
+    ]);
+
+  const { categories, horlogerie: [horlogerieCollection] } = collections;
 
   return (
     <>
@@ -62,7 +77,7 @@ export default async function Home() {
       <FeaturesBar />
       <ProductGridSection
         eyebrow="Haute Vitrine"
-        title="Bestselling Creations in UAE"
+        title="Signature Masterpieces"
         subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
         tabs={MASTERPIECE_TABS}
         products={products.slice(0, 4)}
@@ -76,12 +91,13 @@ export default async function Home() {
       />
       <ShopByOccasionSection occasions={occasions} />
       <ProductGridSection
-        eyebrow="Haute Vitrine"
-        title="Bestselling Creations in UAE"
-        subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
+        eyebrow="Fresh & Favoured"
+        title="Trending Now in the UAE"
+        subtitle="New arrivals from our atelier and the pieces our clients are choosing most."
         tabs={TRENDING_TABS}
         products={products.slice(-4)}
       />
+      <CustomerReviews reviews={reviews} />
       <Testimonials testimonials={testimonials} />
       <Newsletter />
     </>

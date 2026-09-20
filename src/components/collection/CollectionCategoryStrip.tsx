@@ -54,7 +54,7 @@ export default function CollectionCategoryStrip({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="snap-x snap-mandatory overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="snap-x snap-mandatory overflow-x-auto pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex gap-4">
           {categories.map((category) => {

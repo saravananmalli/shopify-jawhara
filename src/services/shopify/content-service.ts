@@ -18,7 +18,7 @@ import {
   BRAND_QUERY,
   CATEGORY_MENU_QUERY,
   MAIN_MENU_COLLECTIONS_QUERY,
-  COLLECTION_BY_HANDLE_QUERY,
+  buildCollectionsByHandlesQuery,
   COLLECTIONS_QUERY,
   HERO_BANNERS_QUERY,
   MENU_QUERY,
@@ -41,7 +41,7 @@ import type {
   ShopifyCategoryMenuItem,
   ShopifyMainMenuCollections,
   ShopifyCollection,
-  ShopifyCollectionWithProducts,
+  ShopifyCollectionHeader,
   ShopifyHeroBannerMetaobject,
   ShopifyMenuItem,
   ShopifyOccasionMetaobject,
@@ -183,41 +183,59 @@ export async function getCategoryTilesForCollection(
 }
 
 /**
+ * Collections (title, description, image — no products) for several handles
+ * in ONE request. Handles that don't exist (deleted/renamed/not yet created)
+ * are dropped rather than throwing; order follows `handles`.
+ */
+export async function getCollectionsByHandles(
+  handles: readonly string[],
+): Promise<Collection[]> {
+  const unique = [...new Set(handles)];
+  if (unique.length === 0) return [];
+
+  const data = await shopifyFetch<
+    Record<string, ShopifyCollectionHeader | null>
+  >({
+    query: buildCollectionsByHandlesQuery(unique.length),
+    variables: Object.fromEntries(unique.map((handle, i) => [`h${i}`, handle])),
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  return unique.flatMap((_, i) => {
+    const collection = data[`c${i}`];
+    return collection ? [toCollection(collection)] : [];
+  });
+}
+
+/**
  * Returns null when no collection has that handle (deleted, unpublished, or
  * a stale link in the Shopify nav menu) — callers should render a real
  * not-found state, not fall back to fake data.
  */
 export async function getCollectionByHandle(
   handle: string,
-  { first = 24 }: { first?: number } = {},
 ): Promise<Collection | null> {
-  const data = await shopifyFetch<{
-    collection: ShopifyCollectionWithProducts | null;
-  }>({
-    query: COLLECTION_BY_HANDLE_QUERY,
-    variables: { handle, first },
-    revalidate: CONTENT_REVALIDATE_SECONDS,
-  });
-
-  return data.collection ? toCollection(data.collection) : null;
+  const [collection] = await getCollectionsByHandles([handle]);
+  return collection ?? null;
 }
 
 /**
- * Fetches several collections by handle in parallel, dropping any that
- * don't exist (deleted/renamed/not-yet-created) rather than throwing —
- * used for curated tile grids (e.g. nav category tiles, homepage "Shop By
- * Category") where the exact set of real Shopify collections is known.
+ * Several named groups of collections (e.g. the header's Gold / Diamond /
+ * Pearl menus) resolved with a single Shopify request instead of one per
+ * group or per handle.
  */
-export async function getCollectionsByHandles(
-  handles: string[],
-  { first = 1 }: { first?: number } = {},
-): Promise<Collection[]> {
-  const collections = await Promise.all(
-    handles.map((handle) => getCollectionByHandle(handle, { first })),
-  );
-  return collections.filter(
-    (collection): collection is Collection => collection !== null,
-  );
+export async function getCollectionGroups<K extends string>(
+  groups: Record<K, readonly string[]>,
+): Promise<Record<K, Collection[]>> {
+  const found = await getCollectionsByHandles(Object.values<readonly string[]>(groups).flat());
+  const byHandle = new Map(found.map((collection) => [collection.handle, collection]));
+
+  return Object.fromEntries(
+    (Object.entries(groups) as [K, readonly string[]][]).map(([key, handles]) => [
+      key,
+      handles.flatMap((handle) => byHandle.get(handle) ?? []),
+    ]),
+  ) as Record<K, Collection[]>;
 }
 
 /**

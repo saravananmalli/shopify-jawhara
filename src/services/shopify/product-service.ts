@@ -7,21 +7,26 @@ import {
   PRODUCT_RECOMMENDATIONS_QUERY,
   SEARCH_PRODUCTS_QUERY,
 } from "@/graphql/queries";
+import { PRODUCT_REVALIDATE_SECONDS } from "@/config/catalog";
 import type { Product, ProductDetail } from "@/types/product";
-import type { ShopifyProduct, ShopifyProductDetail } from "@/types/shopify-api";
+import type { ShopifyProductCard, ShopifyProductDetail } from "@/types/shopify-api";
 
 export async function getProducts({
   first = 12,
   sortKey = "BEST_SELLING",
+  revalidate = PRODUCT_REVALIDATE_SECONDS,
 }: {
   first?: number;
   sortKey?: "BEST_SELLING" | "CREATED_AT" | "PRICE" | "TITLE";
+  /** Override for statically generated pages that re-render on their own schedule. */
+  revalidate?: number;
 } = {}): Promise<Product[]> {
   const data = await shopifyFetch<{
-    products: { edges: { node: ShopifyProduct }[] };
+    products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: PRODUCTS_QUERY,
     variables: { first, sortKey },
+    revalidate,
   });
 
   return data.products.edges.map((edge) => toProduct(edge.node));
@@ -35,10 +40,11 @@ export async function searchProducts({
   first?: number;
 }): Promise<Product[]> {
   const data = await shopifyFetch<{
-    products: { edges: { node: ShopifyProduct }[] };
+    products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: SEARCH_PRODUCTS_QUERY,
     variables: { query, first },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   return data.products.edges.map((edge) => toProduct(edge.node));
@@ -50,6 +56,7 @@ export async function getProductByHandle(
   const data = await shopifyFetch<{ product: ShopifyProductDetail | null }>({
     query: PRODUCT_BY_HANDLE_QUERY,
     variables: { handle },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   return data.product ? toProductDetail(data.product) : null;
@@ -65,10 +72,11 @@ export async function getRelatedProducts(
   { limit = 8 }: { limit?: number } = {}
 ): Promise<Product[]> {
   const data = await shopifyFetch<{
-    productRecommendations: ShopifyProduct[] | null;
+    productRecommendations: ShopifyProductCard[] | null;
   }>({
     query: PRODUCT_RECOMMENDATIONS_QUERY,
     variables: { productId },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   const related = (data.productRecommendations ?? []).map(toProduct).slice(0, limit);
@@ -90,9 +98,10 @@ export async function getRelatedProducts(
 export async function getProductsByIds(ids: string[]): Promise<Product[]> {
   if (ids.length === 0) return [];
 
-  const data = await shopifyFetch<{ nodes: (ShopifyProduct | null)[] }>({
+  const data = await shopifyFetch<{ nodes: (ShopifyProductCard | null)[] }>({
     query: PRODUCTS_BY_IDS_QUERY,
     variables: { ids },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   return data.nodes.flatMap((node) => (node ? [toProduct(node)] : []));

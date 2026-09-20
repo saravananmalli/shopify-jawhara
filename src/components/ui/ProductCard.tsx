@@ -1,12 +1,14 @@
 "use client";
 
+import { memo, useState, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { DirhamSymbol } from "dirham/react";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import WishlistButton from "@/components/ui/WishlistButton";
 import Chip from "@/components/ui/Chip";
-import { ArrowDownIcon, StarIcon, BagIcon } from "@/components/icons";
+import RatingStars from "@/components/ui/RatingStars";
+import { ArrowDownIcon, BagIcon } from "@/components/icons";
 import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
@@ -14,15 +16,31 @@ import type { Product } from "@/types/product";
 // 2x the largest rendered width (25vw of the 1440px max-w-8xl container).
 const PRODUCT_IMAGE_WIDTH = 800;
 
-export default function ProductCard({ product }: { product: Product }) {
+// Memoised: listing pages re-render their whole grid on every filter-drawer
+// toggle or pending state, but a card's `product` object is stable.
+export default memo(function ProductCard({ product }: { product: Product }) {
   const discountPercent = product.compareAtPrice
     ? Math.round((1 - product.price.amount / product.compareAtPrice.amount) * 100)
     : null;
 
   const badge = getProductBadge(product.tags);
 
+  // The photo after the featured one (typically a model / alternate shot).
+  const secondaryImage =
+    product.images.find((image) => image.url !== product.image?.url) ?? null;
+  // Fetched on the first mouse hover, not up front: a listing page would
+  // otherwise download a second photo for every card nobody hovers.
+  const [secondaryRequested, setSecondaryRequested] = useState(false);
+  const [secondaryLoaded, setSecondaryLoaded] = useState(false);
+  const requestSecondary = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse") setSecondaryRequested(true);
+  };
+
   return (
-    <div className="group relative flex flex-col rounded-3xl border border-[#E6D7BE]/60 bg-white p-4 shadow-sm">
+    <div
+      className="group relative flex flex-col rounded-3xl border border-[#E6D7BE]/60 bg-white p-3.5 shadow-sm"
+      onPointerEnter={requestSecondary}
+    >
       <div className="relative">
         {badge && <Chip className="absolute left-3 top-3 z-10">{badge}</Chip>}
 
@@ -64,13 +82,33 @@ export default function ProductCard({ product }: { product: Product }) {
                   sizes="(min-width: 1024px) 25vw, 50vw"
                   placeholder="blur"
                   blurDataURL={IMAGE_BLUR_DATA_URL}
-                  className="object-contain transition-transform group-hover:scale-105"
+                  className={`object-contain transition-[opacity,transform] duration-(--motion-slow) ease-luxury ${
+                    secondaryLoaded
+                      ? "group-hover:opacity-0 group-focus-within:opacity-0"
+                      : "group-hover:scale-105"
+                  }`}
                 />
+                {secondaryImage && secondaryRequested && (
+                  <Image
+                    src={getShopifyImageUrl(secondaryImage.url, PRODUCT_IMAGE_WIDTH)}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 50vw"
+                    onLoad={() => setSecondaryLoaded(true)}
+                    className={`object-contain transition-opacity duration-(--motion-slow) ease-luxury ${
+                      secondaryLoaded
+                        ? "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
+                        : "opacity-0"
+                    }`}
+                  />
+                )}
                 {/* Soft reflection under the product — purely decorative,
                     mirrors the product photography treatment in the design
                     brief, no data involved. */}
                 <div
-                  className="pointer-events-none absolute inset-x-8 bottom-2 h-6 rounded-[50%] bg-brown-900/10 blur-md"
+                  className={`pointer-events-none absolute inset-x-8 bottom-2 h-6 rounded-[50%] bg-brown-900/10 blur-md transition-opacity duration-(--motion-slow) ${
+                    secondaryLoaded ? "group-hover:opacity-0" : ""
+                  }`}
                   aria-hidden
                 />
               </>
@@ -105,16 +143,20 @@ export default function ProductCard({ product }: { product: Product }) {
       </Link>
 
       <div className="mt-2 flex items-center gap-2 font-sans text-sm">
-        <span className="flex items-center gap-0.5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <StarIcon key={i} className="h-3.5 w-3.5 text-warning-500" />
-          ))}
-          <span className="ml-1 font-normal text-brown-900/40">(6)</span>
-        </span>
+        {product.rating && (
+          <span className="flex items-center gap-1">
+            <RatingStars rating={product.rating.average} size="md" />
+            <span className="font-normal text-brown-900/40">({product.rating.count})</span>
+            <span className="sr-only">
+              Rated {product.rating.average} out of 5 from {product.rating.count}{" "}
+              {product.rating.count === 1 ? "review" : "reviews"}
+            </span>
+          </span>
+        )}
         <span className="ml-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
           1-3 Day Delivery
         </span>
       </div>
     </div>
   );
-}
+});

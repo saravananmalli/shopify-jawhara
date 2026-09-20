@@ -1,15 +1,14 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { ChipButton } from "@/components/ui/Chip";
 import ProductCard from "@/components/ui/ProductCard";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
-import FiltersDrawer from "@/components/collection/FiltersDrawer";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { SparkleIcon, StarIcon, TrendingIcon } from "@/components/icons";
 import { QUICK_TAG_CHIPS, SORT_OPTIONS } from "@/config/catalog";
-import { getCatalogPage } from "@/services/shopify";
 import {
   buildCatalogQueryString,
   type CatalogQueryState,
@@ -17,6 +16,12 @@ import {
 import { buildFilterSections } from "@/utils/catalog-filters";
 import type { CatalogFilter, CatalogPage } from "@/types/catalog";
 import type { Product } from "@/types/product";
+
+// Opened on demand — kept out of the grid's initial JS, then fetched once the
+// page has settled so the first click isn't waiting on the network.
+const loadFiltersDrawer = () => import("@/components/collection/FiltersDrawer");
+const FiltersDrawer = dynamic(loadFiltersDrawer);
+const PRELOAD_DRAWER_DELAY_MS = 2500;
 
 /**
  * Filter/sort state lives in the URL (the server page re-renders with the
@@ -39,6 +44,10 @@ export default function CollectionBrowser({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  useEffect(() => {
+    const id = window.setTimeout(loadFiltersDrawer, PRELOAD_DRAWER_DELAY_MS);
+    return () => window.clearTimeout(id);
+  }, []);
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Stable identity: useFocusTrap re-runs (and re-focuses) when onClose changes.
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
@@ -120,6 +129,9 @@ export default function CollectionBrowser({
     setIsLoadingMore(true);
     setLoadError(null);
     try {
+      // The catalog service (all its queries and filter logic) is only needed
+      // once someone asks for a second page, so it stays out of the first load.
+      const { getCatalogPage } = await import("@/services/shopify/catalog-service");
       const next = await getCatalogPage({
         handle,
         filters: activeFilters,
@@ -148,7 +160,7 @@ export default function CollectionBrowser({
       {/* Pinned to the top while the product grid scrolls — the site header
           is static on collection pages, so this is the only sticky bar. The
           opaque background hides cards passing underneath. */}
-      <div className="sticky top-0 z-30 mt-6 bg-cream-50 pt-3">
+      <div className="sticky top-0 z-30 mt-2 bg-cream-50 pt-3">
         <div className="flex flex-wrap items-center gap-3">
           <ChipButton
             active={noneApplied}

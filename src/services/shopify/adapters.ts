@@ -3,6 +3,7 @@ import { formatMetafieldValue, formatMoney } from "@/utils/format";
 import type { Money } from "@/types/money";
 import type { Product, ProductDetail, ProductImage, ProductVariant } from "@/types/product";
 import type { Cart, CartLine } from "@/types/cart";
+import type { RatingSummary } from "@/types/review";
 import type {
   CatalogFilter,
   CatalogPage,
@@ -26,14 +27,14 @@ import type {
   ShopifyCategoryMenuItem,
   ShopifyMainMenuCollections,
   ShopifyCollection,
-  ShopifyCollectionWithProducts,
+  ShopifyCollectionHeader,
   ShopifyFilter,
   ShopifyHeroBannerMetaobject,
   ShopifyImage,
   ShopifyMenuItem,
   ShopifyMoney,
   ShopifyOccasionMetaobject,
-  ShopifyProduct,
+  ShopifyProductCard,
   ShopifyProductDetail,
   ShopifySitemapNode,
   ShopifyTestimonialMetaobject,
@@ -58,7 +59,7 @@ function toImage(image: ShopifyImage, fallbackAlt: string): ProductImage {
 }
 
 function toVariant(
-  variant: ShopifyProduct["variants"]["edges"][number]["node"]
+  variant: ShopifyProductCard["variants"]["edges"][number]["node"]
 ): ProductVariant {
   const compareAtAmount = variant.compareAtPrice
     ? parseFloat(variant.compareAtPrice.amount)
@@ -78,7 +79,30 @@ function toVariant(
   };
 }
 
-export function toProduct(product: ShopifyProduct): Product {
+/**
+ * Judge.me writes `reviews.rating` as a JSON rating value and
+ * `reviews.rating_count` as an integer. Null when either is missing or invalid.
+ */
+export function toRatingSummary(
+  rating: { value: string } | null | undefined,
+  ratingCount: { value: string } | null | undefined,
+): RatingSummary | null {
+  if (!rating?.value) return null;
+  const count = Number(ratingCount?.value);
+  if (!Number.isFinite(count) || count <= 0) return null;
+
+  try {
+    const average = Number(JSON.parse(rating.value).value);
+    return Number.isFinite(average) ? { average, count } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** `description` is only requested on the detail page; list views get "". */
+export function toProduct(
+  product: ShopifyProductCard & { description?: string },
+): Product {
   const variants = product.variants.edges.map((edge) => toVariant(edge.node));
   const compareAtAmount = parseFloat(
     product.compareAtPriceRange.minVariantPrice.amount
@@ -89,9 +113,10 @@ export function toProduct(product: ShopifyProduct): Product {
     id: product.id,
     handle: product.handle,
     title: product.title,
-    description: product.description,
+    description: product.description ?? "",
     available: product.availableForSale,
     tags: product.tags,
+    rating: toRatingSummary(product.rating, product.ratingCount),
     image: product.featuredImage
       ? toImage(product.featuredImage, product.title)
       : null,
@@ -217,7 +242,7 @@ export function toCategoryTile(collection: ShopifyCollection): CategoryTile {
   };
 }
 
-export function toCollection(collection: ShopifyCollectionWithProducts): Collection {
+export function toCollection(collection: ShopifyCollectionHeader): Collection {
   return {
     id: collection.id,
     title: collection.title,
@@ -225,7 +250,6 @@ export function toCollection(collection: ShopifyCollectionWithProducts): Collect
     description: collection.description,
     imageUrl: collection.image?.url ?? null,
     imageAlt: collection.image?.altText ?? collection.title,
-    products: collection.products.edges.map((edge) => toProduct(edge.node)),
   };
 }
 
@@ -356,7 +380,7 @@ export function toCatalogPageFromCollection(
 
 function isProductNode(
   node: ShopifyCatalogSearch["edges"][number]["node"]
-): node is ShopifyProduct {
+): node is ShopifyProductCard {
   return "id" in node;
 }
 
