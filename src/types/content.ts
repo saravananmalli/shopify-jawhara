@@ -65,6 +65,21 @@ export type Testimonial = {
   rating: number;
 };
 
+/** One physical Jawhara store, from the `store_location` metaobject. */
+export type StoreLocation = {
+  id: string;
+  name: string;
+  address: string;
+  country: string;
+  region: string;
+  phone: string;
+  hours: string;
+  /** Google Maps link for the Directions button; "" when missing or unsafe. */
+  mapLink: string;
+  /** Null when neither lat/lng fields nor the map link yielded a position. */
+  coordinates: { lat: number; lng: number } | null;
+};
+
 export type SitemapEntry = {
   handle: string;
   updatedAt: string | null;

@@ -111,7 +111,7 @@ export default function Header({
           </span>
           <AnnouncementTicker />
           <span className="flex items-center gap-3">
-            <Link href="/pages/boutiques" className="flex items-center gap-1.5">
+            <Link href="/stores" className="flex items-center gap-1.5">
               <Image
                 src="/brand/icons/store.webp"
                 alt=""
@@ -119,7 +119,7 @@ export default function Header({
                 height={14}
                 className="h-3.5 w-3.5 brightness-0 invert"
               />
-              Boutiques
+              Stores
             </Link>
             <span className="h-3 w-px bg-cream-50/40" aria-hidden />
             <span className="opacity-70">العربية</span>

@@ -9,6 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: siteUrl, changeFrequency: "daily", priority: 1 },
     { url: `${siteUrl}/collections`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/stores`, changeFrequency: "monthly", priority: 0.5 },
     ...collections.map((collection) => ({
       url: `${siteUrl}/collections/${collection.handle}`,
       lastModified: toDate(collection.updatedAt),

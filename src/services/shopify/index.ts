@@ -26,6 +26,7 @@ export {
   getCollectionsByHandles,
   getHeroBanners,
   getOccasions,
+  getStoreLocations,
   getTestimonials,
   getSitemapEntries,
 } from "@/services/shopify/content-service";
