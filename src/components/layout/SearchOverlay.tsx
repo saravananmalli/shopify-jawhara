@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatMoney } from "@/utils/format";
+import { formatMessage } from "@/utils/i18n";
 import { SearchIcon, CloseIcon } from "@/components/icons";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { getProducts, searchProducts } from "@/services/shopify";
@@ -21,13 +24,13 @@ const RESULTS_LIMIT = 6;
  * keys — there's no distinct "trending" or "related" concept in Shopify, so
  * those tabs fall back to the closest real sort rather than faking a feed.
  */
-const BROWSE_TABS: { key: string; label: string; sortKey: "BEST_SELLING" | "CREATED_AT" }[] = [
-  { key: "related", label: "Related", sortKey: "BEST_SELLING" },
-  { key: "latest", label: "Latest Design", sortKey: "CREATED_AT" },
-  { key: "bestseller", label: "Best Seller", sortKey: "BEST_SELLING" },
-  { key: "trending", label: "Trending", sortKey: "BEST_SELLING" },
-  { key: "new", label: "New Arrivals", sortKey: "CREATED_AT" },
-];
+const BROWSE_TABS = [
+  { key: "related", sortKey: "BEST_SELLING" },
+  { key: "latest", sortKey: "CREATED_AT" },
+  { key: "bestseller", sortKey: "BEST_SELLING" },
+  { key: "trending", sortKey: "BEST_SELLING" },
+  { key: "new", sortKey: "CREATED_AT" },
+] as const;
 
 export default function SearchOverlay({
   open,
@@ -36,8 +39,12 @@ export default function SearchOverlay({
   open: boolean;
   onClose: () => void;
 }) {
+  const locale = useLocale();
+  const { search: t, common } = useDictionary();
   const [query, setQuery] = useState("");
-  const [activeTab, setActiveTab] = useState(BROWSE_TABS[0].key);
+  const [activeTab, setActiveTab] = useState<(typeof BROWSE_TABS)[number]["key"]>(
+    BROWSE_TABS[0].key
+  );
   const [results, setResults] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,15 +80,16 @@ export default function SearchOverlay({
         setError(null);
         try {
           const products = isSearch
-            ? await searchProducts({ query: trimmed, first: RESULTS_LIMIT })
+            ? await searchProducts({ query: trimmed, first: RESULTS_LIMIT, locale })
             : await getProducts({
                 first: RESULTS_LIMIT,
                 sortKey: BROWSE_TABS.find((t) => t.key === activeTab)!.sortKey,
+                locale,
               });
           if (id === requestId.current) setResults(products);
         } catch {
           if (id === requestId.current) {
-            setError("Something went wrong loading results. Please try again.");
+            setError(t.error);
           }
         } finally {
           if (id === requestId.current) setIsLoading(false);
@@ -91,7 +99,7 @@ export default function SearchOverlay({
     );
 
     return () => clearTimeout(timer);
-  }, [open, query, activeTab]);
+  }, [open, query, activeTab, locale, t.error]);
 
   const isSearching = query.trim().length >= MIN_QUERY_LENGTH;
 
@@ -106,7 +114,7 @@ export default function SearchOverlay({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Search"
+        aria-label={t.label}
         className={`absolute inset-x-0 top-0 max-h-[85vh] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-luxury ${
           open ? "translate-y-0" : "-translate-y-4"
         }`}
@@ -121,14 +129,14 @@ export default function SearchOverlay({
                 maxLength={100}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search jewellery..."
-                aria-label="Search jewellery"
+                placeholder={t.placeholder}
+                aria-label={t.inputLabel}
                 className="w-full text-sm outline-none placeholder:text-brown-900/40"
               />
             </div>
             <button
               onClick={onClose}
-              aria-label="Close search"
+              aria-label={t.close}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brown-900/60 hover:bg-cream-100"
             >
               <CloseIcon className="h-5 w-5" />
@@ -139,7 +147,7 @@ export default function SearchOverlay({
             {!isSearching && (
               <div className="shrink-0 sm:w-44">
                 <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-brown-900/50">
-                  Trending:
+                  {t.trending}
                 </p>
                 <ul className="flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible">
                   {BROWSE_TABS.map((tab) => (
@@ -147,13 +155,13 @@ export default function SearchOverlay({
                       <button
                         onClick={() => setActiveTab(tab.key)}
                         aria-pressed={activeTab === tab.key}
-                        className={`whitespace-nowrap rounded-full px-3 py-1.5 text-left text-sm transition-colors sm:w-full sm:rounded-lg ${
+                        className={`whitespace-nowrap rounded-full px-3 py-1.5 text-start text-sm transition-colors sm:w-full sm:rounded-lg ${
                           activeTab === tab.key
                             ? "bg-gold-50 font-semibold text-gold-700"
                             : "text-brown-900/70 hover:bg-cream-100"
                         }`}
                       >
-                        {tab.label}
+                        {t.tabs[tab.key]}
                       </button>
                     </li>
                   ))}
@@ -170,13 +178,13 @@ export default function SearchOverlay({
 
               {!error && isLoading && (
                 <p className="py-6 text-center text-sm text-brown-900/50">
-                  Searching...
+                  {t.searching}
                 </p>
               )}
 
               {!error && !isLoading && isSearching && results.length === 0 && (
                 <p className="py-6 text-center text-sm text-brown-900/50">
-                  No results for &ldquo;{query.trim()}&rdquo;.
+                  {formatMessage(t.noResults, { query: query.trim() })}
                 </p>
               )}
 
@@ -201,16 +209,16 @@ export default function SearchOverlay({
                           ) : null}
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm text-brown-900">
+                          <span dir="auto" className="block truncate text-sm text-brown-900">
                             {product.title}
                           </span>
                           <span className="flex items-center gap-1.5 text-xs text-brown-900/50">
                             <span className="font-medium text-gold-700">
-                              {product.price.formatted}
+                              {formatMoney(product.price.amount, product.price.currencyCode, locale)}
                             </span>
                             <span aria-hidden>·</span>
                             <span>
-                              {product.available ? "In Stock" : "Out of Stock"}
+                              {product.available ? common.inStock : common.outOfStock}
                             </span>
                           </span>
                         </span>

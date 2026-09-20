@@ -1,6 +1,8 @@
 "use client";
 
 import { useWishlist } from "@/store/wishlist";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import { HeartIcon } from "@/components/icons";
 import type { Product } from "@/types/product";
 
@@ -14,6 +16,7 @@ export default function WishlistButton({
   iconClassName?: string;
 }) {
   const { isInWishlist, toggleItem } = useWishlist();
+  const { product: t } = useDictionary();
   const inWishlist = isInWishlist(product.id);
 
   return (
@@ -21,9 +24,9 @@ export default function WishlistButton({
       type="button"
       onClick={() => toggleItem(product)}
       aria-pressed={inWishlist}
-      aria-label={`${inWishlist ? "Remove" : "Add"} ${product.title} ${
-        inWishlist ? "from" : "to"
-      } wishlist`}
+      aria-label={formatMessage(inWishlist ? t.wishlistRemove : t.wishlistAdd, {
+        title: product.title,
+      })}
       className={`${className} ${
         inWishlist ? "text-maroon-500" : "text-brown-900/60 hover:text-maroon-500"
       }`}

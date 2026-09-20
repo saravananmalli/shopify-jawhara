@@ -1,4 +1,5 @@
 import { ShopifyApiError, shopifyFetch } from "@/services/shopify/client";
+import type { Locale } from "@/config/i18n";
 import { toCart } from "@/services/shopify/adapters";
 import {
   CART_CREATE_MUTATION,
@@ -41,9 +42,10 @@ function assertNoUserErrors(userErrors: UserError[]) {
   }
 }
 
-export async function createCart(): Promise<Cart> {
+export async function createCart(locale: Locale): Promise<Cart> {
   const data = await shopifyFetch<{ cartCreate: { cart: ShopifyCart } }>({
     query: CART_CREATE_MUTATION,
+    locale,
   });
 
   return toCart(data.cartCreate.cart);
@@ -51,7 +53,8 @@ export async function createCart(): Promise<Cart> {
 
 export async function addCartLines(
   cartId: string,
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: { merchandiseId: string; quantity: number }[],
+  locale: Locale
 ): Promise<Cart> {
   assertCartId(cartId);
   for (const line of lines) {
@@ -65,6 +68,7 @@ export async function addCartLines(
   }>({
     query: CART_LINES_ADD_MUTATION,
     variables: { cartId, lines },
+    locale,
   });
 
   assertNoUserErrors(data.cartLinesAdd.userErrors);
@@ -73,7 +77,8 @@ export async function addCartLines(
 
 export async function updateCartLines(
   cartId: string,
-  lines: { id: string; quantity: number }[]
+  lines: { id: string; quantity: number }[],
+  locale: Locale
 ): Promise<Cart> {
   assertCartId(cartId);
   for (const line of lines) assertQuantity(line.quantity, { allowZero: true });
@@ -82,6 +87,7 @@ export async function updateCartLines(
   }>({
     query: CART_LINES_UPDATE_MUTATION,
     variables: { cartId, lines },
+    locale,
   });
 
   assertNoUserErrors(data.cartLinesUpdate.userErrors);
@@ -90,7 +96,8 @@ export async function updateCartLines(
 
 export async function removeCartLines(
   cartId: string,
-  lineIds: string[]
+  lineIds: string[],
+  locale: Locale
 ): Promise<Cart> {
   assertCartId(cartId);
   const data = await shopifyFetch<{
@@ -98,17 +105,19 @@ export async function removeCartLines(
   }>({
     query: CART_LINES_REMOVE_MUTATION,
     variables: { cartId, lineIds },
+    locale,
   });
 
   assertNoUserErrors(data.cartLinesRemove.userErrors);
   return toCart(data.cartLinesRemove.cart);
 }
 
-export async function getCart(cartId: string): Promise<Cart | null> {
+export async function getCart(cartId: string, locale: Locale): Promise<Cart | null> {
   assertCartId(cartId);
   const data = await shopifyFetch<{ cart: ShopifyCart | null }>({
     query: CART_QUERY,
     variables: { cartId },
+    locale,
   });
 
   return data.cart ? toCart(data.cart) : null;

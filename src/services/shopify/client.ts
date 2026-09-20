@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createStorefrontClient } from "@shopify/hydrogen-react";
 import { shopifyConfig } from "@/config/shopify";
+import { localeConfig, type Locale } from "@/config/i18n";
 
 const { getStorefrontApiUrl, getPublicTokenHeaders } = createStorefrontClient({
   storeDomain: `https://${shopifyConfig.storeDomain}`,
@@ -69,20 +70,40 @@ function requestInBrowser(body: string, revalidate: number): Promise<unknown> {
   return promise;
 }
 
+const OPERATION_HEADER = /^(\s*(?:query|mutation)\s+\w+)\s*(?:\(([^)]*)\))?\s*\{/m;
+
+/** Makes every operation language-aware by construction: a query written
+ * without `@inContext` would silently return English on the Arabic site.
+ * Shopify falls back to the default language for untranslated fields, so this
+ * is safe before Arabic content exists. The country is deliberately left to
+ * Shopify Markets rather than assumed here. */
+function withLanguageContext(query: string): string {
+  return query.replace(
+    OPERATION_HEADER,
+    (_header, head: string, vars?: string) =>
+      `${head}(${vars ? `${vars.trim().replace(/,$/, "")}, ` : ""}$language: LanguageCode) @inContext(language: $language) {`
+  );
+}
+
 export async function shopifyFetch<T>({
   query,
   variables,
   revalidate,
+  locale,
 }: {
   query: string;
   variables?: Record<string, unknown>;
+  locale: Locale;
   /** Seconds to cache for, server (Next data cache) and browser (in-memory).
    * Omit for data that must always be live (cart) and for mutations. Product
    * data uses a short TTL: availability/price can lag by at most that long,
    * and the cart mutation re-validates stock in Shopify regardless. */
   revalidate?: number;
 }): Promise<T> {
-  const body = JSON.stringify({ query, variables });
+  const body = JSON.stringify({
+    query: withLanguageContext(query),
+    variables: { ...variables, language: localeConfig[locale].shopifyLanguage },
+  });
   const isMutation = query.trimStart().startsWith("mutation");
 
   if (isMutation) return (await request(body)) as T;

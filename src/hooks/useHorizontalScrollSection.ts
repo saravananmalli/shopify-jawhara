@@ -11,7 +11,8 @@ const SLOT_MAX_WIDTH = 1440;
 /**
  * Pinned horizontal-scroll section: a `position: sticky` viewport holds a
  * row of `count` full-width slots, and vertical page scroll is mapped 1:1 onto
- * a horizontal `translateX` of that row. Native scroll stays in control (no
+ * a horizontal `translateX` of that row (rightwards in RTL, where the row
+ * starts at the right edge). Native scroll stays in control (no
  * scroll-jacking), so wheel, touch, keyboard paging and screen-reader scroll
  * all keep working.
  *
@@ -44,6 +45,9 @@ export function useHorizontalScrollSection(count: number) {
     let distance = 0;
     let headerOffset = 0;
     let pinned = false;
+    // The track is laid out from the reading start, so in RTL it begins at the
+    // right edge and later slots sit to the left: it must travel rightwards.
+    let travelSign = -1;
 
     const measure = () => {
       pinned = window.innerWidth >= PINNED_MIN_WIDTH;
@@ -56,6 +60,7 @@ export function useHorizontalScrollSection(count: number) {
         return;
       }
 
+      travelSign = getComputedStyle(section).direction === "rtl" ? 1 : -1;
       headerOffset = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
       const viewportWidth = section.clientWidth;
       const slotWidth = Math.min(viewportWidth * SLOT_WIDTH_RATIO, SLOT_MAX_WIDTH);
@@ -76,7 +81,7 @@ export function useHorizontalScrollSection(count: number) {
       if (!pinned) return;
       const scrolled = headerOffset - section.getBoundingClientRect().top;
       const progress = distance > 0 ? Math.min(1, Math.max(0, scrolled / distance)) : 0;
-      track.style.transform = `translate3d(${-progress * distance}px, 0, 0)`;
+      track.style.transform = `translate3d(${travelSign * progress * distance}px, 0, 0)`;
       setActiveIndex(Math.round(progress * (count - 1)));
     };
 

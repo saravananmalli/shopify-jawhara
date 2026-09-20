@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
 import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon, ChevronRightIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import { useMenuIntent } from "@/hooks/useMenuIntent";
+import { useDictionary } from "@/store/locale";
 import { toTitleCase } from "@/utils/format";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { NavLink, Collection } from "@/types/content";
@@ -33,6 +34,7 @@ export default function ImageCategoryMegaMenu({
   isActive: boolean;
   categories: Collection[];
 }) {
+  const { common } = useDictionary();
   const imageCategories = categories.filter((c) => c.imageUrl);
   const hasContent = link.items.length > 0 || imageCategories.length > 0;
 
@@ -75,7 +77,7 @@ export default function ImageCategoryMegaMenu({
                       href={link.url}
                       className="flex items-center gap-1 text-sm font-medium text-gold-700 hover:underline"
                     >
-                      Shop All <ChevronRightIcon className="h-4 w-4" />
+                      {common.shopAll} <ChevronRightIcon className="h-4 w-4" />
                     </MenuLink>
                   </div>
                   <div className="grid grid-cols-6 gap-4">

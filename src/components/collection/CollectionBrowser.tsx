@@ -4,11 +4,14 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { ChipButton } from "@/components/ui/Chip";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatNumber } from "@/utils/format";
+import { formatMessage, pluralize } from "@/utils/i18n";
 import ProductCard from "@/components/ui/ProductCard";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { SparkleIcon, StarIcon, TrendingIcon } from "@/components/icons";
-import { QUICK_TAG_CHIPS, SORT_OPTIONS } from "@/config/catalog";
+import { QUICK_TAG_CHIPS, SORT_OPTION_KEYS } from "@/config/catalog";
 import {
   buildCatalogQueryString,
   type CatalogQueryState,
@@ -42,6 +45,8 @@ export default function CollectionBrowser({
   categoryFilter: CatalogFilter | null;
 }) {
   const router = useRouter();
+  const locale = useLocale();
+  const { collection: t } = useDictionary();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   useEffect(() => {
@@ -75,13 +80,13 @@ export default function CollectionBrowser({
   }
 
   const { sort, filters: activeFilters } = query;
-  const sortOptions = SORT_OPTIONS.filter((option) =>
-    initialPage.supportedSorts.includes(option.key),
+  const sortOptions = SORT_OPTION_KEYS.filter((key) =>
+    initialPage.supportedSorts.includes(key),
+  ).map((key) => ({ key, label: t.sort[key] }));
+  const sections = buildFilterSections(
+    [...(categoryFilter ? [categoryFilter] : []), ...initialPage.filters],
+    t,
   );
-  const sections = buildFilterSections([
-    ...(categoryFilter ? [categoryFilter] : []),
-    ...initialPage.filters,
-  ]);
   const currencyCode = products[0]?.price.currencyCode ?? "";
 
   function navigate(next: Partial<CatalogQueryState>) {
@@ -121,9 +126,13 @@ export default function CollectionBrowser({
 
   const total = initialPage.totalCount;
   const count = total ?? products.length;
-  const countLabel = `${count.toLocaleString("en-US")}${
-    total === null && pageInfo.hasNextPage ? "+" : ""
-  } ${count === 1 && !pageInfo.hasNextPage ? "Product" : "Products"}`;
+  // A lone product reads "1 Product" only when it is truly the last page.
+  const countLabel = pluralize(
+    locale,
+    count === 1 && !pageInfo.hasNextPage ? 1 : Math.max(count, 2),
+    t.productsCount,
+    `${formatNumber(count, locale)}${total === null && pageInfo.hasNextPage ? "+" : ""}`,
+  );
 
   async function loadMore() {
     setIsLoadingMore(true);
@@ -138,6 +147,7 @@ export default function CollectionBrowser({
         sort,
         after: pageInfo.endCursor,
         withFilters: false,
+        locale,
       });
       if (!next) throw new Error("Collection not found");
       setProducts((current) => {
@@ -149,7 +159,7 @@ export default function CollectionBrowser({
       });
       setPageInfo({ hasNextPage: next.hasNextPage, endCursor: next.endCursor });
     } catch {
-      setLoadError("Couldn't load more pieces. Please try again.");
+      setLoadError(t.loadMoreError);
     } finally {
       setIsLoadingMore(false);
     }
@@ -166,7 +176,7 @@ export default function CollectionBrowser({
             active={noneApplied}
             onClick={() => navigate({ sort: "RECOMMENDED", filters: [] })}
           >
-            All
+            {t.all}
           </ChipButton>
           {QUICK_TAG_CHIPS.map((chip) => (
             <ChipButton
@@ -179,7 +189,7 @@ export default function CollectionBrowser({
               )}
               {chip.tag === "Bestseller" && <StarIcon className="h-3 w-3" />}
               {chip.tag === "Trending" && <TrendingIcon className="h-3 w-3" />}
-              {chip.label}
+              {t.chips[chip.key]}
             </ChipButton>
           ))}
         </div>
@@ -203,9 +213,7 @@ export default function CollectionBrowser({
         {products.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
             <p className="font-sans text-base text-brown-900">
-              {activeFilters.length > 0
-                ? "No pieces match your filters."
-                : "No products in this collection yet."}
+              {activeFilters.length > 0 ? t.noMatch : t.noProducts}
             </p>
             {activeFilters.length > 0 && (
               <button
@@ -213,7 +221,7 @@ export default function CollectionBrowser({
                 onClick={() => navigate({ filters: [] })}
                 className="mt-4 h-10 rounded-full bg-gold-600 px-6 text-sm font-medium text-white transition-colors hover:bg-gold-700"
               >
-                Clear all filters
+                {t.clearAllFilters}
               </button>
             )}
           </div>
@@ -241,11 +249,14 @@ export default function CollectionBrowser({
             disabled={isLoadingMore}
             className="h-11 rounded-full border border-gold-600 bg-white px-8 font-sans text-sm font-medium text-gold-700 transition-colors hover:bg-cream-100 disabled:cursor-wait disabled:opacity-60"
           >
-            {isLoadingMore ? "Loading…" : "Load more"}
+            {isLoadingMore ? t.loadingMore : t.loadMore}
           </button>
           {total !== null && (
             <p className="font-sans text-xs text-brown-900/60">
-              Showing {products.length} of {total.toLocaleString("en-US")}
+              {formatMessage(t.showing, {
+                shown: formatNumber(products.length, locale),
+                total: formatNumber(total, locale),
+              })}
             </p>
           )}
         </div>

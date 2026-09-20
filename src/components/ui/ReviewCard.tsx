@@ -1,11 +1,17 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import RatingStars from "@/components/ui/RatingStars";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
+import { INTL_LOCALE } from "@/utils/format";
+import type { Locale } from "@/config/i18n";
 import { getShopifyImageUrl } from "@/utils/shopify-image";
 import type { Review } from "@/types/review";
 
-function formatReviewDate(iso: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatReviewDate(iso: string, locale: Locale) {
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -27,6 +33,8 @@ export default function ReviewCard({
   /** Layout classes for the card (e.g. a fixed width inside a carousel). */
   className?: string;
 }) {
+  const locale = useLocale();
+  const { common, product: t } = useDictionary();
   const { product } = review;
 
   return (
@@ -47,7 +55,9 @@ export default function ReviewCard({
               review.verifiedPurchase ? "bg-review-verified" : "bg-cream-100"
             }`}
           >
-            {review.verifiedPurchase ? "Verified Purchase" : "Customer Review"}
+            {review.verifiedPurchase
+              ? t.reviewsSection.verifiedPurchase
+              : t.reviewsSection.customerReview}
           </span>
         </div>
       </div>
@@ -55,13 +65,21 @@ export default function ReviewCard({
       <div className="flex items-center gap-2">
         <RatingStars rating={review.rating} />
         <span className="text-base font-bold text-brown-900">{review.rating}</span>
-        <span className="sr-only">Rated {review.rating} out of 5</span>
+        <span className="sr-only">{formatMessage(common.ratedOutOf5, { rating: review.rating })}</span>
       </div>
 
-      {review.title && <p className="text-sm font-semibold text-brown-900">{review.title}</p>}
-      {review.body && <p className="text-sm leading-[1.75] text-brown-900">{review.body}</p>}
+      {review.title && (
+        <p dir="auto" className="text-sm font-semibold text-brown-900">
+          {review.title}
+        </p>
+      )}
+      {review.body && (
+        <p dir="auto" className="text-sm leading-[1.75] text-brown-900">
+          {review.body}
+        </p>
+      )}
       <p className="text-xs italic text-review-muted">
-        <time dateTime={review.createdAt}>{formatReviewDate(review.createdAt)}</time>
+        <time dateTime={review.createdAt}>{formatReviewDate(review.createdAt, locale)}</time>
       </p>
 
       {product && (

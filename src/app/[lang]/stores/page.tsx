@@ -1,30 +1,43 @@
 import type { Metadata } from "next";
 import StoreLocator from "@/components/stores/StoreLocator";
 import { brandName, siteUrl } from "@/config/site";
+import { getDictionary } from "@/dictionaries";
 import { getStoreLocations } from "@/services/shopify";
+import { getLocale } from "@/utils/get-locale";
+import { localizePath } from "@/utils/locale-path";
+import { localeAlternates } from "@/utils/seo";
 import { serializeJsonLd } from "@/utils/json-ld";
 
-const title = `Our Stores | ${brandName}`;
-const description =
-  "Visit a Jawhara Jewellery store near you — find addresses, opening hours, phone numbers and directions across the UAE and the GCC.";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { meta } = await getDictionary(locale);
+  const title = `${meta.storesTitle} | ${meta.brand}`;
+  const description = meta.storesDescription;
+  const alternates = localeAlternates("/stores", locale);
+  const url = localizePath("/stores", locale);
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/stores" },
-  openGraph: { title, description, type: "website", url: "/stores" },
-  twitter: { card: "summary_large_image", title, description },
-};
+  return {
+    title,
+    description,
+    alternates,
+    openGraph: { title, description, type: "website", url },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 export default async function StoresPage() {
-  const stores = await getStoreLocations();
+  const locale = await getLocale();
+  const [stores, { stores: t }] = await Promise.all([
+    getStoreLocations(locale),
+    getDictionary(locale),
+  ]);
 
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": stores.map((store) => ({
       "@type": "JewelryStore",
       name: store.name,
-      url: `${siteUrl}/stores`,
+      url: `${siteUrl}${localizePath("/stores", locale)}`,
       parentOrganization: { "@type": "Organization", name: brandName, url: siteUrl },
       address: {
         "@type": "PostalAddress",
@@ -56,11 +69,9 @@ export default async function StoresPage() {
       <section className="bg-cream-100">
         <div className="mx-auto max-w-8xl px-4 py-8 sm:py-12">
           <h1 className="font-sans text-3xl leading-tight text-gold-600 sm:text-4xl">
-            Find a Jawhara Store Near You
+            {t.heading}
           </h1>
-          <p className="mt-3 text-base text-brown-900/70">
-            Visit us in person to explore our full collection and get expert advice.
-          </p>
+          <p className="mt-3 text-base text-brown-900/70">{t.intro}</p>
         </div>
       </section>
 

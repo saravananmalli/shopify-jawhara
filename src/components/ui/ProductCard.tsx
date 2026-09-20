@@ -2,7 +2,7 @@
 
 import { memo, useState, type PointerEvent } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { DirhamSymbol } from "dirham/react";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import WishlistButton from "@/components/ui/WishlistButton";
@@ -10,6 +10,9 @@ import Chip from "@/components/ui/Chip";
 import RatingStars from "@/components/ui/RatingStars";
 import { ArrowDownIcon, BagIcon } from "@/components/icons";
 import { useDeliveryEstimate } from "@/store/delivery";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatNumber } from "@/utils/format";
+import { formatMessage, pluralize } from "@/utils/i18n";
 import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
@@ -24,7 +27,9 @@ export default memo(function ProductCard({ product }: { product: Product }) {
     ? Math.round((1 - product.price.amount / product.compareAtPrice.amount) * 100)
     : null;
 
-  const badge = getProductBadge(product.tags);
+  const locale = useLocale();
+  const { common, product: t } = useDictionary();
+  const badge = getProductBadge(product.tags, t.badges);
   const delivery = useDeliveryEstimate(product.available);
 
   // The photo after the featured one (typically a model / alternate shot).
@@ -44,13 +49,13 @@ export default memo(function ProductCard({ product }: { product: Product }) {
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
-        {badge && <Chip className="absolute left-3 top-3 z-10">{badge}</Chip>}
+        {badge && <Chip className="absolute start-3 top-3 z-10">{badge}</Chip>}
 
         {/* Wishlist / quick-add — hidden until hover or keyboard focus,
             then pop outward into place (per the design brief: "out from
             in"). Pointer-events are toggled with the animation so the
             invisible resting state isn't clickable. */}
-        <div className="pointer-events-none absolute right-3 top-3 z-10 flex origin-top-right scale-75 flex-col gap-2 opacity-0 transition-all duration-300 ease-luxury group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:scale-100 group-focus-within:opacity-100">
+        <div className="pointer-events-none absolute end-3 top-3 z-10 flex origin-top-right rtl:origin-top-left scale-75 flex-col gap-2 opacity-0 transition-all duration-300 ease-luxury group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:scale-100 group-focus-within:opacity-100">
           <WishlistButton
             product={product}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5"
@@ -65,7 +70,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             <button
               type="button"
               disabled
-              aria-label="Out of stock"
+              aria-label={common.outOfStock}
               className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-full bg-white text-brown-900/30 shadow-sm ring-1 ring-black/5"
             >
               <BagIcon className="h-4 w-4" />
@@ -126,20 +131,20 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             {discountPercent}%
           </span>
         )}
-        <span className="flex items-center gap-0.5 text-[18px] font-bold text-brown-900">
+        <span className="flex items-center gap-0.5 text-[18px] font-bold text-brown-900 rtl:flex-row-reverse">
           <DirhamSymbol size="0.85em" />
-          {product.price.amount.toLocaleString()}
+          {formatNumber(product.price.amount, locale)}
         </span>
         {product.compareAtPrice && (
-          <span className="flex items-center gap-0.5 text-base text-[#7A7369] line-through">
+          <span className="flex items-center gap-0.5 text-base text-[#7A7369] line-through rtl:flex-row-reverse">
             <DirhamSymbol size="0.75em" />
-            {product.compareAtPrice.amount.toLocaleString()}
+            {formatNumber(product.compareAtPrice.amount, locale)}
           </span>
         )}
       </div>
 
       <Link href={`/products/${product.handle}`}>
-        <h3 className="mt-2 line-clamp-1 font-sans text-[14px] text-brown-900">
+        <h3 dir="auto" className="mt-2 line-clamp-1 font-sans text-[14px] text-brown-900">
           {product.title}
         </h3>
       </Link>
@@ -150,13 +155,15 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             <RatingStars rating={product.rating.average} size="md" />
             <span className="font-normal text-brown-900/40">({product.rating.count})</span>
             <span className="sr-only">
-              Rated {product.rating.average} out of 5 from {product.rating.count}{" "}
-              {product.rating.count === 1 ? "review" : "reviews"}
+              {formatMessage(t.ratedFromReviews, {
+                rating: product.rating.average,
+                reviews: pluralize(locale, product.rating.count, t.reviewsCount),
+              })}
             </span>
           </span>
         )}
         {delivery && (
-          <span className="ml-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
+          <span className="ms-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
             {delivery.label}
           </span>
         )}

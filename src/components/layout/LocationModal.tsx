@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { DetectResult } from "@/store/delivery";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import { UAE_EMIRATES } from "@/utils/emirates";
 import {
   CheckIcon,
@@ -27,14 +29,19 @@ export default function LocationModal({
   onSelect: (city: string) => void;
   onDetect: () => Promise<DetectResult>;
 }) {
+  const { delivery: t, common } = useDictionary();
+  const emirateName = (name: string) => (t.emirates as Record<string, string>)[name] ?? name;
   const dialogRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState("");
   const [geoStatus, setGeoStatus] = useState<GeoStatus>("idle");
 
   useFocusTrap(dialogRef, open, onClose);
 
-  const filtered = UAE_EMIRATES.filter((e) =>
-    e.name.toLowerCase().includes(search.trim().toLowerCase())
+  // Match on the name the shopper sees (Arabic or English) and the English key.
+  const term = search.trim().toLowerCase();
+  const filtered = UAE_EMIRATES.filter(
+    (e) =>
+      e.name.toLowerCase().includes(term) || emirateName(e.name).toLowerCase().includes(term)
   );
 
   async function useCurrentLocation() {
@@ -60,7 +67,7 @@ export default function LocationModal({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Delivery location"
+        aria-label={t.locationLabel}
         className={`relative flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-transform duration-300 ease-luxury ${
           open ? "scale-100" : "scale-95"
         }`}
@@ -68,11 +75,11 @@ export default function LocationModal({
         <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 px-5 py-4 text-white">
           <h2 className="flex items-center gap-2 font-semibold">
             <MapPinIcon className="h-5 w-5" />
-            Delivery Location
+            {t.modalTitle}
           </h2>
           <button
             onClick={onClose}
-            aria-label="Close"
+            aria-label={common.close}
             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/20"
           >
             <CloseIcon className="h-5 w-5" />
@@ -86,25 +93,23 @@ export default function LocationModal({
             className="flex items-center justify-center gap-2 rounded-xl border border-gold-200 bg-cream-100 px-4 py-3 text-sm font-medium text-gold-700 hover:bg-gold-50 disabled:opacity-60"
           >
             <CrosshairIcon className="h-4 w-4" />
-            {geoStatus === "locating" ? "Locating..." : "Use my current location"}
+            {geoStatus === "locating" ? t.locating : t.useMyLocation}
           </button>
           {geoStatus === "error" && (
             <p role="alert" className="-mt-2 text-xs text-error-700">
-              Couldn&apos;t get your location. Please choose a city below, or
-              check your browser&apos;s location permission.
+              {t.geoError}
             </p>
           )}
 
           {geoStatus === "outside" && (
             <p role="alert" className="-mt-2 text-xs text-error-700">
-              Your location is outside the UAE. Please choose the emirate you
-              want your order delivered to.
+              {t.geoOutside}
             </p>
           )}
 
           <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-brown-900/40">
             <span className="h-px flex-1 bg-gold-100" />
-            or choose a city
+            {t.orChooseCity}
             <span className="h-px flex-1 bg-gold-100" />
           </div>
 
@@ -114,7 +119,8 @@ export default function LocationModal({
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search cities..."
+              placeholder={t.searchCities}
+              aria-label={t.searchCitiesLabel}
               className="w-full text-sm outline-none placeholder:text-brown-900/40"
             />
           </div>
@@ -122,7 +128,7 @@ export default function LocationModal({
           <ul role="listbox" className="flex flex-col gap-1">
             {filtered.length === 0 ? (
               <li className="py-4 text-center text-sm text-brown-900/50">
-                No cities match &ldquo;{search}&rdquo;.
+                {formatMessage(t.noCities, { query: search })}
               </li>
             ) : (
               filtered.map((emirate) => {
@@ -136,7 +142,7 @@ export default function LocationModal({
                         onSelect(emirate.name);
                         onClose();
                       }}
-                      className={`flex w-full items-center justify-between gap-2 rounded-xl px-4 py-3 text-left text-sm ${
+                      className={`flex w-full items-center justify-between gap-2 rounded-xl px-4 py-3 text-start text-sm ${
                         isSelected
                           ? "bg-gold-50 font-semibold text-gold-700"
                           : "text-brown-900/80 hover:bg-cream-100"
@@ -144,10 +150,10 @@ export default function LocationModal({
                     >
                       <span className="flex items-center gap-2">
                         <MapPinIcon className="h-4 w-4" />
-                        {emirate.name}
+                        {emirateName(emirate.name)}
                       </span>
                       <span className="flex items-center gap-2 text-xs text-brown-900/40">
-                        UAE
+                        {t.uae}
                         {isSelected && <CheckIcon className="h-4 w-4 text-gold-700" />}
                       </span>
                     </button>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import Chip from "@/components/ui/Chip";
 import { CalendarIcon } from "@/components/icons";

@@ -20,6 +20,9 @@ export function useScrollCarousel(itemCount: number) {
     if (!container) return;
 
     const updatePageCount = () => {
+      // A hidden or not-yet-laid-out row has no width; dividing by it would
+      // give Infinity and crash the pagination dots.
+      if (container.clientWidth === 0) return;
       setPageCount(Math.max(1, Math.ceil(container.scrollWidth / container.clientWidth)));
     };
 
@@ -29,10 +32,16 @@ export function useScrollCarousel(itemCount: number) {
     return () => observer.disconnect();
   }, [itemCount]);
 
+  // "Next" always means further along the reading direction. In an RTL row
+  // that is toward negative scrollLeft, so the sign flips with the direction.
   const scrollByPage = (direction: 1 | -1) => {
     const container = scrollRef.current;
     if (!container) return;
-    container.scrollBy({ left: direction * container.clientWidth, behavior: "smooth" });
+    const sign = getComputedStyle(container).direction === "rtl" ? -1 : 1;
+    container.scrollBy({
+      left: sign * direction * container.clientWidth,
+      behavior: "smooth",
+    });
   };
 
   const handleScroll = () => {
@@ -47,7 +56,8 @@ export function useScrollCarousel(itemCount: number) {
       setActivePage(0);
       return;
     }
-    const page = Math.round((container.scrollLeft / maxScrollLeft) * (pageCount - 1));
+    // scrollLeft is 0 at the start edge and negative going the other way in RTL.
+    const page = Math.round((Math.abs(container.scrollLeft) / maxScrollLeft) * (pageCount - 1));
     setActivePage(Math.max(0, Math.min(page, pageCount - 1)));
   };
 

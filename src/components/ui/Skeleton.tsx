@@ -1,3 +1,7 @@
+"use client";
+
+import { useDictionary } from "@/store/locale";
+
 /**
  * Shared loading placeholders. Each one mirrors the real component's box
  * (same padding, aspect ratio and row heights) so content swaps in without
@@ -51,15 +55,17 @@ const GRID = "grid grid-cols-2 gap-4 lg:grid-cols-4";
 
 export function ProductGridSkeleton({
   count = 8,
-  label = "Loading products…",
+  label,
   className = "",
 }: {
   count?: number;
   label?: string;
   className?: string;
 }) {
+  const { common } = useDictionary();
+
   return (
-    <SkeletonRegion label={label} className={`${GRID} ${className}`}>
+    <SkeletonRegion label={label ?? common.loadingProducts} className={`${GRID} ${className}`}>
       {Array.from({ length: count }, (_, i) => (
         <ProductCardSkeleton key={i} />
       ))}
@@ -68,13 +74,11 @@ export function ProductGridSkeleton({
 }
 
 /** Row sized like ProductCarousel (2 cards on mobile, 4 on desktop). */
-export function ProductCarouselSkeleton({
-  label = "Loading products…",
-}: {
-  label?: string;
-}) {
+export function ProductCarouselSkeleton({ label }: { label?: string }) {
+  const { common } = useDictionary();
+
   return (
-    <SkeletonRegion label={label} className="flex gap-4 overflow-hidden pb-2">
+    <SkeletonRegion label={label ?? common.loadingProducts} className="flex gap-4 overflow-hidden pb-2">
       {Array.from({ length: 4 }, (_, i) => (
         <div
           key={i}
@@ -91,9 +95,11 @@ export function ProductCarouselSkeleton({
 
 /** Collection page: category strip, chip row, filter toolbar, product grid. */
 export function CollectionPageSkeleton() {
+  const { common } = useDictionary();
+
   return (
     <div className="bg-cream-50">
-      <SkeletonRegion label="Loading collection…" className="mx-auto max-w-8xl pb-16 pt-3">
+      <SkeletonRegion label={common.loadingCollection} className="mx-auto max-w-8xl pb-16 pt-3">
         <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 6 }, (_, i) => (
             <div key={i} className="w-[226px] shrink-0">
@@ -116,7 +122,7 @@ export function CollectionPageSkeleton() {
           <Skeleton className="hidden h-9 w-24 rounded-lg lg:block" />
           <Skeleton className="hidden h-9 w-24 rounded-lg lg:block" />
           <Skeleton className="h-9 w-36 rounded-lg" />
-          <Skeleton className="ml-auto h-9 w-40 rounded-lg" />
+          <Skeleton className="ms-auto h-9 w-40 rounded-lg" />
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -131,8 +137,10 @@ export function CollectionPageSkeleton() {
 
 /** Product page: breadcrumb, gallery (thumbnails + main photo), buy box. */
 export function ProductPageSkeleton() {
+  const { common } = useDictionary();
+
   return (
-    <SkeletonRegion label="Loading product…" className="mx-auto max-w-8xl px-4 py-8">
+    <SkeletonRegion label={common.loadingProduct} className="mx-auto max-w-8xl px-4 py-8">
       <Skeleton className="h-5 w-64" />
 
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-start xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">

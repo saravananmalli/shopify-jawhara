@@ -1,4 +1,5 @@
 import { shopifyFetch } from "@/services/shopify/client";
+import { defaultLocale, type Locale } from "@/config/i18n";
 import {
   sortByDisplayOrder,
   sortOccasionsByDisplayOrder,
@@ -11,6 +12,7 @@ import {
   toCollection,
   toHeroBanner,
   toNavLinks,
+  withDefaultLanguageKeys,
   toOccasion,
   toSitemapEntry,
   toStoreLocation,
@@ -58,11 +60,12 @@ import { parseCoordinates } from "@/utils/geo";
 
 const CONTENT_REVALIDATE_SECONDS = 3600; // stable content — rule #22
 
-export async function getBrand(): Promise<Brand> {
+export async function getBrand(locale: Locale): Promise<Brand> {
   const data = await shopifyFetch<{
     shop: { brand: ShopifyBrand | null };
   }>({
     query: BRAND_QUERY,
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -73,26 +76,38 @@ export async function getBrand(): Promise<Brand> {
  * Returns [] (not an error) when the menu handle doesn't exist yet — lets
  * callers fall back to a default nav instead of breaking the header.
  */
-export async function getMenu(handle: string): Promise<NavLink[]> {
-  const data = await shopifyFetch<{
-    menu: { items: ShopifyMenuItem[] } | null;
-  }>({
-    query: MENU_QUERY,
-    variables: { handle },
-    revalidate: CONTENT_REVALIDATE_SECONDS,
-  });
+export async function getMenu(handle: string, locale: Locale): Promise<NavLink[]> {
+  const fetchMenu = (menuLocale: Locale) =>
+    shopifyFetch<{ menu: { items: ShopifyMenuItem[] } | null }>({
+      query: MENU_QUERY,
+      variables: { handle },
+      locale: menuLocale,
+      revalidate: CONTENT_REVALIDATE_SECONDS,
+    });
 
-  return data.menu ? toNavLinks(data.menu.items) : [];
+  // The default-language menu is fetched too so entries can be recognised by
+  // their English title after translation. It is the same cached request the
+  // English site makes, so it costs nothing extra there.
+  const [data, base] = await Promise.all([
+    fetchMenu(locale),
+    locale === defaultLocale ? null : fetchMenu(defaultLocale),
+  ]);
+  if (!data.menu) return [];
+
+  const links = toNavLinks(data.menu.items);
+  return base?.menu ? withDefaultLanguageKeys(links, toNavLinks(base.menu.items)) : links;
 }
 
 export async function getCategoryCollections({
   first = 8,
-}: { first?: number } = {}): Promise<CategoryTile[]> {
+  locale,
+}: { first?: number; locale: Locale }): Promise<CategoryTile[]> {
   const data = await shopifyFetch<{
     collections: { edges: { node: ShopifyCollection }[] };
   }>({
     query: COLLECTIONS_QUERY,
     variables: { first },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -106,12 +121,14 @@ export async function getCategoryCollections({
  */
 export async function getCategoryTilesFromMenu(
   handle: string,
+  locale: Locale,
 ): Promise<CategoryTile[]> {
   const data = await shopifyFetch<{
     menu: { items: ShopifyCategoryMenuItem[] } | null;
   }>({
     query: CATEGORY_MENU_QUERY,
     variables: { handle },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -125,8 +142,9 @@ export async function getCategoryTilesFromMenu(
  */
 export async function getCategoryTilesByHandles(
   handles: string[],
+  locale: Locale,
 ): Promise<CategoryTile[]> {
-  const collections = await getCategoryCollections({ first: 100 });
+  const collections = await getCategoryCollections({ first: 100, locale });
   return handles.flatMap((handle) => {
     const tile = collections.find((collection) => collection.handle === handle);
     return tile?.imageUrl ? [tile] : [];
@@ -150,23 +168,36 @@ export async function getCategoryTilesForCollection(
     fallbackMenuHandle,
     scopedColumns,
     tileGroups,
+    locale,
   }: {
     mainMenuHandle: string;
     fallbackMenuHandle: string;
     scopedColumns: string[];
     tileGroups: string[][];
+    locale: Locale;
   },
 ): Promise<{ tiles: CategoryTile[]; categoryTiles: CategoryTile[] }> {
-  const data = await shopifyFetch<{ menu: ShopifyMainMenuCollections | null }>({
-    query: MAIN_MENU_COLLECTIONS_QUERY,
-    variables: { handle: mainMenuHandle },
-    revalidate: CONTENT_REVALIDATE_SECONDS,
-  });
+  const fetchMainMenu = (menuLocale: Locale) =>
+    shopifyFetch<{ menu: ShopifyMainMenuCollections | null }>({
+      query: MAIN_MENU_COLLECTIONS_QUERY,
+      variables: { handle: mainMenuHandle },
+      locale: menuLocale,
+      revalidate: CONTENT_REVALIDATE_SECONDS,
+    });
+
+  // Column titles are matched by their default-language name (see
+  // CATEGORY_SCOPED_MENU_COLUMNS), so that check runs on the default-language
+  // menu; the tiles themselves come from the translated one.
+  const [data, base] = await Promise.all([
+    fetchMainMenu(locale),
+    locale === defaultLocale ? null : fetchMainMenu(defaultLocale),
+  ]);
 
   const column = data.menu ? findMenuColumnItems(data.menu, handle) : null;
   const siblings = column ? toCategoryTilesFromMenu(column.items) : [];
+  const baseColumn = base ? (base.menu ? findMenuColumnItems(base.menu, handle) : null) : column;
   const isCuration =
-    !!column && scopedColumns.includes(column.title.trim().toLowerCase());
+    !!baseColumn && scopedColumns.includes(baseColumn.title.trim().toLowerCase());
 
   // Order of precedence: the menu column, then a tile group (e.g. Gold), then
   // the fallback menu — so a page already found in a column never changes.
@@ -175,7 +206,7 @@ export async function getCategoryTilesForCollection(
       ? undefined
       : tileGroups.find((group) => group.includes(handle));
   const groupTiles = tileGroup
-    ? await getCategoryTilesByHandles(tileGroup)
+    ? await getCategoryTilesByHandles(tileGroup, locale)
     : [];
 
   const [tiles, categoryTiles] = await Promise.all([
@@ -183,8 +214,8 @@ export async function getCategoryTilesForCollection(
       ? siblings
       : groupTiles.length > 0
         ? groupTiles
-        : getCategoryTilesFromMenu(fallbackMenuHandle),
-    isCuration ? getCategoryTilesFromMenu(fallbackMenuHandle) : [],
+        : getCategoryTilesFromMenu(fallbackMenuHandle, locale),
+    isCuration ? getCategoryTilesFromMenu(fallbackMenuHandle, locale) : [],
   ]);
   return { tiles, categoryTiles };
 }
@@ -196,6 +227,7 @@ export async function getCategoryTilesForCollection(
  */
 export async function getCollectionsByHandles(
   handles: readonly string[],
+  locale: Locale,
 ): Promise<Collection[]> {
   const unique = [...new Set(handles)];
   if (unique.length === 0) return [];
@@ -205,6 +237,7 @@ export async function getCollectionsByHandles(
   >({
     query: buildCollectionsByHandlesQuery(unique.length),
     variables: Object.fromEntries(unique.map((handle, i) => [`h${i}`, handle])),
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -221,8 +254,9 @@ export async function getCollectionsByHandles(
  */
 export async function getCollectionByHandle(
   handle: string,
+  locale: Locale,
 ): Promise<Collection | null> {
-  const [collection] = await getCollectionsByHandles([handle]);
+  const [collection] = await getCollectionsByHandles([handle], locale);
   return collection ?? null;
 }
 
@@ -233,8 +267,12 @@ export async function getCollectionByHandle(
  */
 export async function getCollectionGroups<K extends string>(
   groups: Record<K, readonly string[]>,
+  locale: Locale,
 ): Promise<Record<K, Collection[]>> {
-  const found = await getCollectionsByHandles(Object.values<readonly string[]>(groups).flat());
+  const found = await getCollectionsByHandles(
+    Object.values<readonly string[]>(groups).flat(),
+    locale,
+  );
   const byHandle = new Map(found.map((collection) => [collection.handle, collection]));
 
   return Object.fromEntries(
@@ -251,12 +289,14 @@ export async function getCollectionGroups<K extends string>(
  */
 export async function getHeroBanners({
   first = 5,
-}: { first?: number } = {}): Promise<HeroBanner[]> {
+  locale,
+}: { first?: number; locale: Locale }): Promise<HeroBanner[]> {
   const data = await shopifyFetch<{
     metaobjects: { edges: { node: ShopifyHeroBannerMetaobject }[] };
   }>({
     query: HERO_BANNERS_QUERY,
     variables: { first },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -271,12 +311,14 @@ export async function getHeroBanners({
  */
 export async function getOccasions({
   first = 10,
-}: { first?: number } = {}): Promise<Occasion[]> {
+  locale,
+}: { first?: number; locale: Locale }): Promise<Occasion[]> {
   const data = await shopifyFetch<{
     metaobjects: { edges: { node: ShopifyOccasionMetaobject }[] };
   }>({
     query: OCCASIONS_QUERY,
     variables: { first },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -293,12 +335,14 @@ export async function getOccasions({
  */
 export async function getTestimonials({
   first = 6,
-}: { first?: number } = {}): Promise<Testimonial[]> {
+  locale,
+}: { first?: number; locale: Locale }): Promise<Testimonial[]> {
   const data = await shopifyFetch<{
     metaobjects: { edges: { node: ShopifyTestimonialMetaobject }[] };
   }>({
     query: TESTIMONIALS_QUERY,
     variables: { first },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -318,12 +362,13 @@ export async function getTestimonials({
  * the Google Maps link (short links are resolved on the server), so pasting
  * a map link into Admin is enough.
  */
-export async function getStoreLocations(): Promise<StoreLocation[]> {
+export async function getStoreLocations(locale: Locale): Promise<StoreLocation[]> {
   const data = await shopifyFetch<{
     metaobjects: { edges: { node: ShopifyStoreLocationMetaobject }[] };
   }>({
     query: STORE_LOCATIONS_QUERY,
     variables: { first: 250 },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
@@ -343,7 +388,7 @@ export async function getStoreLocations(): Promise<StoreLocation[]> {
 }
 
 /** Storefront API caps a page at 250; a catalogue past that needs pagination. */
-export async function getSitemapEntries(): Promise<{
+export async function getSitemapEntries(locale: Locale): Promise<{
   products: SitemapEntry[];
   collections: SitemapEntry[];
 }> {
@@ -353,6 +398,7 @@ export async function getSitemapEntries(): Promise<{
   }>({
     query: SITEMAP_QUERY,
     variables: { first: 250 },
+    locale,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 

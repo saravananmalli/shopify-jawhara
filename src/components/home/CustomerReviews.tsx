@@ -1,23 +1,27 @@
 import ReviewCard from "@/components/ui/ReviewCard";
 import ReviewCarousel from "@/components/ui/ReviewCarousel";
+import { getDictionary } from "@/dictionaries";
+import { getLocale } from "@/utils/get-locale";
 import type { Review } from "@/types/review";
 
 /** Renders nothing when there are no approved Judge.me reviews. */
-export default function CustomerReviews({ reviews }: { reviews: Review[] }) {
+export default async function CustomerReviews({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) return null;
+  const { home } = await getDictionary(await getLocale());
+  const t = home.reviews;
 
   return (
     <section aria-labelledby="home-reviews-heading" className="bg-cream-200">
       <div className="mx-auto max-w-8xl px-4 py-12">
         <div className="mb-6">
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
-            Loved by Clients
+            {t.eyebrow}
           </p>
           <h2 id="home-reviews-heading" className="mt-1 font-sans text-3xl font-normal text-gold-600">
-            What Our Customers Say
+            {t.title}
           </h2>
           <p className="mt-1 font-sans text-sm text-brown-900/60">
-            Honest words from those who chose Jawhara for their most treasured moments.
+            {t.subtitle}
           </p>
         </div>
         <ReviewCarousel itemCount={reviews.length}>

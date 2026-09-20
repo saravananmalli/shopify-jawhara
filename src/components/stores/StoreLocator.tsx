@@ -6,17 +6,23 @@ import SelectDropdown from "@/components/ui/SelectDropdown";
 import { CloseIcon, CrosshairIcon, SearchIcon } from "@/components/icons";
 import { useUserCoordinates } from "@/hooks/useUserCoordinates";
 import { useDelivery } from "@/store/delivery";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatMessage, pluralize } from "@/utils/i18n";
 import { distanceKm } from "@/utils/geo";
 import { foldKey, isUaeCountry, uniqueValues } from "@/utils/stores";
 import type { StoreLocation } from "@/types/content";
 
-const ALL_COUNTRIES = "All Countries";
-const ALL_REGIONS = "All Regions";
+// Internal values for the "all" choices — never displayed, so they can't
+// collide with a real country or region name.
+const ALL_COUNTRIES = "__all_countries__";
+const ALL_REGIONS = "__all_regions__";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-lg border border-gold-100 bg-white text-sm text-brown-900 transition-colors duration-300 ease-luxury focus:border-gold-600 focus:outline-none focus:ring-2 focus:ring-gold-600/15";
 
 export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
+  const locale = useLocale();
+  const { stores: t } = useDictionary();
   const { emirate } = useDelivery();
   const {
     coordinates: userCoordinates,
@@ -25,6 +31,8 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
     locate,
   } = useUserCoordinates();
   const searchId = useId();
+  const optionLabel = (option: string) =>
+    option === ALL_COUNTRIES ? t.allCountries : option === ALL_REGIONS ? t.allRegions : option;
 
   const [search, setSearch] = useState("");
   // Country/Region follow the shopper's detected emirate until they pick one
@@ -131,7 +139,7 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
     setRegionOverride(ALL_REGIONS);
   };
 
-  const plural = visible.length !== 1 ? "s" : "";
+  const storesLabel = pluralize(locale, visible.length, t.storesCount);
   let countLabel: string;
   if (isFiltered) {
     const place = isRegionFiltered
@@ -139,24 +147,22 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
         ? region
         : `${region}, ${country}`
       : country;
-    countLabel = `Showing ${visible.length} store${plural} in ${place}`;
+    countLabel = formatMessage(t.showingIn, { stores: storesLabel, place });
   } else {
     const order = userCoordinates
-      ? " · sorted by distance"
+      ? t.sortedByDistance
       : region !== ALL_REGIONS
-        ? ` · ${region} stores shown first`
+        ? formatMessage(t.shownFirst, { place: region })
         : country !== ALL_COUNTRIES
-          ? ` · ${country} stores shown first`
+          ? formatMessage(t.shownFirst, { place: country })
           : "";
-    countLabel = `Showing all ${visible.length} store${plural}${order}`;
+    countLabel = formatMessage(t.showingAll, { stores: storesLabel, order });
   }
 
   if (stores.length === 0) {
     return (
       <div className="py-20 text-center">
-        <p className="text-lg text-brown-900/70">
-          Our store locations will be listed here soon.
-        </p>
+        <p className="text-lg text-brown-900/70">{t.empty}</p>
       </div>
     );
   }
@@ -166,24 +172,24 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative min-w-55 flex-1">
           <label htmlFor={searchId} className="sr-only">
-            Search stores by name or location
+            {t.searchLabel}
           </label>
-          <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brown-900/50" />
+          <SearchIcon className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brown-900/50" />
           <input
             id={searchId}
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search stores by name or location…"
+            placeholder={t.searchPlaceholder}
             autoComplete="off"
-            className={`${FIELD_CLASS} pl-11 pr-11 placeholder:text-brown-900/40`}
+            className={`${FIELD_CLASS} ps-11 pe-11 placeholder:text-brown-900/40`}
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-brown-900/60 hover:text-brown-900 focus-visible:outline-2 focus-visible:outline-gold-600"
+              aria-label={t.clearSearch}
+              className="absolute end-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-brown-900/60 hover:text-brown-900 focus-visible:outline-2 focus-visible:outline-gold-600"
             >
               <CloseIcon className="h-4 w-4" />
             </button>
@@ -192,16 +198,18 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
 
         <SelectDropdown
           className="min-w-40 flex-1 sm:flex-none"
-          label="Filter by country"
+          label={t.filterCountry}
           value={country}
           options={countries}
+          optionLabel={optionLabel}
           onChange={handleCountryChange}
         />
         <SelectDropdown
           className="min-w-40 flex-1 sm:flex-none"
-          label="Filter by region"
+          label={t.filterRegion}
           value={region}
           options={regions}
+          optionLabel={optionLabel}
           onChange={setRegionOverride}
         />
 
@@ -212,25 +220,25 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
           className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-lg bg-gold-600 px-5 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <CrosshairIcon className={`h-4 w-4 ${locating ? "animate-spin" : ""}`} />
-          {locating ? "Locating…" : userCoordinates ? "Update my location" : "Show nearby stores"}
+          {locating ? t.locating : userCoordinates ? t.updateLocation : t.showNearby}
         </button>
       </div>
 
       {locationDenied && (
         <p role="status" className="mt-4 text-sm text-brown-900/60">
-          We couldn&apos;t access your location. You can still browse all stores below.
+          {t.locationDenied}
         </p>
       )}
 
       {visible.length === 0 ? (
         <div className="py-16 text-center">
-          <p className="text-base text-brown-900/70">No stores match your search.</p>
+          <p className="text-base text-brown-900/70">{t.noMatch}</p>
           <button
             type="button"
             onClick={resetFilters}
             className="mt-5 rounded-lg bg-gold-600 px-6 py-2 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
           >
-            Clear search
+            {t.clearSearch}
           </button>
         </div>
       ) : (

@@ -47,20 +47,21 @@ export const ATELIER_COLLECTION_HANDLE = "solitaire";
 
 export const CATEGORY_SCOPED_MENU_COLUMNS = ["curations & style"];
 
-export const SORT_OPTIONS: { key: CatalogSortKey; label: string }[] = [
-  { key: "RECOMMENDED", label: "Recommended" },
-  { key: "BEST_SELLING", label: "Best Selling" },
-  { key: "NEWEST", label: "New In" },
-  { key: "PRICE_ASC", label: "Price: Low to High" },
-  { key: "PRICE_DESC", label: "Price: High to Low" },
+/** Labels live in the dictionary (`collection.sort`), keyed by sort key. */
+export const SORT_OPTION_KEYS: CatalogSortKey[] = [
+  "RECOMMENDED",
+  "BEST_SELLING",
+  "NEWEST",
+  "PRICE_ASC",
+  "PRICE_DESC",
 ];
 
 /** Quick-filter chips above the grid. Each filters on a Shopify product tag
  * (Admin → Products → Tags) — a chip with no tagged products shows the empty state. */
 export const QUICK_TAG_CHIPS = [
-  { label: "New Arrival", tag: "New Arrival" },
-  { label: "Bestseller", tag: "Bestseller" },
-  { label: "Trending", tag: "Trending" },
+  { key: "newArrival", tag: "New Arrival" },
+  { key: "bestseller", tag: "Bestseller" },
+  { key: "trending", tag: "Trending" },
 ] as const;
 
 export type PriceBand = { min?: number; max?: number };

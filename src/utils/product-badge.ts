@@ -18,26 +18,31 @@ const PLAIN_BADGE_TAGS = new Set([
   "exclusive",
 ]);
 
-const BADGE_LABEL_OVERRIDES: Record<string, string> = {
-  bestseller: "Dubai Bestseller",
-  "flagship exclusive": "Dubai Flagship Exclusive",
-};
+/** Tags whose label is fixed rather than the tag text. */
+const BADGE_LABEL_OVERRIDES = new Set(["bestseller", "flagship exclusive"]);
 
 const normalizeTag = (tag: string) => tag.toLowerCase().replace(/[-_]+/g, " ").trim();
 
 /**
  * The first matching tag wins, in the order Shopify returns them. Returns
  * null when the product has no badge tag — nothing is shown, never a default.
+ *
+ * `labels` are the translated names of the well-known tags. Product tags
+ * aren't translatable in Shopify, so a custom `badge:<Label>` tag is shown
+ * exactly as typed in every language.
  */
-export function getProductBadge(tags: string[]): string | null {
+export function getProductBadge(
+  tags: string[],
+  labels: Record<string, string>
+): string | null {
   for (const tag of tags) {
     const custom = tag.match(BADGE_TAG_PREFIX)?.[1].trim();
     if (custom) return custom;
 
     const key = normalizeTag(tag);
-    const override = BADGE_LABEL_OVERRIDES[key];
-    if (override) return override;
-    if (PLAIN_BADGE_TAGS.has(key)) return tag.replace(/[-_]+/g, " ").trim();
+    if (BADGE_LABEL_OVERRIDES.has(key) || PLAIN_BADGE_TAGS.has(key)) {
+      return labels[key] ?? tag.replace(/[-_]+/g, " ").trim();
+    }
   }
   return null;
 }

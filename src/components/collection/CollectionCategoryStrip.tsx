@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import CarouselPagination from "@/components/ui/CarouselPagination";
 import { useScrollCarousel } from "@/hooks/useScrollCarousel";
 import {
@@ -10,6 +10,7 @@ import {
   isInCollectionFilter,
   type CatalogQueryState,
 } from "@/utils/catalog-params";
+import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { CategoryTile } from "@/types/content";
 
@@ -44,13 +45,14 @@ export default function CollectionCategoryStrip({
    * place (`?filter=…`) instead of linking to another collection page. */
   scope?: { basePath: string; query: CatalogQueryState };
 }) {
+  const { collection: t, common } = useDictionary();
   const { scrollRef, pageCount, activePage, scrollByPage, handleScroll } =
     useScrollCarousel(categories.length);
 
   if (categories.length === 0) return null;
 
   return (
-    <nav aria-label="Shop by category">
+    <nav aria-label={t.shopByCategory}>
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -123,7 +125,7 @@ export default function CollectionCategoryStrip({
           activePage={activePage}
           onPrev={() => scrollByPage(-1)}
           onNext={() => scrollByPage(1)}
-          label="categories"
+          label={common.categories}
           className="mt-2"
         />
       )}

@@ -5,6 +5,7 @@ import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
 import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
 import { getProductsByIds } from "@/services/shopify";
+import { useDictionary, useLocale } from "@/store/locale";
 import type { Product } from "@/types/product";
 
 const STORAGE_KEY = "jawhara_recently_viewed";
@@ -19,6 +20,8 @@ type Status = "idle" | "loading" | "ready" | "error";
  * like the wishlist — there's no customer account to sync it to.
  */
 export default function RecentlyViewed({ currentProductId }: { currentProductId: string }) {
+  const locale = useLocale();
+  const { product: t } = useDictionary();
   const [products, setProducts] = useState<Product[]>([]);
   const [status, setStatus] = useState<Status>("idle");
 
@@ -59,7 +62,7 @@ export default function RecentlyViewed({ currentProductId }: { currentProductId:
 
       setStatus("loading");
       try {
-        const result = await getProductsByIds(others);
+        const result = await getProductsByIds(others, locale);
         if (cancelled) return;
         setProducts(result);
         setStatus("ready");
@@ -71,18 +74,18 @@ export default function RecentlyViewed({ currentProductId }: { currentProductId:
     return () => {
       cancelled = true;
     };
-  }, [currentProductId]);
+  }, [currentProductId, locale]);
 
   if (status === "idle" || (status === "ready" && products.length === 0)) return null;
 
   return (
-    <ProductShelf title="Recently Viewed">
+    <ProductShelf title={t.recentlyViewed}>
       {status === "loading" && (
-        <ProductCarouselSkeleton label="Loading recently viewed products…" />
+        <ProductCarouselSkeleton label={t.recentlyViewedLoading} />
       )}
       {status === "error" && (
         <p role="alert" className="font-sans text-sm text-error-700">
-          Couldn&rsquo;t load your recently viewed products.
+          {t.recentlyViewedError}
         </p>
       )}
       {status === "ready" && <ProductCarousel products={products} />}

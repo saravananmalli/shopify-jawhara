@@ -1,4 +1,7 @@
 import { StarIcon } from "@/components/icons";
+import { getDictionary } from "@/dictionaries";
+import { getLocale } from "@/utils/get-locale";
+import { formatMessage } from "@/utils/i18n";
 import type { Testimonial } from "@/types/content";
 
 function Stars({ rating, className }: { rating: number; className: string }) {
@@ -15,8 +18,9 @@ function Stars({ rating, className }: { rating: number; className: string }) {
 }
 
 /** Renders nothing when there are no active testimonials in Shopify. */
-export default function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
+export default async function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   if (testimonials.length === 0) return null;
+  const t = await getDictionary(await getLocale());
 
   const average =
     testimonials.reduce((sum, review) => sum + review.rating, 0) / testimonials.length;
@@ -28,16 +32,21 @@ export default function Testimonials({ testimonials }: { testimonials: Testimoni
       </div>
       <p className="text-lg font-semibold">
         {average.toFixed(1)} / 5.0
-        <span className="sr-only"> average from {testimonials.length} client reviews</span>
+        <span className="sr-only">
+          {" "}
+          {formatMessage(t.home.testimonials.average, { count: testimonials.length })}
+        </span>
       </p>
-      <h2 className="mt-2 font-serif text-3xl text-gold-600">Words from Our Clients</h2>
+      <h2 className="mt-2 font-serif text-3xl text-gold-600">{t.home.testimonials.title}</h2>
 
-      <ul className="mt-8 grid grid-cols-1 gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-8 grid grid-cols-1 gap-5 text-start sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((review) => (
           <li key={review.id} className="rounded-2xl border border-gold-100 bg-white p-5">
             <Stars rating={review.rating} className="h-3.5 w-3.5" />
-            <span className="sr-only">Rated {review.rating} out of 5</span>
-            <blockquote className="mt-3 text-sm leading-relaxed text-brown-900/80">
+            <span className="sr-only">
+              {formatMessage(t.common.ratedOutOf5, { rating: review.rating })}
+            </span>
+            <blockquote dir="auto" className="mt-3 text-sm leading-relaxed text-brown-900/80">
               &ldquo;{review.quote}&rdquo;
             </blockquote>
             <div className="mt-4 flex items-center gap-3 border-t border-gold-100 pt-3">

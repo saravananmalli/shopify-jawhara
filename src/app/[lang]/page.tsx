@@ -16,6 +16,10 @@ import {
   getProducts,
   getTestimonials,
 } from "@/services/shopify";
+import { getDictionary, type Dictionary } from "@/dictionaries";
+import { getLocale } from "@/utils/get-locale";
+import { localeAlternates } from "@/utils/seo";
+import type { Metadata } from "next";
 import { ATELIER_COLLECTION_HANDLE, MASTERPIECES_COLLECTION_HANDLE } from "@/config/catalog";
 
 /** Real Shopify collections powering the homepage "Shop By Category" strip
@@ -34,41 +38,51 @@ const SHOP_BY_CATEGORY_HANDLES = [
  * collection (any collection handle works; products and their order are
  * managed in Admin → Products → Collections). A tab with nothing in it
  * honestly shows "no products match" rather than faking a result. */
-const MASTERPIECE_TABS: ProductTab[] = [
-  { label: "All Masterpieces", mode: "initial" },
-  { label: "Under AED 5,000", mode: "query", query: "variants.price:<5000" },
-  { label: "Solitaires", mode: "collection", handle: "solitaire" },
-  { label: "Everyday Luxury", mode: "collection", handle: "everyday-luxury" },
+const masterpieceTabs = (t: Dictionary["home"]["masterpieces"]["tabs"]): ProductTab[] => [
+  { label: t.all, mode: "initial" },
+  { label: t.under5000, mode: "query", query: "variants.price:<5000" },
+  { label: t.solitaires, mode: "collection", handle: "solitaire" },
+  { label: t.everyday, mode: "collection", handle: "everyday-luxury" },
 ];
 
-const TRENDING_TABS: ProductTab[] = [
-  { label: "New Arrivals", mode: "sort", sortKey: "CREATED_AT" },
-  { label: "Best Sellers", mode: "sort", sortKey: "BEST_SELLING" },
-  { label: "Trending UAE Gifts", mode: "query", query: "tag:trending" },
+const trendingTabs = (t: Dictionary["home"]["trending"]["tabs"]): ProductTab[] => [
+  { label: t.newArrivals, mode: "sort", sortKey: "CREATED_AT" },
+  { label: t.bestSellers, mode: "sort", sortKey: "BEST_SELLING" },
+  { label: t.uaeGifts, mode: "query", query: "tag:trending" },
 ];
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { alternates: localeAlternates("/", await getLocale()) };
+}
 
 /** The homepage is statically generated; its shelves refresh on this
  * schedule (a full-page regeneration each minute would be wasted work). */
 const HOME_REVALIDATE_SECONDS = 600;
 
 export default async function Home() {
+  const locale = await getLocale();
+  const { home: t } = await getDictionary(locale);
   const [products, signatureProducts, collections, heroBanners, occasions, testimonials, reviews] =
     await Promise.all([
-      getProducts({ first: 8, revalidate: HOME_REVALIDATE_SECONDS }),
+      getProducts({ first: 8, revalidate: HOME_REVALIDATE_SECONDS, locale }),
       // A curation problem must not take the homepage down — fall back to best sellers.
       getCollectionProducts({
         handle: MASTERPIECES_COLLECTION_HANDLE,
         revalidate: HOME_REVALIDATE_SECONDS,
+        locale,
       }).catch(() => []),
-      getCollectionGroups({
-        categories: SHOP_BY_CATEGORY_HANDLES,
-        atelier: [ATELIER_COLLECTION_HANDLE],
-      }),
-      getHeroBanners(),
-      getOccasions(),
-      getTestimonials(),
+      getCollectionGroups(
+        {
+          categories: SHOP_BY_CATEGORY_HANDLES,
+          atelier: [ATELIER_COLLECTION_HANDLE],
+        },
+        locale,
+      ),
+      getHeroBanners({ locale }),
+      getOccasions({ locale }),
+      getTestimonials({ locale }),
       // A reviews outage must not take the homepage down.
-      getLatestReviews().catch((error) => {
+      getLatestReviews({ locale }).catch((error) => {
         console.error("Failed to load homepage reviews", error);
         return [];
       }),
@@ -82,10 +96,10 @@ export default async function Home() {
       <CategoryStrip categories={categories} />
       <FeaturesBar />
       <ProductGridSection
-        eyebrow="Our Finest Creations"
-        title="Signature Masterpieces"
-        subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
-        tabs={MASTERPIECE_TABS}
+        eyebrow={t.masterpieces.eyebrow}
+        title={t.masterpieces.title}
+        subtitle={t.masterpieces.subtitle}
+        tabs={masterpieceTabs(t.masterpieces.tabs)}
         products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
       />
       <AtelierSection
@@ -97,10 +111,10 @@ export default async function Home() {
       />
       <ShopByOccasionSection occasions={occasions} />
       <ProductGridSection
-        eyebrow="Fresh & Favoured"
-        title="Trending Now in the UAE"
-        subtitle="New arrivals from our atelier and the pieces our clients are choosing most."
-        tabs={TRENDING_TABS}
+        eyebrow={t.trending.eyebrow}
+        title={t.trending.title}
+        subtitle={t.trending.subtitle}
+        tabs={trendingTabs(t.trending.tabs)}
         products={products.slice(-4)}
       />
       <CustomerReviews reviews={reviews} />

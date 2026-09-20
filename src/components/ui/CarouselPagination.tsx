@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 
 export default function CarouselPagination({
   pageCount,
@@ -18,6 +20,8 @@ export default function CarouselPagination({
   /** Outer wrapper classes — override when the parent already provides the gutter. */
   className?: string;
 }) {
+  const { common } = useDictionary();
+
   return (
     <div className={`flex items-center justify-between ${className}`}>
       <div className="flex items-center gap-1.5">
@@ -34,7 +38,7 @@ export default function CarouselPagination({
         <button
           type="button"
           onClick={onPrev}
-          aria-label={`Previous ${label}`}
+          aria-label={formatMessage(common.previous, { label })}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
         >
           <ChevronLeftIcon className="h-4 w-4" />
@@ -42,7 +46,7 @@ export default function CarouselPagination({
         <button
           type="button"
           onClick={onNext}
-          aria-label={`Next ${label}`}
+          aria-label={formatMessage(common.next, { label })}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
         >
           <ChevronRightIcon className="h-4 w-4" />
