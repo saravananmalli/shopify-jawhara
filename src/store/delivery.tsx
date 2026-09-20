@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useHydrated } from "@/hooks/useHydrated";
 import { useDictionary } from "@/store/locale";
 import { getDeliveryEstimate, isPastSameDayCutoff } from "@/utils/delivery";
 import { emirateFromCoords, isEmirateName } from "@/utils/emirates";
@@ -246,5 +247,13 @@ export function useLocationUi() {
 export function useDeliveryEstimate(available: boolean) {
   const { emirate, pastCutoff } = useDelivery();
   const { delivery } = useDictionary();
-  return getDeliveryEstimate({ emirate, available, pastCutoff, t: delivery });
+  // Emirate and cutoff come from localStorage / the clock; until hydrated use
+  // the server's defaults so a late-streaming card doesn't mismatch its HTML.
+  const hydrated = useHydrated();
+  return getDeliveryEstimate({
+    emirate: hydrated ? emirate : null,
+    available,
+    pastCutoff: hydrated && pastCutoff,
+    t: delivery,
+  });
 }
