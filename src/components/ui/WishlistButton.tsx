@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydrated } from "@/hooks/useHydrated";
 import { useWishlist } from "@/store/wishlist";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
@@ -17,7 +18,9 @@ export default function WishlistButton({
 }) {
   const { isInWishlist, toggleItem } = useWishlist();
   const { product: t } = useDictionary();
-  const inWishlist = isInWishlist(product.id);
+  // The saved list lives in localStorage; until hydrated, render the same
+  // "not saved" state the server did.
+  const inWishlist = useHydrated() && isInWishlist(product.id);
 
   return (
     <button
