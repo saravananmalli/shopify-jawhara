@@ -21,7 +21,7 @@ export default async function AtelierSection({
 
   return (
     <section className="bg-[#FAF8F5]">
-      <div className="grid page-container grid-cols-1 gap-10 py-16 lg:grid-cols-2 lg:items-center">
+      <div className="grid page-container grid-cols-1 gap-10 py-6 sm:py-16 lg:grid-cols-2 lg:items-center">
         <div className="relative">
           {image ? (
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">

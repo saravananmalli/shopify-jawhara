@@ -37,12 +37,14 @@ export default function ProductGridSection({
   subtitle,
   tabs,
   products: initialProducts,
+  tightOnPhone,
 }: {
   eyebrow?: string;
   title: string;
   subtitle: string;
   tabs: ProductTab[];
   products: Product[];
+  tightOnPhone?: boolean;
 }) {
   const locale = useLocale();
   const t = useDictionary();
@@ -102,6 +104,7 @@ export default function ProductGridSection({
       eyebrow={eyebrow}
       title={title}
       subtitle={subtitle}
+      tightOnPhone={tightOnPhone}
       actions={
         <div className="flex min-w-0 max-w-full flex-col items-start gap-3 sm:items-end">
           {/* One swipeable row on phones (bleeding to the screen edges) so a long
