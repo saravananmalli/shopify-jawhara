@@ -13,6 +13,7 @@ import { useDictionary, useLocale } from "@/store/locale";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import { ALL_PRODUCTS_HANDLE } from "@/config/catalog";
+import { shopifyConfig } from "@/config/shopify";
 import type { Collection } from "@/types/content";
 
 // 2x the rendered card image (~104px wide in the 2-column sheet).
@@ -41,7 +42,7 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
   const isActive: Record<TabKey, boolean> = {
     home: pathname === "/" && !sheetOpen && !cartOpen,
     categories: sheetOpen || (!cartOpen && pathname.startsWith("/collections")),
-    account: !sheetOpen && !cartOpen && pathname.startsWith("/account"),
+    account: false, // leaves the site for Shopify, so it never shows as current
     cart: cartOpen,
   };
 
@@ -93,14 +94,10 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
           {t.categories}
         </button>
 
-        <Link
-          href="/account"
-          aria-current={pathname.startsWith("/account") ? "page" : undefined}
-          className={itemClass("account")}
-        >
+        <a href={shopifyConfig.accountUrl} className={itemClass("account")}>
           <NavIcon name="account" tinted className={iconClass("account")} />
           {t.account}
-        </Link>
+        </a>
 
         <button
           type="button"

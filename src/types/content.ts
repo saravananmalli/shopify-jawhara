@@ -88,3 +88,13 @@ export type SitemapEntry = {
   handle: string;
   updatedAt: string | null;
 };
+
+/** A Shopify online-store page ("About", "FAQ"…) or shop policy, as merchant HTML. */
+export type ContentPage = {
+  handle: string;
+  title: string;
+  /** Merchant-authored HTML from Shopify Admin — sanitise before rendering. */
+  bodyHtml: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};

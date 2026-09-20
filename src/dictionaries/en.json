@@ -11,7 +11,8 @@
     "collectionsDescription": "Browse every Jawhara Jewellery piece — bridal, gold, diamonds, pearls, and more, straight from Dubai's historic Gold Souk.",
     "storesTitle": "Our Stores",
     "storesDescription": "Visit a Jawhara Jewellery store near you — find addresses, opening hours, phone numbers and directions across the UAE and the GCC.",
-    "notFoundTitle": "Page not found"
+    "notFoundTitle": "Page not found",
+    "wishlistTitle": "Wishlist"
   },
   "common": {
     "language": "Language",
@@ -95,44 +96,53 @@
     "copyright": "Copyright - {brand} {year}",
     "columns": [
       {
-        "title": "Know Your Jewellery",
+        "title": "Quick Links",
         "links": [
-          "Diamond Guide",
-          "Jewellery Guide",
-          "Gemstone Guide",
-          "Gold Rate"
-        ]
-      },
-      {
-        "title": "Jawhara Advantage",
-        "links": [
-          "Free Shipping",
-          "15 days return",
-          "About Us",
-          "Our Designs",
-          "Sustainability",
-          "Certificate",
-          "Blog",
-          "Awards"
+          {
+            "title": "About Us",
+            "url": "/pages/about"
+          },
+          {
+            "title": "Careers",
+            "url": "/pages/career"
+          },
+          {
+            "title": "FAQ",
+            "url": "/pages/faq"
+          },
+          {
+            "title": "Contact Us",
+            "url": "/pages/contact"
+          }
         ]
       },
       {
         "title": "Customer Service",
         "links": [
-          "Privacy Policy",
-          "Return Policy",
-          "Order Status",
-          "Terms and Conditions",
-          "Faq"
-        ]
-      },
-      {
-        "title": "About Us",
-        "links": [
-          "Our Story",
-          "Press",
-          "Blog",
-          "Careers"
+          {
+            "title": "Our Stores",
+            "url": "/stores"
+          },
+          {
+            "title": "Shipping & Returns",
+            "url": "/policies/shipping-policy"
+          },
+          {
+            "title": "Terms & Conditions",
+            "url": "/policies/terms-of-service"
+          },
+          {
+            "title": "Privacy Policy",
+            "url": "/policies/privacy-policy"
+          },
+          {
+            "title": "User Responsibilities",
+            "url": "/pages/user-responsibilities"
+          },
+          {
+            "title": "Limitation of Liability",
+            "url": "/pages/limitation-of-liability"
+          }
         ]
       }
     ]
@@ -472,5 +482,17 @@
     "sheetTitle": "Shop by Category",
     "allJewellery": "All Jewellery",
     "closeSheet": "Close categories"
+  },
+  "wishlist": {
+    "title": "Your Wishlist",
+    "intro": "Pieces you have saved on this device.",
+    "count": {
+      "one": "{count} piece",
+      "other": "{count} pieces"
+    },
+    "emptyTitle": "Your wishlist is empty",
+    "emptyBody": "Tap the heart on any piece to save it here.",
+    "loadError": "We couldn't load your saved pieces. Please try again.",
+    "retry": "Try again"
   }
 }

@@ -16,20 +16,18 @@ export default async function Footer({
 }) {
   const t = await getDictionary(await getLocale());
   const hasColumns = footerNav.some((item) => item.items.length > 0);
-  // The dictionary columns are used only until the "footer" menu in Shopify
+  // The dictionary columns (real pages and policies, same set as
+  // jawharajewellery.com) are used only until the "footer" menu in Shopify
   // Admin has column-style nested items (a top-level item per column, its
   // links as sub-items).
   const columns: { title: string; links: { title: string; url: string }[] }[] = hasColumns
     ? footerNav.map((column) => ({ title: column.title, links: column.items }))
-    : t.footer.columns.map((column) => ({
-        title: column.title,
-        links: column.links.map((title) => ({ title, url: "#" })),
-      }));
+    : t.footer.columns;
 
   return (
     <footer className="border-t border-gold-100 bg-cream-100">
       <div className="page-container py-12">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <div className="flex items-center gap-2 text-gold-700">
               <AwardIcon className="h-9 w-9" />

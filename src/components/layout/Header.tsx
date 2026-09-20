@@ -18,6 +18,7 @@ import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import CountBadge from "@/components/ui/CountBadge";
 import NavIcon from "@/components/ui/NavIcon";
+import { shopifyConfig } from "@/config/shopify";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLazyDialog } from "@/hooks/useLazyDialog";
 import { AnnouncementTicker, SearchHint } from "@/components/layout/HeaderTickers";
@@ -218,13 +219,14 @@ export default function Header({
             >
               <SearchIcon className="h-5 w-5" />
             </button>
-            <Link
-              href="/account"
+            {/* Shopify-hosted customer account, so a plain <a> (not our locale Link). */}
+            <a
+              href={shopifyConfig.accountUrl}
               className="hidden items-center gap-1.5 sm:flex"
             >
               <NavIcon name="account" className="h-6 w-6" />
               {t.header.logIn}
-            </Link>
+            </a>
             <Link
               href="/wishlist"
               className="-me-2 flex h-11 w-11 items-center justify-center sm:me-0 sm:h-auto sm:w-auto"

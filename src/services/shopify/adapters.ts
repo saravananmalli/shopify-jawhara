@@ -17,6 +17,7 @@ import type {
   Brand,
   CategoryTile,
   Collection,
+  ContentPage,
   HeroBanner,
   NavLink,
   Occasion,
@@ -509,4 +510,17 @@ export function findMenuColumnItems(
     }
   }
   return null;
+}
+
+export function toContentPage(
+  node: { handle: string; title: string; body: string },
+  seo?: { title: string | null; description: string | null } | null,
+): ContentPage {
+  return {
+    handle: node.handle,
+    title: node.title,
+    bodyHtml: node.body,
+    seoTitle: seo?.title ?? null,
+    seoDescription: seo?.description ?? null,
+  };
 }
