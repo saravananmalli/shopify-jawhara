@@ -211,7 +211,7 @@ export default function CollectionBrowser({
 
       <div
         aria-busy={isPending}
-        className={`mt-8 transition-opacity duration-300 ${isPending ? "opacity-50" : ""}`}
+        className={`mt-6 transition-opacity duration-300 ${isPending ? "opacity-50" : ""}`}
       >
         {products.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">

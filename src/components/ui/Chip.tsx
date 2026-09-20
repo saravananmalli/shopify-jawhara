@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 /** The shared "Dubai Bestseller" chip look (colour, type, tracking) — one
  * definition, sized separately by <Chip> and <ChipButton>. */
 const CHIP_STYLE =
-  "inline-flex items-center gap-1.5 rounded-full border font-sans text-[11px] font-semibold uppercase tracking-[1.6px] sm:tracking-[2.2px]";
+  "inline-flex items-center gap-1.5 rounded-full border font-sans font-semibold uppercase tracking-[1.6px] sm:tracking-[2.2px]";
 
 /** Shared pill/badge style — reused wherever the "Dubai Bestseller" chip
  * color scheme appears (product cards, section eyebrows, ...) so it's
@@ -26,7 +26,7 @@ export default function Chip({
   } as const;
   const toneStyle = TONE_STYLES[tone];
   return (
-    <span className={`${CHIP_STYLE} ${toneStyle} px-2.5 py-1 ${className}`}>
+    <span className={`${CHIP_STYLE} ${toneStyle} px-2.5 py-1 text-[11px] ${className}`}>
       {children}
     </span>
   );
@@ -50,7 +50,7 @@ export function ChipButton({
     <button
       type="button"
       aria-pressed={active}
-      className={`${CHIP_STYLE} shrink-0 snap-start whitespace-nowrap px-3.5 py-2 transition-colors ${
+      className={`${CHIP_STYLE} shrink-0 snap-start whitespace-nowrap px-3.5 py-1 text-[11px] transition-colors ${
         active
           ? "border-gold-600 bg-gold-600 text-white"
           : "border-[#E6D7BE] bg-cream-100 text-gold-600 hover:border-gold-600"
