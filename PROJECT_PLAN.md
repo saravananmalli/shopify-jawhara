@@ -1,16 +1,14 @@
 # Jawhara — 14-Day Plan & Status
 
-_Last reviewed: 2026-09-19. Code status: `tsc`, `eslint` and `next build` all pass. Behaviour was checked with scripted headless-Chrome runs against `localhost` and the live Shopify store (filters, tiles, sticky bar, drawer, before/after snapshots of every collection page). **Not done:** manual QA on real devices, Lighthouse, deployment. Shopify-side numbers below were read from the live Storefront API on the review date._
+_Last reviewed: 2026-09-20. Code status: `tsc`, `eslint` and `next build` pass. Everything is committed and pushed (branch `feat/arabic-rtl`, PRs #1–#18 merged into `main`). Behaviour was checked with scripted headless-Chrome runs against `localhost` and the live Shopify Storefront API. **Not done:** testing on real devices, Lighthouse, a confirmed production deployment. Shopify counts on 2026-09-20: 7 products, 71 collections, 12 `store_location` entries, 0 `testimonial` entries._
 
 ## Verdict
 
-**The storefront is well ahead of the Day 1–7 plan, and the collection experience is now the most complete part. The blockers to "Week 1 done" are unchanged in kind: nothing is committed or deployed, there is no store locator, and a few UI pieces still show placeholder data.**
+**The web storefront (plan Days 1–7) is built and well beyond scope: Arabic/RTL, a full collection/catalog experience, store locator, reviews, wishlist, Shopify-driven pages and a phone-first UI. What is left is deployment and QA, Shopify Admin content, and a few small code items. The custom admin (Days 8–14) has not been started and, given how the store now works, may not be needed.**
 
-- Architecture follows the rules in `CLAUDE.md` (UI → services → adapters → normalized types, GraphQL isolated, tokens in one place).
-- Homepage, header/mega-menus, cart, wishlist, product pages and a full collection/catalog page exist and build cleanly.
-- **Nothing is committed:** last commit is `f426de8` on `fix/testimonials-and-production-files`, with ~38 modified/untracked files on top. One machine failure loses them.
-- The remaining work is now mostly **Shopify Admin content** (collections, tags, menu links, products — the store has only 7 products) plus **a handful of code items** listed under "Pending".
-- Days 8–14 (custom admin) have not started and still need a decision (see "Open decisions").
+- Architecture follows `CLAUDE.md` (UI → services → adapters → normalized types, GraphQL isolated, tokens in `globals.css`, all strings in `dictionaries/en.json` + `ar.json`).
+- The repository is no longer at risk: the earlier "nothing is committed" blocker is resolved.
+- Remaining work is mostly **Shopify Admin content** (products, collections, tags, page/policy text) and **deploy + real-device QA**.
 
 ## Plan deviations (deliberate, keep them)
 
@@ -20,6 +18,8 @@ _Last reviewed: 2026-09-19. Code status: `tsc`, `eslint` and `next build` all pa
 | Tailwind + gold `#8B7355` | Tailwind v4, tokens in `globals.css`. Primary gold is `#967123`; `#8B7355` is kept as `brown-800` | Fine — values come from the brand's real SCSS tokens. Confirm with the client that `#967123` should be primary. |
 | Shopify Storefront API | Direct GraphQL client + `@shopify/hydrogen-react` | Fine. |
 | Filters via Shopify | Shopify's collection `filters` argument ignores tags and has no multi-range price/on-sale filter, so those run in our own server-side scan | Deliberate. See "Known limitations". |
+| Custom backend for stores / delivery / ratings | Stores = Shopify metaobjects; reviews = Judge.me; delivery = rules in `config/delivery.ts` | In effect the "Shopify-native" option was taken (see Open decisions). |
+| Account / login | Shopify-hosted customer accounts (`/account` on the store domain) | Supported route for headless; no password handling in our code. |
 
 Legend: ✅ done · 🟡 partial · ❌ not started
 
@@ -30,132 +30,133 @@ Legend: ✅ done · 🟡 partial · ❌ not started
 | Item | Status | Notes |
 |---|---|---|
 | Next.js project structure | ✅ | `app/ components/ services/ graphql/ store/ hooks/ types/ utils/ config/` |
-| Tailwind + custom colors | ✅ | Gold, cream, brown, maroon, state colors, motion tokens, `max-w-8xl` container in `globals.css` |
-| Shopify Storefront API | ✅ | `services/shopify/{client,product-service,cart-service,content-service,catalog-service,adapters}.ts`; env via `config/shopify.ts` |
-| Header, Footer, ProductCard | ✅ | Plus mega-menus, search overlay, location modal, cart drawer. Shared `Chip` / `ChipButton` added |
-| Deploy empty shell to Vercel | ❌ | No Vercel config yet |
+| Tailwind + custom colors | ✅ | Gold, cream, brown, maroon, state colors, motion tokens; one `page-container` utility and fluid `--page-gutter` |
+| Shopify Storefront API | ✅ | `services/shopify/{client,product-service,cart-service,content-service,catalog-service,review-service,adapters}.ts`; env via `config/shopify.ts` |
+| Header, Footer, ProductCard | ✅ | Plus mega-menus, search overlay, location modal, cart drawer, phone bottom bar |
+| Deploy empty shell to Vercel | 🟡 | No `vercel.json` in the repo. `main` is merged regularly, so a Vercel project may exist — confirm the URL and its env vars |
 
 ### Day 3–4 — Homepage sections
 
 | Item | Status | Notes |
 |---|---|---|
-| Hero / carousel | ✅ | `Hero.tsx`, fed by `getHeroBanners()` |
-| Shop by category | ✅ | `CategoryStrip.tsx`. Uses a **hardcoded handle list** in `app/page.tsx` (kept on request) |
+| Hero / carousel | ✅ | `getHeroBanners()`, swipe on phones. **Shopify content issue:** the current banner's `hasBakedInText` flag is off although the photo already contains "only Natural Diamonds", so the text prints twice; also needs a mobile image field on the `hero_banner` metaobject |
+| Shop by category | ✅ | `CategoryStrip.tsx`, handle list in `config/catalog.ts` (`SHOP_BY_CATEGORY_HANDLES`), shared with the phone category sheet |
 | Features bar | ✅ | `FeaturesBar.tsx` |
-| Product grid | ✅ | `ProductGridSection.tsx` with tabs |
+| Product grid | ✅ | `ProductGridSection.tsx` with swipeable tabs |
 | Story sections | ✅ | `HeritageSection`, `AtelierSection`, `ShopByOccasionSection` |
-| Testimonials carousel | 🟡 | Reads `testimonial` metaobjects from Shopify (hidden when none). Still a grid, not a carousel. Not re-checked this review. Needs the `testimonial` definition + entries in Shopify Admin |
-| Footer with links | 🟡 | Built. Has `FALLBACK_COLUMNS` and a hardcoded socials list — confirm links come from Shopify menus |
+| Customer reviews | ✅ | `CustomerReviews` from Judge.me (needs `JUDGEME_PRIVATE_API_TOKEN` + `JUDGEME_SHOP_DOMAIN` on the host; hidden when there are none) |
+| Testimonials | 🟡 | Reads `testimonial` metaobjects (0 exist, so the section is hidden). Still a grid, not a carousel |
+| Footer with links | 🟡 | Real links to pages/policies (en/ar) from `dictionaries`; used until the Shopify `footer` menu has column-style items. **The seven social icons are still placeholders linking to `#`** |
 
 ### Day 5–6 — Shopify integration
 
 | Item | Status | Notes |
 |---|---|---|
 | Fetch products | ✅ | `getProducts`, collections, occasions, catalog pages |
-| Product grids | ✅ | Home + the full collection page (below) |
-| Add to cart | ✅ | `cartCreate / LinesAdd / LinesUpdate / LinesRemove`, all mutations request `userErrors`; `store/cart.tsx` + `CartDrawer` |
-| Product details | ✅ | `/products/[handle]` with gallery, info, related / recently viewed, JSON-LD, `generateMetadata`. Badge now comes from tags |
-| Store locator (map view) | ❌ | Only a `LocationModal` (UAE emirate picker). No `/stores` page, no map |
+| Product grids | ✅ | 2/3/4 columns, shared with skeletons via `config/layout.ts` |
+| Add to cart | ✅ | `cartCreate / LinesAdd / LinesUpdate / LinesRemove`, `userErrors` checked; `store/cart.tsx` + `CartDrawer` |
+| Product details | ✅ | Gallery (swipe on phones), info, related / recently viewed, JSON-LD, metadata |
+| Store locator | 🟡 | `/stores`: list, filters, "Show nearby stores", Directions links; 12 stores from `store_location` metaobjects. **No embedded map** (the plan asked for a map view) |
+| Delivery estimates | ✅ | By emirate with geolocation prompt (`config/delivery.ts`, display only — checkout doesn't enforce it) |
 
 ### Day 7 — Test & deploy
 
 | Item | Status | Notes |
 |---|---|---|
 | Typecheck / lint / build | ✅ | All pass |
-| Real browser testing | 🟡 | Scripted headless-Chrome checks for collection pages, filters, drawer (focus, Escape), sticky bar, mobile overflow. **Cart flow, real devices, screen readers still need a manual pass** |
-| Responsive check | 🟡 | No horizontal overflow at 390px on collection pages. Mobile height of the sticky filter bar not reviewed |
-| Performance | 🟡 | Homepage is ISR (1h). Not measured with Lighthouse. Collection pages are dynamic and run extra scans (see limitations) |
-| Deploy to Vercel | ❌ | Not done |
+| Responsive check | ✅ | Scripted overflow audit: 7 routes × 20 viewports (320–2560, portrait + landscape) × EN/AR = 0 horizontal overflow. Not run on real devices |
+| Real browser testing | 🟡 | Scripted headless Chrome (touch emulation, both languages). **Real iPhone/Android, cart→checkout, screen readers still need a manual pass** |
+| Performance | 🟡 | Homepage is ISR; images use `next/image`. Not measured with Lighthouse |
+| Deploy to Vercel | ❌ | Not confirmed (see Day 1–2) |
 
 ### Day 8–14 — Custom admin (not started)
 
-Nothing exists for `/admin`, auth, stores CRUD, delivery zones/charges, ratings moderation or analytics. No backend or database yet.
+Nothing exists for `/admin`, auth, stores CRUD, delivery zones/charges, ratings moderation or analytics. Stores, reviews and delivery are already covered without a backend (see deviations), so the need for this block should be re-decided first.
 
-## Completed beyond the original plan — collections & catalog
-
-Built after the Day 1–7 items; all in the working tree, **uncommitted**.
+## Completed beyond the original plan
 
 | Area | What exists |
 |---|---|
-| **Collection page** (`/collections/[handle]` and `/collections`) | One shared `CollectionPageView`. Category tile row, quick chips (All / New Arrival / Bestseller / Trending), count, filter dropdowns, "Show All Filters", Clear all, Sort By, product grid (shared `ProductCard`), Load more. `/collections` is the "all products" view |
-| **Sticky behaviour** | Site header is static on `/collections…`; the filter bar is pinned instead. Header is still sticky everywhere else |
-| **State in the URL** | Filters and sort live in `?filter=…&sort=…`: server-rendered, shareable. Filtered URLs are `noindex` with a canonical to the base page; input is validated before reaching Shopify. Title, description, OG/Twitter, `CollectionPage` JSON-LD |
-| **Filters panel** | Accordion drawer + toolbar dropdowns, 13px, checkbox rows with counts. Sections: **Metal, Stone, Stone color, Shape, Brand** (from product tags), **Price** (5 bands, multi-select), **Deals** (on sale). Any filter Shopify's Search & Discovery returns also appears automatically. Availability filter removed by request |
-| **Tag-driven sections** | Prefixed tags (`metal:18K White Gold`, `stone:Diamond`, `brand:Filo`) or plain tags from the vocabulary in `config/catalog.ts` (`18K Yellow Gold`, `Pearl`, `Diamonds`…) |
-| **Category tiles — menu-driven** | Tiles = the other links in the same Shopify main-menu column as the current collection (also flat menus like "Our Collections"). Fallback: the `collections` menu |
-| **Category tiles — Curations** | On CURATIONS & STYLE pages the top row stays the curations; a **Category** filter section lists the categories that have products in it |
-| **Category tiles — Gold / Diamonds / Pearls** | Each nav's collections show as a set on their own pages (shared handle lists in `config/catalog.ts`, same lists as the header menus) |
-| **Category tiles — Gift promo** | `/collections/gift` (the "Shop the collection" card): tiles filter the page in place, only categories with gift products |
-| **Product badges** | "Dubai Bestseller" etc. now come from Shopify tags (`badge:<Label>` or known tags like `New Arrival`, `Trending`, `Limited Edition`, `Gift Pick`, `Exclusive`, `Bestseller`); no tag → no badge. Shared by the card and product page (`utils/product-badge.ts`) |
-| **Server-side filtering** | Tag, price-band, on-sale and in-collection filters run in `catalog-service.ts` (light scan of id/tags/prices/collections, then only the page's products loaded) |
-| **Safety checks used for each tile change** | Before/after snapshots of every collection page (72 pages) proved only the intended pages changed |
+| **Arabic / RTL** | English unprefixed, Arabic under `/ar`; `proxy.ts` routing + cookie; Shopify content translated by Shopify; logical CSS only; Arabic type stack; all UI strings paired in `en.json` / `ar.json`. Shopify Arabic content is not published yet |
+| **Collection & catalog** | `/collections` and `/collections/[handle]`: category tiles (menu-driven; the selected tile scrolls to the start), quick chips, filter dropdowns + drawer, custom sort dropdown, tag-driven badges, URL-driven filter state, server-side filtering, JSON-LD |
+| **Phone experience** | Bottom tab bar (Home / Categories / Account / Cart) with a real-Shopify category sheet, delivery + language row under the header, header and bar that hide on scroll down and return on scroll up, swipeable chip rows, compact product cards, sticky filter bar |
+| **Responsive system** | Fluid container/gutter, fluid typography sizes, 44px touch targets on dialogs, inert closed dialogs, ref-counted scroll lock, skeletons that match real breakpoints |
+| **Reviews** | Judge.me reviews on product pages and home; ratings from `reviews.rating` metafields on cards |
+| **Wishlist** | Heart on cards/product; `/wishlist` page re-fetches products live from Shopify (ids stored in the browser only) |
+| **Shopify-driven pages** | `/pages/[handle]` and `/policies/[handle]` render Admin pages and policies (sanitised HTML, SEO metadata, 404 when missing). Content pack from jawharajewellery.com in `docs/shopify-content/` |
+| **Account** | Log In / Account link to Shopify's hosted customer account |
 
-## Shopify Admin content status (read live, 2026-09-19)
+## Shopify Admin content status
 
-The store exposes **7 products** to the Storefront API. "Empty" = collection exists and is linked but has 0 products.
+(Menu/collection tables read live 2026-09-19; product/collection/store/testimonial counts re-read 2026-09-20.) "Empty" = collection exists and is linked but has 0 products.
 
 | Nav section | Menu links | Linked to a collection | Linked but empty | Notes |
 |---|---|---|---|---|
-| Jewellery | 15 | 14 | 6 | Shop By Type + Gem & Metal (yellow/rose/white gold) + Curations linked. Only Trending Collections has products among the curations |
-| Gifts | 16 | 16 | 14 | Linked, but several point to duplicated collections (`birthday-copy`, `gifts-under-aed-1-000-copy`…) — clean up the URL handles. Only a few products tagged |
+| Jewellery | 15 | 14 | 6 | Shop By Type + Gem & Metal linked. Only Trending Collections has products among the curations |
+| Gifts | 16 | 16 | 14 | Several point to duplicated collections (`birthday-copy`, `gifts-under-aed-1-000-copy`…) — clean up handles |
 | Our Collections | 16 | **3** | 0 | 13 items still need a collection + image + link |
-| Bridal & Solitaires | 17 | 17 | 13 | Linked; needs products tagged (`bridal`, `stone:…`, `occasion:…`, `solitaire`, `bridal-set`, `wedding-band`, `bridal-party`) |
-| Gold / Diamonds / Pearls | — | — | — | Not menu-driven: header uses handle lists in `config/catalog.ts`. Collections exist with images, mostly 0 products. `gold-bars-coins` does not exist yet |
+| Bridal & Solitaires | 17 | 17 | 13 | Needs products tagged (`bridal`, `stone:…`, `occasion:…`, `solitaire`, `bridal-set`, `wedding-band`, `bridal-party`) |
+| Gold / Diamonds / Pearls | — | — | — | Not menu-driven: handle lists in `config/catalog.ts`. Mostly 0 products. `gold-bars-coins` does not exist |
 | New & Exclusive | 0 | — | — | No children; not built out |
 
 ## Pending — code
 
 Highest value first.
 
-1. **Commit and push** the working tree on a feature branch (see Gaps).
-2. **Remove placeholder data from `ProductCard`** (violates the "no fake data" rule): five stars and "(6)" are hardcoded, and the "1-3 Day Delivery" pill is fixed text. Options: read `reviews.rating` / `reviews.rating_count` metafields and the store delivery policy, and hide what has no data. This affects the homepage and every collection page.
-3. **Store locator** (`/stores` list + map) — needs the data-source decision below.
-4. **Testimonials carousel** and confirm Shopify `testimonial` entries exist.
-5. **Footer** — replace `FALLBACK_COLUMNS` / hardcoded socials with Shopify menu data.
-6. **Homepage "Shop By Category"** still uses a hardcoded handle list (`app/page.tsx`). Left as-is on request; can be made menu-driven like the collection page.
-7. **Collection page polish:** the `all` page has no "New In" / "Best Selling" sort (Shopify has no `all` collection in the API; create one with handle `all` to enable them); product-rating and Collection facets are not built; the pinned filter bar is tall on phones; keyboard/screen-reader pass on the filters drawer.
-8. **Diamonds / Pearls / Gold nav** could become menu-driven instead of code handle lists (one source for header + tiles).
-9. **Add `generateStaticParams`** / caching review for collection and product routes once content stabilises.
+1. **Confirm deployment:** find/create the Vercel project for this repo; set `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN`, `NEXT_PUBLIC_SHOPIFY_API_VERSION`, `JUDGEME_PRIVATE_API_TOKEN`, `JUDGEME_SHOP_DOMAIN` (and `NEXT_PUBLIC_SITE_URL` for the custom domain); confirm `.env.local` stays git-ignored. Missing Judge.me variables silently hide the reviews section — consider a server log line.
+2. **Real-device QA** (iOS Safari, Android Chrome): scroll auto-hide, swipe, safe-area on the bottom bar, keyboard/focus, screen readers; then **Lighthouse** on the deployed URL.
+3. **Account and orders:** Log In links to Shopify's hosted account (requires customer accounts enabled). Decide whether that is enough or whether an in-storefront account area is wanted (needs Customer Account API app setup).
+4. **Footer socials:** replace the placeholder letter icons and `#` links with real URLs (ideally from a Shopify menu or metaobject).
+5. **Store locator map:** add an embedded map (list + map) if still wanted.
+6. **Testimonials:** carousel instead of grid; create `testimonial` entries.
+7. **Blog / Journal:** the live site has a Journal and `/blogs/news`; no blog routes exist yet.
+8. **Sitemap:** add Shopify pages/policies to `sitemap.ts`.
+9. **Collection page polish:** the `all` collection lacks "New In" / "Best Selling" sorts (create a Shopify collection with handle `all`); rating and Collection facets not built; keyboard/screen-reader pass on the filters drawer.
+10. **Menu-driven nav:** Gold / Diamonds / Pearls nav and the homepage category strip still use code handle lists.
+11. **Caching review** (`generateStaticParams` for collection/product routes) once content stabilises.
+12. **Footer contact block:** emails in `Footer.tsx` use `jawharajewllery.ae` (misspelled); the live site uses `jawharajewellery.ae`. Confirm and fix.
 
 ## Pending — Shopify Admin setup
 
-1. **Our Collections:** create/link the 13 missing collections (Ada, Alpha, Alwan, Carre, Colori, Colour Classic, Danah Diamond, Disney Collection, Dunyati, Farfalla Diamond, Solitaire, Tennis, Valentine collection), each with an image, published to the same sales channels.
-2. **Tag products** (bulk **More actions → Add tags**): `metal:…`, `stone:…`, `bridal`, `occasion:…`, `recipient:…`, `solitaire`, `gift`, `brand:…`, `badge:…` as needed — the empty collections above stay empty until then.
-3. **Curations:** Everyday Luxury, Filo, Statement Masterpieces, Online Exclusives Only have 0 products.
-4. **Clean up duplicated gift collections:** rename URL handles (drop `-copy`), re-link if needed. Fix the By Price menu title `5000 - 1000` → `5000 - 10000` if not already done.
-5. **Create the missing collections** `gold-bars-coins` (if wanted) and, optionally, `all`.
-6. **Search & Discovery (optional):** configure native filters (Metal, Stone, Product rating, Collection) if you prefer Shopify-native facets over tags; the UI shows whatever Shopify returns.
-7. **Product data:** the store has 7 products vs the ~800 in the design; the product type field is empty on all of them.
-8. **Homepage tabs** still rely on tags `solitaire`, `ready-for-hand-delivery`, `trending`.
+1. **Paste the content pack** (`docs/shopify-content/README.md`): six pages (About, FAQ, Contact, Careers, User Responsibilities, Limitation of Liability) and four policies (Privacy, Shipping, Terms, Refund); then translate to Arabic with Translate & Adapt. Review the placeholders noted in that README first. The default Privacy Policy still reads "My Store 2 operates this store…".
+2. **Hero banner:** set `hasBakedInText` correctly and, ideally, add a mobile image to the `hero_banner` metaobject.
+3. **Our Collections:** create/link the 13 missing collections (Ada, Alpha, Alwan, Carre, Colori, Colour Classic, Danah Diamond, Disney Collection, Dunyati, Farfalla Diamond, Solitaire, Tennis, Valentine collection), each with an image, published to the same sales channels.
+4. **Tag products** (bulk **More actions → Add tags**): `metal:…`, `stone:…`, `bridal`, `occasion:…`, `recipient:…`, `solitaire`, `gift`, `brand:…`, `badge:…`.
+5. **Curations:** Everyday Luxury, Filo, Statement Masterpieces, Online Exclusives Only have 0 products.
+6. **Clean up duplicated gift collections** (drop `-copy` handles). Fix the By Price menu title `5000 - 1000` → `5000 - 10000` if not already done.
+7. **Optional:** collection `all` and `gold-bars-coins`; Search & Discovery facets (Metal, Stone, Product rating, Collection); customer accounts enabled; footer menu with column-style items.
+8. **Product data:** 7 products vs ~800 in the design; product type is empty on all of them.
+9. **Homepage tabs** still rely on tags `solitaire`, `ready-for-hand-delivery`, `trending`.
+10. **Arabic:** publish Arabic in Shopify and translate content (products, collections, menus, pages).
 
 ## Known limitations & risks
 
-- **1,000-product scan cap.** Tag/price-band/on-sale/category filters and Metal/Stone/Category counts read up to 1,000 products per collection (up to 4 light requests, cached ~5 min for counts). Fine for now; a catalog well beyond that (the reference shows 801, so close) should move to Search & Discovery facets or a different approach.
+- **1,000-product scan cap.** Tag/price-band/on-sale/category filters and counts read up to 1,000 products per collection. Fine now; a catalog near the reference's ~800 should move to Search & Discovery facets.
 - **Filter counts are static per collection** — they don't update as other filters are ticked, and can lag ~5 min.
-- **Tag vocabulary lives in config** for plain tags (`TAG_FILTER_GROUPS`); anything else needs the prefixed form.
+- **Tag vocabulary lives in config** for plain tags (`TAG_FILTER_GROUPS`).
 - **Missing collection URLs** return HTTP 200 with `noindex` (streaming behaviour of `loading.tsx`).
-- **Dynamic routes.** `/collections` and `/collections/[handle]` are dynamic (they read search params).
-- **Testing so far is scripted**, not human QA; cart flow and Lighthouse have not been run.
+- **Dynamic routes:** `/collections/**`, `/products/**`, `/pages/**` and `/policies/**` render on demand (Shopify data cached ~1 h).
+- **Wishlist is per-browser** (localStorage); it cannot follow a customer across devices without an account integration.
+- **Delivery labels are display-only** — checkout does not enforce them.
+- **Scroll auto-hide** uses a sticky `top` offset (not a transform) so dialogs inside the header keep working; verified only in emulated touch.
+- **Testing is scripted**, not human QA.
 
-## Open decisions (need an answer before Day 8)
+## Open decisions
 
-1. **Where do stores, delivery zones/charges and ratings live?** Options:
-   - **A. Shopify-native (recommended to evaluate first):** stores → Shopify Locations or metaobjects; delivery → Shopify shipping profiles / Markets; reviews → a Shopify reviews app (this also supplies the rating metafields `ProductCard` needs). No custom backend, far less to build and secure.
-   - **B. Custom backend on Railway** (as planned): full control, but you own auth, DB, and keeping data in sync with Shopify.
-2. **Admin auth:** the plan says "authentication system" without a provider. Suggest NextAuth/Auth.js or a managed provider rather than hand-rolled.
-3. **Backend stack for Railway:** not specified (Node/Express + Postgres is the usual choice). Pick before Day 8.
-4. **Is the custom admin needed at all** if Option A covers stores/delivery/ratings? Worth deciding first; it could remove Days 8–14 or shrink them.
-5. **Should the homepage strip and the Gold/Diamonds/Pearls nav be menu-driven** like the rest, so merchants edit them in Shopify instead of code?
+1. **Custom admin (Days 8–14): still needed?** Stores (metaobjects), reviews (Judge.me) and delivery (config) work without a backend. If the merchant needs delivery zones/charges editable in a UI or ratings moderation beyond Judge.me, decide between Shopify metaobjects/Locations or a custom backend (Railway); otherwise drop Days 8–14.
+2. **Account area:** Shopify-hosted login (current) vs an in-storefront account using the Customer Account API.
+3. **Should the homepage strip and the Gold/Diamonds/Pearls nav be menu-driven** so merchants edit them in Shopify instead of code?
+4. **Store locator:** is an embedded map required, or are the list and Directions links enough?
+5. **Primary gold:** confirm `#967123` with the client.
 
 ## Suggested next steps (in order)
 
-1. **Commit and push** current work on a feature branch (highest priority — nothing since `f426de8` is saved).
-2. **Deploy to Vercel** with the three `NEXT_PUBLIC_SHOPIFY_*` env vars; confirm `.env.local` stays git-ignored.
-3. **Replace the ProductCard placeholders** (stars/"(6)"/delivery pill) with real or hidden data.
-4. **Finish Shopify content:** Our Collections (13 items), tags on products, curations, gift collection handles.
-5. **Build `/stores`** after deciding the data source.
-6. **Full manual QA + Lighthouse** on the deployed URL (cart flow, mobile, keyboard/focus).
-7. **Decide A vs B** above, then start the admin.
+1. **Deploy / confirm deployment** and set all env vars, including Judge.me (fixes the reviews section missing on live).
+2. **Paste the Shopify content pack** and publish Arabic translations so the footer pages stop returning 404.
+3. **Real-device QA + Lighthouse** on the deployed URL.
+4. **Finish Shopify content:** Our Collections (13), product tags, curations, gift collection handles, real products.
+5. **Small code items:** footer socials, testimonials carousel, sitemap entries, store map (if wanted), footer email spelling.
+6. **Decide** on the custom admin and the account area.
 
 ## Original 14-day plan (reference)
 
