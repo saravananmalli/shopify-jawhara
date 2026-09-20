@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import CarouselPagination from "@/components/ui/CarouselPagination";
@@ -49,6 +50,40 @@ export default function CollectionCategoryStrip({
   const { collection: t, common } = useDictionary();
   const { scrollRef, pageCount, activePage, scrollByPage, handleScroll } =
     useScrollCarousel(categories.length);
+
+  // The selected category is what the shopper is looking at, so it is brought
+  // to the start edge of the row (not left wherever the row was scrolled). The
+  // first run on a fresh page jumps there before paint; later selections glide.
+  const selectedHandle =
+    categories.find((category) =>
+      scope
+        ? scope.query.filters.includes(inCollectionInput(category.handle))
+        : category.handle === currentHandle,
+    )?.handle ?? null;
+  const hasAligned = useRef(false);
+  useLayoutEffect(() => {
+    const row = scrollRef.current;
+    const tile = row?.querySelector<HTMLElement>("[aria-current]")?.closest("li");
+    if (!row || !tile) return;
+
+    const rowBox = row.getBoundingClientRect();
+    const tileBox = tile.getBoundingClientRect();
+    const gutter = parseFloat(getComputedStyle(row).paddingInlineStart) || 0;
+    // Distance the tile's start edge is from where the row's first tile sits.
+    // The same subtraction works in RTL: scrollLeft goes negative there, and
+    // the tile lies toward that side, so the delta is negative too.
+    const isRtl = getComputedStyle(row).direction === "rtl";
+    const delta = isRtl
+      ? tileBox.right - (rowBox.right - gutter)
+      : tileBox.left - (rowBox.left + gutter);
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    row.scrollTo({
+      left: row.scrollLeft + delta,
+      behavior: hasAligned.current && !reduceMotion ? "smooth" : "instant",
+    });
+    hasAligned.current = true;
+  }, [selectedHandle, scrollRef]);
 
   if (categories.length === 0) return null;
 
