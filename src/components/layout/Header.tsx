@@ -152,11 +152,11 @@ export default function Header({
                 height={24}
                 className="h-6 w-6 shrink-0"
               />
-              <span className="flex flex-col items-start gap-0.5 text-left">
-                <span className="font-sans text-[10px] font-semibold uppercase tracking-widest text-gold-800">
+              <span className="flex flex-col items-start gap-1 text-left">
+                <span className="font-sans text-[10px] font-semibold uppercase leading-none tracking-widest text-gold-800">
                   Deliver to
                 </span>
-                <span className="flex items-center gap-1 text-sm font-semibold">
+                <span className="flex items-center gap-1 text-sm font-semibold leading-none">
                   {emirate ? `${emirate}, UAE` : "Select location"}
                   <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
                 </span>

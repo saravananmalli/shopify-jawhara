@@ -1,6 +1,7 @@
 import { shopifyFetch } from "@/services/shopify/client";
 import { toProduct, toProductDetail } from "@/services/shopify/adapters";
 import {
+  COLLECTION_PRODUCTS_QUERY,
   PRODUCTS_BY_IDS_QUERY,
   PRODUCTS_QUERY,
   PRODUCT_BY_HANDLE_QUERY,
@@ -64,6 +65,56 @@ export async function searchProducts({
   });
 
   return data.products.edges.map((edge) => toProduct(edge.node));
+}
+
+/**
+ * Shopify search-syntax filter (`tag:solitaire`, `variants.price:<5000`) for
+ * the homepage tabs. Unlike `searchProducts` it does NOT strip operators —
+ * the query is written in code (never typed by a shopper), and stripping the
+ * `:`/`<` turns a filter into a plain-text search that matches nothing.
+ * Don't pass user input here.
+ */
+export async function filterProducts({
+  query,
+  first = 12,
+}: {
+  query: string;
+  first?: number;
+}): Promise<Product[]> {
+  const data = await shopifyFetch<{
+    products: { edges: { node: ShopifyProductCard }[] };
+  }>({
+    query: SEARCH_PRODUCTS_QUERY,
+    variables: { query, first },
+    revalidate: PRODUCT_REVALIDATE_SECONDS,
+  });
+
+  return data.products.edges.map((edge) => toProduct(edge.node));
+}
+
+/**
+ * A collection's products in the order set in Shopify Admin. Returns [] when
+ * the collection doesn't exist (yet) or is empty, so callers can fall back.
+ */
+export async function getCollectionProducts({
+  handle,
+  first = 12,
+  revalidate = PRODUCT_REVALIDATE_SECONDS,
+}: {
+  handle: string;
+  first?: number;
+  /** Override for statically generated pages that re-render on their own schedule. */
+  revalidate?: number;
+}): Promise<Product[]> {
+  const data = await shopifyFetch<{
+    collection: { products: { edges: { node: ShopifyProductCard }[] } } | null;
+  }>({
+    query: COLLECTION_PRODUCTS_QUERY,
+    variables: { handle, first },
+    revalidate,
+  });
+
+  return data.collection?.products.edges.map((edge) => toProduct(edge.node)) ?? [];
 }
 
 export async function getProductByHandle(

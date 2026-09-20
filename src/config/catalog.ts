@@ -36,6 +36,12 @@ export const CATEGORY_MENU_HANDLE = "collections";
  * instead of leading to other collection pages. */
 export const GIFTS_PROMO_HANDLE = "gift";
 
+/** Shopify collection that curates the homepage "Signature Masterpieces" shelf
+ * (its "All Masterpieces" tab): add products to it (and drag to reorder) in
+ * Admin → Products → Collections. Until it has products, the shelf shows the
+ * top best sellers. */
+export const MASTERPIECES_COLLECTION_HANDLE = "statement-masterpieces";
+
 /** Shopify collection whose image and link back the homepage atelier section. */
 export const ATELIER_COLLECTION_HANDLE = "solitaire";
 
