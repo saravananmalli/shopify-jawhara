@@ -114,7 +114,7 @@ export default function Header({
         <div className="mx-auto flex max-w-8xl items-center justify-between">
           <span className="flex items-center gap-1.5 font-medium">
             {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
-            <img src="/brand/icons/badge-white.svg" alt="" aria-hidden className="h-6 w-6" />
+            <img src="/brand/icons/badge-white.svg" alt="" aria-hidden className="h-5 w-5" />
             {t.header.heritage}
           </span>
           <AnnouncementTicker />
@@ -300,7 +300,7 @@ export default function Header({
           })}
           <li className="ms-auto flex items-center gap-1.5 whitespace-nowrap text-gold-700">
             {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
-            <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-6 w-6" />
+            <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
             {t.header.heritage}
           </li>
         </ul>
