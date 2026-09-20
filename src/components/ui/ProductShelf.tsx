@@ -30,7 +30,7 @@ export default function ProductShelf({
             <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
               {eyebrow ?? home.shelfEyebrow}
             </p>
-            <h2 className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-3xl">{title}</h2>
+            <h2 className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[28px]">{title}</h2>
             {subtitle && (
               <p className="mt-1 font-sans text-sm text-brown-900/60">{subtitle}</p>
             )}
