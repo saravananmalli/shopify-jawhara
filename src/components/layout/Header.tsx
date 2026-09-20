@@ -229,7 +229,7 @@ export default function Header({
             </a>
             <Link
               href="/wishlist"
-              className="-me-2 flex h-11 w-11 items-center justify-center sm:me-0 sm:h-auto sm:w-auto"
+              className="flex h-11 w-11 items-center justify-center sm:h-auto sm:w-auto"
               aria-label={formatMessage(t.header.wishlistLabel, { count: itemsLabel(wishlistCount) })}
             >
               <span className="relative">
@@ -241,7 +241,7 @@ export default function Header({
               onClick={openCart}
               onPointerEnter={loadCartDrawer}
               onFocus={loadCartDrawer}
-              className="hidden h-11 w-11 items-center justify-center gap-2 md:-me-2 md:flex lg:me-0 lg:h-auto lg:w-auto"
+              className="-me-2 flex h-11 w-11 items-center justify-center gap-2 lg:me-0 lg:h-auto lg:w-auto"
               aria-label={formatMessage(t.header.bagLabel, { count: itemsLabel(itemCount) })}
             >
               <span className="relative">

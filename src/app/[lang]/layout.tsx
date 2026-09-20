@@ -124,7 +124,10 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <main className="flex-1">{children}</main>
               <Footer brand={brand} footerNav={footerNav} />
               <LocationPrompt />
-              <BottomNav categories={shopCategories} />
+              <BottomNav
+                categories={shopCategories}
+                ourCollectionsUrl={headerNav.find((link) => link.key === "our collections")?.url ?? "/collections"}
+              />
               <NavAutoHide />
             </DeliveryProvider>
           </WishlistProvider>

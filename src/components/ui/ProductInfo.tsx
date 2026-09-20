@@ -187,7 +187,9 @@ export default function ProductInfo({
 
       <DeliveryEstimate available={available} />
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      {/* On phones this row is the page's fixed purchase bar (quantity, add to
+          bag, wishlist) and replaces the tab bar; from md it is a normal row. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-2 border-t border-black/[0.08] bg-white px-(--page-gutter) pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] md:static md:z-auto md:mt-4 md:gap-3 md:border-0 md:bg-transparent md:p-0 md:shadow-none">
         {available && <QuantitySelector value={quantity} onChange={setQuantity} />}
 
         {selectedVariant && available ? (
@@ -197,13 +199,13 @@ export default function ProductInfo({
             label={formatMessage(t.addToBagWithTotal, {
               total: formatMoney(price.amount * quantity, price.currencyCode, locale),
             })}
-            className="order-last h-12 min-w-full rounded-xl! text-[14px]! sm:order-none sm:min-w-0 sm:flex-1"
+            className="h-12 min-w-0 flex-1 rounded-xl! px-2! text-center text-[14px]! leading-tight! max-[359px]:[&>svg]:hidden"
           />
         ) : (
           <button
             type="button"
             disabled
-            className="order-last h-12 min-w-full rounded-xl bg-cream-100 px-4 sm:order-none sm:min-w-0 sm:flex-1 font-sans text-[14px] font-semibold uppercase tracking-wide text-brown-900/40"
+            className="h-12 min-w-0 flex-1 rounded-xl bg-cream-100 px-4 font-sans text-[14px] font-semibold uppercase tracking-wide text-brown-900/40"
           >
             {t.outOfStock}
           </button>
@@ -212,7 +214,7 @@ export default function ProductInfo({
         <WishlistButton
           product={product}
           iconClassName="h-5 w-5"
-          className="ms-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cream-100 transition-colors hover:bg-cream-200 sm:ms-0"
+          className="flex h-12 w-11 shrink-0 items-center justify-center rounded-xl bg-cream-100 transition-colors hover:bg-cream-200 min-[360px]:w-12"
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRoutePath } from "@/hooks/useRoutePath";
 import { useLocationUi } from "@/store/delivery";
 import { useDictionary } from "@/store/locale";
 import { CloseIcon, MapPinIcon } from "@/components/icons";
@@ -13,13 +14,17 @@ import { CloseIcon, MapPinIcon } from "@/components/icons";
 export default function LocationPrompt() {
   const { promptVisible, locating, allowLocation, dismissPrompt, openPicker } = useLocationUi();
   const { delivery: t, common } = useDictionary();
+  // The product page's purchase bar never hides, so the prompt must stay above it.
+  const aboveFixedBar = useRoutePath().startsWith("/products/");
 
   if (!promptVisible) return null;
 
   return (
     <aside
       aria-label={t.locationLabel}
-      className="fixed inset-x-4 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 transition-[bottom] duration-300 ease-luxury [html[data-nav-hidden=true]_&]:bottom-4 flex items-start gap-3 rounded-2xl border border-gold-100 bg-white p-4 font-sans shadow-xl sm:inset-x-auto sm:start-4 sm:max-w-sm"
+      className={`fixed inset-x-4 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 flex items-start gap-3 rounded-2xl border border-gold-100 bg-white p-4 font-sans shadow-xl transition-[bottom] duration-300 ease-luxury sm:inset-x-auto sm:start-4 sm:max-w-sm ${
+        aboveFixedBar ? "" : "[html[data-nav-hidden=true]_&]:bottom-4"
+      }`}
     >
       <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
       <div className="min-w-0 flex-1">

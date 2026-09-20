@@ -4,13 +4,10 @@ import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { CloseIcon } from "@/components/icons";
-import CountBadge from "@/components/ui/CountBadge";
 import NavIcon from "@/components/ui/NavIcon";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useRoutePath } from "@/hooks/useRoutePath";
-import { useCart } from "@/store/cart";
-import { useDictionary, useLocale } from "@/store/locale";
-import { formatMessage, pluralize } from "@/utils/i18n";
+import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import { ALL_PRODUCTS_HANDLE } from "@/config/catalog";
 import { shopifyConfig } from "@/config/shopify";
@@ -19,7 +16,7 @@ import type { Collection } from "@/types/content";
 // 2x the rendered card image (~104px wide in the 2-column sheet).
 const CATEGORY_IMAGE_WIDTH = 240;
 
-type TabKey = "home" | "categories" | "account" | "cart";
+type TabKey = "home" | "categories" | "collections" | "account";
 
 /**
  * Phone-only bottom tab bar (Home / Categories / Account / Cart) — the
@@ -27,12 +24,16 @@ type TabKey = "home" | "categories" | "account" | "cart";
  * menu, search and bag. Categories opens a bottom sheet of the real Shopify
  * category collections; Cart opens the same drawer as the header's bag button.
  */
-export default function BottomNav({ categories }: { categories: Collection[] }) {
-  const { bottomNav: t, common, header, collection } = useDictionary();
-  const locale = useLocale();
+export default function BottomNav({
+  categories,
+  ourCollectionsUrl,
+}: {
+  categories: Collection[];
+  /** The "Our Collections" link from the Shopify main menu. */
+  ourCollectionsUrl: string;
+}) {
+  const { bottomNav: t, common, collection } = useDictionary();
   const pathname = useRoutePath();
-  const { cart, isOpen: cartOpen, openCart } = useCart();
-  const itemCount = cart?.totalQuantity ?? 0;
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -40,11 +41,14 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
   useFocusTrap(sheetRef, sheetOpen, closeSheet);
 
   const isActive: Record<TabKey, boolean> = {
-    home: pathname === "/" && !sheetOpen && !cartOpen,
-    categories: sheetOpen || (!cartOpen && pathname.startsWith("/collections")),
+    home: pathname === "/" && !sheetOpen,
+    // Any other collection page belongs to Categories, except the Our
+    // Collections landing itself.
+    categories: sheetOpen || (pathname.startsWith("/collections") && pathname !== ourCollectionsUrl),
+    collections: !sheetOpen && pathname === ourCollectionsUrl,
     account: false, // leaves the site for Shopify, so it never shows as current
-    cart: cartOpen,
   };
+
 
   // Shopify's automatic "all products" page first, then the real categories.
   const sheetLinks = [
@@ -65,6 +69,9 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
     `h-[26px] w-[26px] transition-transform duration-(--motion-fast) ease-luxury ${
       isActive[tab] ? "scale-105" : ""
     }`;
+
+  // The product page has its own fixed purchase bar in this spot (ProductInfo).
+  if (pathname.startsWith("/products/")) return null;
 
   return (
     <>
@@ -94,26 +101,19 @@ export default function BottomNav({ categories }: { categories: Collection[] }) 
           {t.categories}
         </button>
 
+        <Link
+          href={ourCollectionsUrl}
+          aria-current={pathname === ourCollectionsUrl ? "page" : undefined}
+          className={itemClass("collections")}
+        >
+          <NavIcon name="collections" tinted className={iconClass("collections")} />
+          {t.ourCollections}
+        </Link>
+
         <a href={shopifyConfig.accountUrl} className={itemClass("account")}>
           <NavIcon name="account" tinted className={iconClass("account")} />
           {t.account}
         </a>
-
-        <button
-          type="button"
-          onClick={openCart}
-          aria-haspopup="dialog"
-          aria-label={formatMessage(header.bagLabel, {
-            count: pluralize(locale, itemCount, header.items),
-          })}
-          className={itemClass("cart")}
-        >
-          <span className="relative flex">
-            <NavIcon name="cart" tinted className={iconClass("cart")} />
-            {itemCount > 0 && <CountBadge count={itemCount} />}
-          </span>
-          {t.cart}
-        </button>
       </nav>
 
       {/* Closed sheet is inert so its links leave the tab order. */}

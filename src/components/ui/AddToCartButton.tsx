@@ -42,7 +42,7 @@ export default function AddToCartButton({
         aria-label={justAdded ? t.addedToBag : buttonLabel}
         className={`flex items-center justify-center transition-colors disabled:opacity-60 ${className}`}
       >
-        {justAdded ? <CheckIcon className="h-4 w-4" /> : <BagIcon className="h-4 w-4" />}
+        {justAdded ? <CheckIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <BagIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
       </button>
     );
   }

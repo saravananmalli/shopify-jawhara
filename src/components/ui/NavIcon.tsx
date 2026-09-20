@@ -3,6 +3,7 @@ import Image from "next/image";
 const NAV_ICON_SRC = {
   home: "/brand/icons/nav/home.webp",
   categories: "/brand/icons/nav/categories.webp",
+  collections: "/brand/icons/nav/collections.svg",
   wishlist: "/brand/icons/nav/wishlist.webp",
   account: "/brand/icons/nav/account.webp",
   cart: "/brand/icons/nav/cart.webp",
