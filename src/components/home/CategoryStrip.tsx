@@ -64,7 +64,7 @@ export default function CategoryStrip({
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-0 pe-(--page-gutter) sm:mt-6 sm:pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="mt-1 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-0 pe-(--page-gutter) sm:mt-6 sm:pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {/* A real flex child, not container padding — padding-inline-start
                 on a scrollable flex container gets treated as already-scrolled
@@ -77,7 +77,7 @@ export default function CategoryStrip({
                 href={`/collections/${cat.handle}`}
                 className="w-[min(11rem,52vw)] shrink-0 snap-start sm:w-80"
               >
-                <div className="relative aspect-[4/5] sm:aspect-[18/25] w-full overflow-hidden rounded-2xl bg-cream-100">
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-cream-100">
                   {cat.imageUrl && (
                     <Image
                       src={getShopifyImageUrl(cat.imageUrl, CATEGORY_IMAGE_WIDTH)}
