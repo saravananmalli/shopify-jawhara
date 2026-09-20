@@ -19,7 +19,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <section role="alert" className="mx-auto max-w-8xl px-4 py-24 text-center">
+    <section role="alert" className="page-container py-24 text-center">
       <h1 className="font-serif text-3xl">{t.somethingWrong}</h1>
       <p className="mx-auto mt-3 max-w-md text-sm text-brown-900/60">
         {t.loadFailed}

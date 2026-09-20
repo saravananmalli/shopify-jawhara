@@ -462,5 +462,15 @@
     "loadFailed": "We couldn't load this page. Please try again in a moment.",
     "tryAgain": "Try again",
     "reference": "Reference: {digest}"
+  },
+  "bottomNav": {
+    "label": "Mobile navigation",
+    "home": "Home",
+    "categories": "Categories",
+    "account": "Account",
+    "cart": "Cart",
+    "sheetTitle": "Shop by Category",
+    "allJewellery": "All Jewellery",
+    "closeSheet": "Close categories"
   }
 }

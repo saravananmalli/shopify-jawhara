@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Kufi_Arabic, Poppins } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import LocationPrompt from "@/components/layout/LocationPrompt";
 import { CartProvider } from "@/store/cart";
 import { LocaleProvider } from "@/store/locale";
@@ -12,6 +13,7 @@ import {
   GIFTS_PROMO_HANDLE,
   GOLD_CATEGORY_HANDLES,
   PEARL_CATEGORY_HANDLES,
+  SHOP_BY_CATEGORY_HANDLES,
 } from "@/config/catalog";
 import { siteUrl } from "@/config/site";
 import { localeConfig, locales } from "@/config/i18n";
@@ -82,6 +84,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       gold: goldCategories,
       diamond: diamondCategories,
       pearl: pearlCategories,
+      categories: shopCategories,
     },
   ] = await Promise.all([
     getBrand(locale),
@@ -93,6 +96,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       gold: GOLD_CATEGORY_HANDLES,
       diamond: DIAMOND_CATEGORY_HANDLES,
       pearl: PEARL_CATEGORY_HANDLES,
+      categories: SHOP_BY_CATEGORY_HANDLES,
     }, locale),
   ]);
 
@@ -102,7 +106,8 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       dir={dir}
       className={`${latin.variable} ${locale === "ar" ? arabic.variable : ""} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col text-brown-900">
+      {/* Bottom padding keeps the footer clear of the phone tab bar (4rem tall). */}
+      <body className="min-h-full flex flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] text-brown-900 md:pb-0">
         <LocaleProvider locale={locale} dictionary={dictionary}>
         <CartProvider>
           <WishlistProvider>
@@ -118,6 +123,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               <main className="flex-1">{children}</main>
               <Footer brand={brand} footerNav={footerNav} />
               <LocationPrompt />
+              <BottomNav categories={shopCategories} />
             </DeliveryProvider>
           </WishlistProvider>
         </CartProvider>

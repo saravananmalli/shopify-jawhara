@@ -11,6 +11,7 @@ import ProductCard from "@/components/ui/ProductCard";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { SparkleIcon, StarIcon, TrendingIcon } from "@/components/icons";
+import { PRODUCT_GRID_CLASS } from "@/config/layout";
 import { QUICK_TAG_CHIPS, SORT_OPTION_KEYS } from "@/config/catalog";
 import {
   buildCatalogQueryString,
@@ -171,7 +172,9 @@ export default function CollectionBrowser({
           is static on collection pages, so this is the only sticky bar. The
           opaque background hides cards passing underneath. */}
       <div className="sticky top-0 z-30 mt-2 bg-cream-50 pt-3">
-        <div className="flex flex-wrap items-center gap-3">
+        {/* One swipeable row on phones (bleeding to the screen edges) instead
+            of wrapping onto a second line; wraps normally from sm. */}
+        <div className="-mx-(--page-gutter) flex scroll-px-(--page-gutter) snap-x items-center gap-2 overflow-x-auto px-(--page-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
           <ChipButton
             active={noneApplied}
             onClick={() => navigate({ sort: "RECOMMENDED", filters: [] })}
@@ -226,9 +229,9 @@ export default function CollectionBrowser({
             )}
           </div>
         ) : (
-          <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <ul className={PRODUCT_GRID_CLASS}>
             {products.map((product) => (
-              <li key={product.id}>
+              <li key={product.id} className="min-w-0">
                 <ProductCard product={product} />
               </li>
             ))}

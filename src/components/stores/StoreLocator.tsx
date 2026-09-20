@@ -170,7 +170,7 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
   return (
     <>
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative min-w-55 flex-1">
+        <div className="relative min-w-0 flex-1 basis-55">
           <label htmlFor={searchId} className="sr-only">
             {t.searchLabel}
           </label>
@@ -217,7 +217,7 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
           type="button"
           onClick={locate}
           disabled={locating}
-          className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-lg bg-gold-600 px-5 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:cursor-not-allowed disabled:opacity-70"
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold-600 px-5 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:cursor-not-allowed disabled:opacity-70"
         >
           <CrosshairIcon className={`h-4 w-4 ${locating ? "animate-spin" : ""}`} />
           {locating ? t.locating : userCoordinates ? t.updateLocation : t.showNearby}

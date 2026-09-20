@@ -66,7 +66,7 @@ export default function ImageCategoryMegaMenu({
       {hasContent && (
         <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
-            <div className="mx-auto max-w-8xl px-4 py-6">
+            <div className="page-container py-6">
               {imageCategories.length > 0 && (
                 <>
                   <div className="mb-4 flex items-center justify-between">

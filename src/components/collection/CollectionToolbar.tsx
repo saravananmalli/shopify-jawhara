@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDownIcon, SlidersIcon } from "@/components/icons";
+import { SlidersIcon } from "@/components/icons";
+import SelectDropdown from "@/components/ui/SelectDropdown";
 import FilterDropdown from "@/components/collection/FilterDropdown";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { useDictionary } from "@/store/locale";
@@ -9,6 +10,12 @@ import type { CatalogSortKey } from "@/types/catalog";
 
 /** Inline dropdowns beyond this many live only in the "Show All Filters" drawer. */
 const MAX_INLINE_FILTERS = 4;
+
+/** "Show All Filters" and the sort dropdown share one width: half the row on
+ * phones, a fixed width from sm. An explicit half-row basis, not `flex-1`:
+ * with a zero basis the button's padding and border would make it wider than
+ * the dropdown. 0.25rem is half the row's 0.5rem gap. */
+const FILTER_CONTROL_WIDTH_CLASS = "min-w-0 basis-[calc(50%-0.25rem)] sm:w-48 sm:basis-auto";
 
 export default function CollectionToolbar({
   countLabel,
@@ -33,8 +40,8 @@ export default function CollectionToolbar({
   const totalApplied = actions.active.length;
 
   return (
-    <div className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-3">
-      <p aria-live="polite" className="me-2 font-sans text-base text-brown-900">
+    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:mt-6 sm:py-3">
+      <p aria-live="polite" className="basis-full font-sans text-sm text-brown-900 sm:me-2 sm:basis-auto sm:text-base">
         {countLabel}
       </p>
 
@@ -63,7 +70,7 @@ export default function CollectionToolbar({
         type="button"
         onClick={onOpenFilters}
         aria-haspopup="dialog"
-        className="flex h-9 items-center gap-1.5 rounded-lg border border-gold-600 bg-white px-3 font-sans text-[13px] font-medium text-gold-700 transition-colors hover:bg-cream-100"
+        className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border border-gold-600 bg-white px-2.5 font-sans text-[13px] font-medium text-gold-700 transition-colors hover:bg-cream-100 ${FILTER_CONTROL_WIDTH_CLASS}`}
       >
         <SlidersIcon className="h-4 w-4" />
         {t.showAllFilters}
@@ -74,27 +81,20 @@ export default function CollectionToolbar({
         )}
       </button>
 
-      <div className="ms-auto flex items-center gap-2 font-sans text-[13px]">
-        <label htmlFor="collection-sort" className="text-brown-900/60">
+      <div className="flex min-w-0 basis-[calc(50%-0.25rem)] items-center gap-2 font-sans text-[13px] sm:ms-auto sm:basis-auto">
+        <span aria-hidden className="hidden text-brown-900/60 sm:inline">
           {t.sortBy}
-        </label>
-        <div className="relative">
-          <select
-            id="collection-sort"
-            value={sort}
-            onChange={(event) =>
-              onSortChange(event.target.value as CatalogSortKey)
-            }
-            className="h-9 cursor-pointer appearance-none rounded-lg border border-[#D6D3D1] bg-white py-0 ps-3 pe-8 text-brown-900 focus-visible:border-gold-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold-600"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.key} value={option.key}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDownIcon className="pointer-events-none absolute end-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-brown-900" />
-        </div>
+        </span>
+        <SelectDropdown
+          label={t.sortBy}
+          value={sort}
+          options={sortOptions.map((option) => option.key)}
+          optionLabel={(key) => sortOptions.find((option) => option.key === key)?.label ?? key}
+          onChange={(next) => onSortChange(next as CatalogSortKey)}
+          size="sm"
+          menuAlign="end"
+          className="min-w-0 flex-1 sm:w-48 sm:flex-none"
+        />
       </div>
     </div>
   );

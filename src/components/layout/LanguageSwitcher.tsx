@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LOCALE_COOKIE, localeConfig, type Locale } from "@/config/i18n";
 import { useDictionary, useLocale } from "@/store/locale";
@@ -14,7 +15,14 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
  * Switching is a client-side navigation — no document reload. `<html lang
  * dir>` is rendered by the root layout from the URL's `[lang]` param, so the
  * direction, font and every server-rendered string change together. */
-export default function LanguageSwitcher({ className = "" }: { className?: string }) {
+export default function LanguageSwitcher({
+  className = "",
+  showFlag = false,
+}: {
+  className?: string;
+  /** UAE flag before the Arabic label (only ever shown next to "العربية"). */
+  showFlag?: boolean;
+}) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
@@ -40,6 +48,9 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
       }}
       className={className}
     >
+      {showFlag && target === "ar" && (
+        <Image src="/brand/icons/nav/uae.webp" alt="" width={24} height={24} className="h-6 w-6" />
+      )}
       {localeConfig[target].label}
     </a>
   );

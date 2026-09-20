@@ -52,7 +52,7 @@ export default function MegaMenuItem({
       {hasColumns && (
         <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
-            <div className="mx-auto flex max-w-8xl gap-10 px-4 py-6">
+            <div className="flex page-container gap-10 py-6">
               {link.items.map((column) => (
                 <div key={column.title} className="min-w-[140px] flex-1">
                   <MenuLink

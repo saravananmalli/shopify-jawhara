@@ -12,7 +12,7 @@ export default async function NotFound() {
   const { errors: t } = await getDictionary(await getLocale());
 
   return (
-    <section className="mx-auto max-w-8xl px-4 py-24 text-center">
+    <section className="page-container py-24 text-center">
       <p className="text-sm font-medium uppercase tracking-widest text-gold-600">404</p>
       <h1 className="mt-3 font-serif text-3xl">{t.notFoundTitle}</h1>
       <p className="mx-auto mt-3 max-w-md text-sm text-brown-900/60">{t.notFoundBody}</p>

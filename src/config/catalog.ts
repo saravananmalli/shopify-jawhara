@@ -158,3 +158,16 @@ export const CATEGORY_TILE_GROUPS: string[][] = [
   DIAMOND_CATEGORY_HANDLES,
   PEARL_CATEGORY_HANDLES,
 ];
+
+/** Real Shopify collections powering the homepage "Shop By Category" strip
+ * and the mobile bottom bar's category sheet
+ * — the plain, material-agnostic collections (not the "Gold Rings" /
+ * "Diamond Rings" / "Pearl Rings" material-line variants). */
+export const SHOP_BY_CATEGORY_HANDLES = [
+  "rings",
+  "earrings",
+  "pendants",
+  "necklace",
+  "bracelet",
+  "bangles",
+];

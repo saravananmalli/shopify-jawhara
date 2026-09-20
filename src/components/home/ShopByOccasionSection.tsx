@@ -40,7 +40,7 @@ export default function ShopByOccasionSection({
       {/* Below md this is an ordinary vertical stack; from md up it pins under
           the header while the hook slides the track sideways. */}
       <div className="md:sticky md:top-(--header-offset) md:flex md:h-[calc(100vh-var(--header-offset))] md:flex-col md:justify-center md:gap-8 md:overflow-hidden">
-        <div className="px-4 pb-8 text-center md:pb-0">
+        <div className="px-(--page-gutter) pb-8 text-center md:pb-0">
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
             {t.eyebrow}
           </p>
@@ -54,7 +54,7 @@ export default function ShopByOccasionSection({
 
         <div
           ref={trackRef}
-          className="flex flex-col gap-4 px-4 will-change-transform md:w-max md:flex-row md:items-center md:gap-8 md:px-(--slot-pad)"
+          className="flex flex-col gap-4 px-(--page-gutter) will-change-transform md:w-max md:flex-row md:items-center md:gap-8 md:px-(--slot-pad)"
         >
           {occasions.map((occasion, index) => {
             const isActive = index === activeIndex;
@@ -72,7 +72,7 @@ export default function ShopByOccasionSection({
                 <Link
                   href={occasion.ctaHref}
                   tabIndex={tabIndex}
-                  className={`group relative block h-[520px] w-full overflow-hidden rounded-2xl transition-transform duration-700 ease-luxury focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-600 md:h-[min(600px,calc(100vh-var(--header-offset)-12rem))] md:w-[97%] ${
+                  className={`group relative block h-[clamp(26rem,120vw,32.5rem)] w-full overflow-hidden rounded-2xl transition-transform duration-700 ease-luxury focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-600 md:h-[max(18rem,min(600px,calc(100vh-var(--header-offset)-12rem)))] md:w-[97%] ${
                     isActive ? "" : "md:scale-90"
                   }`}
                 >

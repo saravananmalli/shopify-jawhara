@@ -67,7 +67,7 @@ export default async function StoresPage() {
       )}
 
       <section className="bg-cream-100">
-        <div className="mx-auto max-w-8xl px-4 py-8 sm:py-12">
+        <div className="page-container py-8 sm:py-12">
           <h1 className="font-sans text-3xl leading-tight text-gold-600 sm:text-4xl">
             {t.heading}
           </h1>
@@ -75,7 +75,7 @@ export default async function StoresPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-8xl px-4 pb-16 pt-8">
+      <div className="page-container pb-16 pt-8">
         <StoreLocator stores={stores} />
       </div>
     </>

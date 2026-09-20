@@ -117,7 +117,7 @@ export default async function CollectionPageView({
 
   return (
     <div className="bg-cream-50">
-      <section className="mx-auto max-w-8xl pb-16 pt-3">
+      <section className="page-container pb-16 pt-3">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}

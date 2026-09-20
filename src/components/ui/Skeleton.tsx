@@ -1,6 +1,13 @@
 "use client";
 
 import { useDictionary } from "@/store/locale";
+import {
+  CATEGORY_TILE_IMAGE_CLASS,
+  CATEGORY_TILE_WIDTH_CLASS,
+  PRODUCT_CAROUSEL_GAP_CLASS,
+  PRODUCT_CAROUSEL_ITEM_CLASS,
+  PRODUCT_GRID_CLASS,
+} from "@/config/layout";
 
 /**
  * Shared loading placeholders. Each one mirrors the real component's box
@@ -51,7 +58,6 @@ export function ProductCardSkeleton() {
   );
 }
 
-const GRID = "grid grid-cols-2 gap-4 lg:grid-cols-4";
 
 export function ProductGridSkeleton({
   count = 8,
@@ -65,7 +71,7 @@ export function ProductGridSkeleton({
   const { common } = useDictionary();
 
   return (
-    <SkeletonRegion label={label ?? common.loadingProducts} className={`${GRID} ${className}`}>
+    <SkeletonRegion label={label ?? common.loadingProducts} className={`${PRODUCT_GRID_CLASS} ${className}`}>
       {Array.from({ length: count }, (_, i) => (
         <ProductCardSkeleton key={i} />
       ))}
@@ -73,17 +79,17 @@ export function ProductGridSkeleton({
   );
 }
 
-/** Row sized like ProductCarousel (2 cards on mobile, 4 on desktop). */
+/** Row sized like ProductCarousel (2 cards on mobile, 3 on tablet, 4 on desktop). */
 export function ProductCarouselSkeleton({ label }: { label?: string }) {
   const { common } = useDictionary();
 
   return (
-    <SkeletonRegion label={label ?? common.loadingProducts} className="flex gap-4 overflow-hidden pb-2">
+    <SkeletonRegion label={label ?? common.loadingProducts} className={`flex ${PRODUCT_CAROUSEL_GAP_CLASS} overflow-hidden pb-2`}>
       {Array.from({ length: 4 }, (_, i) => (
         <div
           key={i}
-          className={`w-[calc(50%-8px)] shrink-0 lg:w-[calc(25%-12px)] ${
-            i >= 2 ? "hidden lg:block" : ""
+          className={`${PRODUCT_CAROUSEL_ITEM_CLASS} shrink-0 ${
+            i === 2 ? "hidden md:block" : i === 3 ? "hidden lg:block" : ""
           }`}
         >
           <ProductCardSkeleton />
@@ -99,12 +105,12 @@ export function CollectionPageSkeleton() {
 
   return (
     <div className="bg-cream-50">
-      <SkeletonRegion label={common.loadingCollection} className="mx-auto max-w-8xl pb-16 pt-3">
+      <SkeletonRegion label={common.loadingCollection} className="page-container pb-16 pt-3">
         <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="w-[226px] shrink-0">
+            <div key={i} className={`${CATEGORY_TILE_WIDTH_CLASS} shrink-0`}>
               <div className="p-1">
-                <Skeleton className="h-[240px] w-full rounded-xl" />
+                <Skeleton className={`${CATEGORY_TILE_IMAGE_CLASS} w-full rounded-xl`} />
               </div>
               <Skeleton className="mx-auto mt-2 h-5 w-24" />
             </div>
@@ -125,7 +131,7 @@ export function CollectionPageSkeleton() {
           <Skeleton className="ms-auto h-9 w-40 rounded-lg" />
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className={`mt-8 ${PRODUCT_GRID_CLASS}`}>
           {Array.from({ length: 8 }, (_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -140,7 +146,7 @@ export function ProductPageSkeleton() {
   const { common } = useDictionary();
 
   return (
-    <SkeletonRegion label={common.loadingProduct} className="mx-auto max-w-8xl px-4 py-8">
+    <SkeletonRegion label={common.loadingProduct} className="page-container py-8">
       <Skeleton className="h-5 w-64" />
 
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-start xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
