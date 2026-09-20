@@ -40,7 +40,7 @@ export default function CollectionToolbar({
   const totalApplied = actions.active.length;
 
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:mt-6 sm:py-3">
+    <div className="mt-3.5 flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:py-3">
       <p aria-live="polite" className="basis-full font-sans text-sm text-brown-900 sm:me-2 sm:basis-auto sm:text-base">
         {countLabel}
       </p>

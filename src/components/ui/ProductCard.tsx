@@ -49,7 +49,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
-        {badge && <Chip className="absolute start-2 top-2 z-10 max-w-[calc(100%-3.75rem)] text-center text-[9px]! leading-tight sm:start-3 sm:top-3 sm:text-[11px]!">{badge}</Chip>}
+        {badge && <Chip className="absolute start-2 top-2 z-10 max-w-[calc(100%-3.75rem)] text-center leading-tight sm:start-3 sm:top-3">{badge}</Chip>}
 
         {/* Wishlist / quick-add — hidden until hover or keyboard focus,
             then pop outward into place (per the design brief: "out from
