@@ -58,7 +58,7 @@ export default async function AtelierSection({
           <Chip tone="deep" className="mb-4">
             <SparkleIcon className="h-3.5 w-3.5" /> {t.chip}
           </Chip>
-          <h2 className="font-sans text-3xl leading-tight text-gold-600 sm:text-4xl">
+          <h2 className="font-sans text-2xl leading-tight text-gold-600 sm:text-4xl">
             {t.headingLine1}
             <br />
             <span className="font-sans italic text-gold-600">{t.headingLine2}</span>

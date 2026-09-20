@@ -39,13 +39,13 @@ export default function CategoryStrip({
     useScrollCarousel(categories.length);
 
   return (
-    <section className="bg-white py-10">
+    <section className="bg-white py-6 sm:py-10">
       <div className="flex page-container items-end justify-between">
         <div>
           <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-800">
             {t.home.categories.eyebrow}
           </p>
-          <h2 className="mt-1 font-sans text-[32px] font-normal text-gold-600">{t.home.categories.title}</h2>
+          <h2 className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[32px]">{t.home.categories.title}</h2>
         </div>
         <Link
           href="/collections"

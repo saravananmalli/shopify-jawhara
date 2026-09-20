@@ -46,7 +46,7 @@ export default function ShopByOccasionSection({
           </p>
           <h2
             id="shop-by-occasion-heading"
-            className="mt-1 font-sans text-3xl font-normal text-gold-600 sm:text-4xl"
+            className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-4xl"
           >
             {t.title}
           </h2>
