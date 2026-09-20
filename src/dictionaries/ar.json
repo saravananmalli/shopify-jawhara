@@ -506,7 +506,10 @@
     "account": "حسابي",
     "sheetTitle": "تسوّق حسب الفئة",
     "allJewellery": "جميع المجوهرات",
-    "closeSheet": "إغلاق الفئات"
+    "closeSheet": "إغلاق الفئات",
+    "collectionsTitle": "مجموعاتنا",
+    "allCollections": "جميع المجموعات",
+    "closeCollections": "إغلاق المجموعات"
   },
   "wishlist": {
     "title": "قائمة مفضلتي",

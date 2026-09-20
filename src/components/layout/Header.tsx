@@ -207,13 +207,13 @@ export default function Header({
             />
           </Link>
 
-          <div className="flex flex-1 items-center justify-end gap-2 text-sm sm:gap-5">
+          <div className="flex flex-1 items-center justify-end gap-0 text-sm sm:gap-5">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               onPointerEnter={loadSearchOverlay}
               onFocus={loadSearchOverlay}
-              className="flex h-11 w-11 items-center justify-center lg:hidden"
+              className="flex h-10 w-10 items-center justify-center lg:hidden"
               aria-haspopup="dialog"
               aria-label={t.search.label}
             >
@@ -229,7 +229,7 @@ export default function Header({
             </a>
             <Link
               href="/wishlist"
-              className="flex h-11 w-11 items-center justify-center sm:h-auto sm:w-auto"
+              className="flex h-10 w-10 items-center justify-center sm:h-auto sm:w-auto"
               aria-label={formatMessage(t.header.wishlistLabel, { count: itemsLabel(wishlistCount) })}
             >
               <span className="relative">
@@ -241,7 +241,7 @@ export default function Header({
               onClick={openCart}
               onPointerEnter={loadCartDrawer}
               onFocus={loadCartDrawer}
-              className="-me-2 flex h-11 w-11 items-center justify-center gap-2 lg:me-0 lg:h-auto lg:w-auto"
+              className="-me-2 flex h-10 w-10 items-center justify-center gap-2 lg:me-0 lg:h-auto lg:w-auto"
               aria-label={formatMessage(t.header.bagLabel, { count: itemsLabel(itemCount) })}
             >
               <span className="relative">

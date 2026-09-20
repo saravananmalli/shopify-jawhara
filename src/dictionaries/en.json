@@ -482,7 +482,10 @@
     "account": "Account",
     "sheetTitle": "Shop by Category",
     "allJewellery": "All Jewellery",
-    "closeSheet": "Close categories"
+    "closeSheet": "Close categories",
+    "collectionsTitle": "Our Collections",
+    "allCollections": "All Collections",
+    "closeCollections": "Close collections"
   },
   "wishlist": {
     "title": "Your Wishlist",
