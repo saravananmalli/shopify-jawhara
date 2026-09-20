@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
 import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon } from "@/components/icons";

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
 import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
@@ -30,7 +32,7 @@ export type ProductTab =
     };
 
 export default function ProductGridSection({
-  eyebrow = "Haute Vitrine",
+  eyebrow,
   title,
   subtitle,
   tabs,
@@ -42,6 +44,8 @@ export default function ProductGridSection({
   tabs: ProductTab[];
   products: Product[];
 }) {
+  const locale = useLocale();
+  const t = useDictionary();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [fetchedProducts, setFetchedProducts] = useState<Product[] | null>(
     null,
@@ -74,14 +78,14 @@ export default function ProductGridSection({
       try {
         const result =
           tab.mode === "query"
-            ? await filterProducts({ query: tab.query, first: 12 })
+            ? await filterProducts({ query: tab.query, first: 12, locale })
             : tab.mode === "collection"
-              ? await getCollectionProducts({ handle: tab.handle, first: 12 })
-              : await getProducts({ sortKey: tab.sortKey, first: 12 });
+              ? await getCollectionProducts({ handle: tab.handle, first: 12, locale })
+              : await getProducts({ sortKey: tab.sortKey, first: 12, locale });
         if (!cancelled) setFetchedProducts(result);
       } catch {
         if (!cancelled)
-          setError("Couldn't load these products. Please try again.");
+          setError(t.home.loadError);
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -121,7 +125,7 @@ export default function ProductGridSection({
             href="/collections/all"
             className="flex items-center gap-1 font-sans text-sm font-medium text-gold-700 hover:underline"
           >
-            View All <ChevronRightIcon className="h-4 w-4" />
+            {t.common.viewAll} <ChevronRightIcon className="h-4 w-4" />
           </Link>
         </div>
       }
@@ -136,7 +140,7 @@ export default function ProductGridSection({
         <ProductCarouselSkeleton />
       ) : products.length === 0 ? (
         <p className="rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-10 text-center font-sans text-sm text-brown-900/60">
-          No products match &ldquo;{tabs[activeTabIndex]?.label}&rdquo; yet.
+          {formatMessage(t.home.noMatchYet, { label: tabs[activeTabIndex]?.label ?? "" })}
         </p>
       ) : (
         <ProductCarousel products={products} />

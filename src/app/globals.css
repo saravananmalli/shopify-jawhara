@@ -64,6 +64,46 @@
      section/header/mega-menu wrapper uses this (Tailwind's `max-w-8xl`,
      mapped below) instead of the default `max-w-7xl` (1280px). */
   --container-max-width: 1440px;
+
+  /* Latin (Poppins) is loaded in the root layout as --font-latin. */
+  --font-sans: var(--font-latin);
+}
+
+/*
+ * Arabic typography. The Arabic face leads the stack and Poppins stays
+ * behind it for Latin brand names, digits and currency codes. Arabic letters
+ * join into connected words, so tracking must be zero (spacing them breaks the
+ * joins) and the script needs more line height than Latin to keep its tall
+ * ascenders and descenders from colliding. Tailwind's tracking and leading
+ * utilities are Latin-tuned, so they are neutralised here rather than
+ * overridden per component.
+ */
+:root[lang="ar"] {
+  --font-sans: var(--font-arabic), var(--font-latin);
+  --font-heading-serif: var(--font-arabic), var(--font-latin);
+}
+
+:root[lang="ar"] body {
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+
+:root[lang="ar"] :where(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.5;
+}
+
+:root[lang="ar"] *:where([class*="tracking-"]) {
+  letter-spacing: 0;
+}
+
+/* No italic in Arabic — a slanted joined script is not a real style. */
+:root[lang="ar"] *:where(.italic) {
+  font-style: normal;
+}
+
+/* Latin-tuned uppercase eyebrows have no Arabic meaning. */
+:root[lang="ar"] *:where(.uppercase) {
+  text-transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

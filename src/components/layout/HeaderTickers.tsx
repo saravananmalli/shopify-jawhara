@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 
 /**
  * Rotating header text lives in its own leaf components so each tick
@@ -17,50 +19,43 @@ function useRotatingIndex(length: number, intervalMs: number) {
   return index;
 }
 
-const ANNOUNCEMENTS = [
-  "4-Hr Delivery in Dubai on Select Pieces",
-  "Extra 10% OFF Selected Jewellery. Discount auto-applied at checkout.",
-  "Free Delivery Across UAE",
-];
 const ANNOUNCEMENT_INTERVAL_MS = 4000;
 
 export function AnnouncementTicker() {
-  const index = useRotatingIndex(ANNOUNCEMENTS.length, ANNOUNCEMENT_INTERVAL_MS);
+  const { announcements } = useDictionary().header;
+  const index = useRotatingIndex(announcements.length, ANNOUNCEMENT_INTERVAL_MS);
 
   return (
     <span
       key={index}
       className="animate-announcement-fade truncate px-4 text-center font-medium"
     >
-      {ANNOUNCEMENTS[index]}
+      {announcements[index]}
     </span>
   );
 }
 
-const SEARCH_SUGGESTIONS = [
-  "Ring",
-  "Pendant",
-  "Necklace",
-  "Earring",
-  "Bangle",
-  "Gold Necklace",
-  "Wedding Ring",
-];
 const SEARCH_SUGGESTION_INTERVAL_MS = 2200;
 
 /** The "Search for “Ring”" hint inside the search trigger buttons. */
 export function SearchHint() {
-  const index = useRotatingIndex(SEARCH_SUGGESTIONS.length, SEARCH_SUGGESTION_INTERVAL_MS);
+  const { searchHint, searchSuggestions } = useDictionary().header;
+  const index = useRotatingIndex(searchSuggestions.length, SEARCH_SUGGESTION_INTERVAL_MS);
+
+  // The template is split around the term so the term can animate on its own
+  // while the surrounding sentence keeps each language's own word order.
+  const [before, after] = formatMessage(searchHint, { term: "\u0000" }).split("\u0000");
 
   return (
     <>
-      Search for{" "}
+      {before}
       <span
         key={index}
         className="animate-announcement-fade inline-block text-brown-900/70"
       >
-        &ldquo;{SEARCH_SUGGESTIONS[index]}&rdquo;
+        &ldquo;{searchSuggestions[index]}&rdquo;
       </span>
+      {after}
     </>
   );
 }

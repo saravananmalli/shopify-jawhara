@@ -1,5 +1,6 @@
 import { shopifyConfig } from "@/config/shopify";
 import { shopifyFetch } from "@/services/shopify/client";
+import type { Locale } from "@/config/i18n";
 import { REVIEW_PRODUCTS_QUERY } from "@/graphql/queries";
 import type {
   ProductReviews,
@@ -122,7 +123,13 @@ export async function getProductReviews(
  * (title, image, link). Returns [] when Judge.me isn't configured or has no
  * published review, so the homepage section can hide itself.
  */
-export async function getLatestReviews({ limit = 12 }: { limit?: number } = {}): Promise<Review[]> {
+export async function getLatestReviews({
+  limit = 12,
+  locale,
+}: {
+  limit?: number;
+  locale: Locale;
+}): Promise<Review[]> {
   const published = await fetchPublishedReviews();
   if (!published || published.length === 0) return [];
 
@@ -145,6 +152,7 @@ export async function getLatestReviews({ limit = 12 }: { limit?: number } = {}):
       }>({
         query: REVIEW_PRODUCTS_QUERY,
         variables: { ids },
+        locale,
         revalidate: REVIEWS_REVALIDATE_SECONDS,
       })
     : { nodes: [] };

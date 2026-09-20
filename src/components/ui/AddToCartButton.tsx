@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useCart } from "@/store/cart";
+import { useDictionary } from "@/store/locale";
 import { BagIcon, CheckIcon } from "@/components/icons";
 
 export default function AddToCartButton({
   variantId,
   quantity = 1,
   className = "",
-  label = "Add to Bag",
+  label,
   iconOnly = false,
 }: {
   variantId: string;
@@ -18,6 +19,8 @@ export default function AddToCartButton({
   iconOnly?: boolean;
 }) {
   const { addItem, isLoading } = useCart();
+  const { product: t } = useDictionary();
+  const buttonLabel = label ?? t.addToBag;
   const [justAdded, setJustAdded] = useState(false);
 
   const handleClick = async () => {
@@ -36,7 +39,7 @@ export default function AddToCartButton({
         type="button"
         disabled={isLoading}
         onClick={handleClick}
-        aria-label={justAdded ? "Added to bag" : label}
+        aria-label={justAdded ? t.addedToBag : buttonLabel}
         className={`flex items-center justify-center transition-colors disabled:opacity-60 ${className}`}
       >
         {justAdded ? <CheckIcon className="h-4 w-4" /> : <BagIcon className="h-4 w-4" />}
@@ -51,7 +54,7 @@ export default function AddToCartButton({
       className={`flex items-center justify-center gap-2 rounded-full bg-gold-600 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-gold-700 disabled:opacity-60 ${className}`}
     >
       <BagIcon className="h-3.5 w-3.5" />
-      {justAdded ? "Added!" : label}
+      {justAdded ? t.added : buttonLabel}
     </button>
   );
 }

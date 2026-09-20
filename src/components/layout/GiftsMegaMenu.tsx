@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
 import MenuPanel from "@/components/layout/MenuPanel";
-import { ChevronDownIcon } from "@/components/icons";
+import { ChevronDownIcon, ChevronRightIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import { useMenuIntent } from "@/hooks/useMenuIntent";
+import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { NavLink, Collection } from "@/types/content";
 
@@ -29,6 +30,7 @@ export default function GiftsMegaMenu({
   isActive: boolean;
   promoCollection: Collection | null;
 }) {
+  const { megaMenu: t } = useDictionary();
   const hasPromo = Boolean(promoCollection?.imageUrl);
   const hasContent = link.items.length > 0 || hasPromo;
 
@@ -108,7 +110,9 @@ export default function GiftsMegaMenu({
                     <p className="text-sm font-semibold text-brown-900">
                       <DirhamText text={promoCollection.title} />
                     </p>
-                    <p className="mt-0.5 text-xs text-gold-700">Shop the collection &rarr;</p>
+                    <p className="mt-0.5 flex items-center gap-1 text-xs text-gold-700">
+                      {t.shopCollection} <ChevronRightIcon className="h-3 w-3" />
+                    </p>
                   </div>
                 </MenuLink>
               )}

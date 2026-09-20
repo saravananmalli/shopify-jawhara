@@ -1,4 +1,5 @@
 import { PRODUCT_SPEC_FIELDS } from "@/config/product-specs";
+import type { Locale } from "@/config/i18n";
 import { formatMetafieldValue, formatMoney } from "@/utils/format";
 import { brandName } from "@/config/site";
 import { isSafeCheckoutUrl, isSafeHttpsUrl, toSafeInternalPath } from "@/utils/safe-url";
@@ -138,10 +139,10 @@ export function toProduct(
   };
 }
 
-export function toProductDetail(product: ShopifyProductDetail): ProductDetail {
+export function toProductDetail(product: ShopifyProductDetail, locale: Locale): ProductDetail {
   const specValues = new Map(
     product.specs.flatMap((spec) =>
-      spec ? [[spec.key, formatMetafieldValue(spec.type, spec.value)] as const] : []
+      spec ? [[spec.key, formatMetafieldValue(spec.type, spec.value, locale)] as const] : []
     )
   );
   // SKU: the product-level metafield if set, else the first variant's SKU
@@ -227,10 +228,27 @@ export function toBrand(brand: ShopifyBrand | null): Brand {
 
 export function toNavLinks(items: ShopifyMenuItem[]): NavLink[] {
   return items.map((item) => ({
+    key: item.title.trim().toLowerCase(),
     title: item.title,
     url: toRelativeUrl(item.url),
     items: toNavLinks(item.items ?? []),
   }));
+}
+
+/** Copies the default-language keys onto a translated menu. Shopify
+ * translates menu titles in place (same items, same order), so position is
+ * the pairing; if the shapes ever differ, the translated entry keeps its own
+ * key rather than getting a wrong one. */
+export function withDefaultLanguageKeys(translated: NavLink[], base: NavLink[]): NavLink[] {
+  return translated.map((link, index) => {
+    const original = base[index];
+    if (!original || original.url !== link.url) return link;
+    return {
+      ...link,
+      key: original.key,
+      items: withDefaultLanguageKeys(link.items, original.items),
+    };
+  });
 }
 
 /** Shopify menu URLs are absolute (https://store.myshopify.com/...) —

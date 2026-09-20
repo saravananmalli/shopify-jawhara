@@ -70,7 +70,7 @@ export default function FilterDropdown({
           id={panelId}
           role="group"
           aria-label={section.label}
-          className="absolute left-0 top-full z-30 mt-1.5 w-60 rounded-xl border border-gold-100 bg-white p-3 shadow-lg"
+          className="absolute start-0 top-full z-30 mt-1.5 w-60 rounded-xl border border-gold-100 bg-white p-3 shadow-lg"
         >
           <FilterOptions section={section} actions={actions} />
         </div>

@@ -13,12 +13,20 @@ export default function GlobalError({ retry }: { retry: () => void }) {
           <p className="mt-3 text-sm text-brown-900/60">
             We&rsquo;re having trouble reaching our catalogue. Please try again shortly.
           </p>
+          {/* This page replaces the root layout, so it cannot know the shopper's
+              language — it says both. */}
+          <div dir="rtl" lang="ar" className="mt-6">
+            <h2 className="text-2xl">جوهرة غير متاحة مؤقتًا</h2>
+            <p className="mt-2 text-sm text-brown-900/60">
+              نواجه صعوبة في الوصول إلى الكتالوج. يُرجى المحاولة مرة أخرى بعد قليل.
+            </p>
+          </div>
           <button
             type="button"
             onClick={() => retry()}
             className="mt-8 rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white hover:bg-gold-700"
           >
-            Try again
+            Try again · حاول مرة أخرى
           </button>
         </div>
       </body>

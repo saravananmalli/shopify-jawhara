@@ -1,10 +1,15 @@
-import Link from "next/link";
+"use client";
+
+import Link from "@/components/ui/Link";
+import { useDictionary } from "@/store/locale";
 
 export type BreadcrumbItem = { label: string; href?: string };
 
 export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
+  const { common } = useDictionary();
+
   return (
-    <nav aria-label="Breadcrumb" className="font-sans text-sm text-brown-900/60">
+    <nav aria-label={common.breadcrumb} className="font-sans text-sm text-brown-900/60">
       <ol className="flex flex-wrap items-center gap-2">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex items-center gap-2">

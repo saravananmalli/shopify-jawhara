@@ -20,7 +20,9 @@ don't hardcode Shopify data, don't add a library when the stack already solves i
 
 ```
 src/
-├── app/            Next.js routes
+├── app/            Next.js routes — everything user-facing lives under app/[lang]/
+├── dictionaries/   en.json / ar.json UI strings (one paired file per language)
+├── proxy.ts        language routing: /ar/... prefix, cookie + Accept-Language redirect
 ├── components/      layout/ home/ ui/ — presentational, no raw Shopify shapes
 ├── services/shopify/  client.ts, product-service.ts, cart-service.ts, adapters.ts
 ├── graphql/         fragments.ts, queries.ts, mutations.ts — no inline queries in components
@@ -48,6 +50,35 @@ Components must consume `Product`/`Cart`/`Money` from `types/`, never Shopify's 
 
 Strong types for Product, ProductVariant, Money, Image, Cart, CartLine, Customer,
 Market, NavigationItem. Avoid `any`; if a type is genuinely unknown, say why in a comment.
+
+## Internationalization (English LTR / Arabic RTL)
+
+English keeps its unprefixed URLs (`/products/x`); Arabic lives under `/ar/...`.
+The `[lang]` segment renders `<html lang dir>` on the server; `proxy.ts` rewrites
+unprefixed paths to `/en` and redirects by the `jawhara_locale` cookie.
+
+- **Every user-visible string goes in `dictionaries/en.json` AND `ar.json`** — never
+  hardcode English in a component. Server: `getDictionary(await getLocale())`;
+  client: `useDictionary()` / `useLocale()` (from `store/locale.tsx`). A key missing
+  from `ar.json` is a compile error. Use `formatMessage` / `pluralize`
+  (`utils/i18n.ts`) — Arabic has six plural forms and different word order, so
+  write whole sentences per language, never concatenate fragments.
+- **Shopify content is translated by Shopify**, not us: every service function takes
+  a `locale`, and `shopifyFetch` injects `@inContext(language:)` into every query and
+  mutation (falls back to English until a field is translated). Pass `locale` to any
+  new service call; `getLocale()` on the server, `useLocale()` in client components.
+  Never recognise Shopify content by its displayed text — use `NavLink.key` (the
+  default-language title) instead.
+- **Links**: use `@/components/ui/Link`, not `next/link` (it adds the `/ar` prefix).
+- **Layout is direction-agnostic**: logical utilities only (`ms-/me-/ps-/pe-`,
+  `start-/end-`, `text-start/end`, `border-s/e`, `rounded-s/e`), never `ml/mr/left/right`.
+  Sliding/flipping needs an `rtl:` variant. Only directional icons mirror
+  (`icons.tsx`); keep photography, logos and object icons unflipped. Text that must
+  not be reordered (phone, email, "03 / 04" counters) gets `dir="ltr"`; merchant text
+  gets `dir="auto"`. Scroll code must handle RTL `scrollLeft` (negative).
+- Arabic type: `--font-arabic` leads `--font-sans` under `:root[lang="ar"]`, with zero
+  letter-spacing and taller line-height (`globals.css`). Numbers are Latin digits
+  (`utils/format.ts` `INTL_LOCALE`) — never call bare `toLocaleString()`.
 
 ## Design system
 

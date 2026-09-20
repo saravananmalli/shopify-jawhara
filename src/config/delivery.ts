@@ -11,8 +11,3 @@ export const SAME_DAY_EMIRATES: readonly string[] = ["Dubai"];
 /** Orders placed at or after this hour (24h, Dubai time) ship next day. */
 export const SAME_DAY_CUTOFF_HOUR = 14;
 
-export const DELIVERY_LABELS = {
-  sameDay: "Same Day Delivery",
-  nextDay: "Next Day Delivery",
-  standard: "1-2 Day Delivery",
-} as const;

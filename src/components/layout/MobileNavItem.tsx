@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import type { NavLink } from "@/types/content";
@@ -65,7 +65,7 @@ export default function MobileNavItem({
 
       {expanded && (
         <ul
-          className={`flex flex-col pl-3 ${depth === 0 ? "gap-4 pb-4" : "mt-2 gap-2"}`}
+          className={`flex flex-col ps-3 ${depth === 0 ? "gap-4 pb-4" : "mt-2 gap-2"}`}
         >
           {link.items.map((child) => (
             <MobileNavItem

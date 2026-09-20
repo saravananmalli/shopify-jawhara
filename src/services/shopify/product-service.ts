@@ -1,4 +1,5 @@
 import { shopifyFetch } from "@/services/shopify/client";
+import type { Locale } from "@/config/i18n";
 import { toProduct, toProductDetail } from "@/services/shopify/adapters";
 import {
   COLLECTION_PRODUCTS_QUERY,
@@ -16,17 +17,20 @@ export async function getProducts({
   first = 12,
   sortKey = "BEST_SELLING",
   revalidate = PRODUCT_REVALIDATE_SECONDS,
+  locale,
 }: {
+  locale: Locale;
   first?: number;
   sortKey?: "BEST_SELLING" | "CREATED_AT" | "PRICE" | "TITLE";
   /** Override for statically generated pages that re-render on their own schedule. */
   revalidate?: number;
-} = {}): Promise<Product[]> {
+}): Promise<Product[]> {
   const data = await shopifyFetch<{
     products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: PRODUCTS_QUERY,
     variables: { first, sortKey },
+    locale,
     revalidate,
   });
 
@@ -49,9 +53,11 @@ function toSafeSearchTerm(query: string): string {
 export async function searchProducts({
   query,
   first = 8,
+  locale,
 }: {
   query: string;
   first?: number;
+  locale: Locale;
 }): Promise<Product[]> {
   const safeQuery = toSafeSearchTerm(query);
   if (!safeQuery) return [];
@@ -61,6 +67,7 @@ export async function searchProducts({
   }>({
     query: SEARCH_PRODUCTS_QUERY,
     variables: { query: safeQuery, first },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
@@ -77,15 +84,18 @@ export async function searchProducts({
 export async function filterProducts({
   query,
   first = 12,
+  locale,
 }: {
   query: string;
   first?: number;
+  locale: Locale;
 }): Promise<Product[]> {
   const data = await shopifyFetch<{
     products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: SEARCH_PRODUCTS_QUERY,
     variables: { query, first },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
@@ -100,8 +110,10 @@ export async function getCollectionProducts({
   handle,
   first = 12,
   revalidate = PRODUCT_REVALIDATE_SECONDS,
+  locale,
 }: {
   handle: string;
+  locale: Locale;
   first?: number;
   /** Override for statically generated pages that re-render on their own schedule. */
   revalidate?: number;
@@ -111,6 +123,7 @@ export async function getCollectionProducts({
   }>({
     query: COLLECTION_PRODUCTS_QUERY,
     variables: { handle, first },
+    locale,
     revalidate,
   });
 
@@ -118,15 +131,17 @@ export async function getCollectionProducts({
 }
 
 export async function getProductByHandle(
-  handle: string
+  handle: string,
+  locale: Locale
 ): Promise<ProductDetail | null> {
   const data = await shopifyFetch<{ product: ShopifyProductDetail | null }>({
     query: PRODUCT_BY_HANDLE_QUERY,
     variables: { handle },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
-  return data.product ? toProductDetail(data.product) : null;
+  return data.product ? toProductDetail(data.product, locale) : null;
 }
 
 /**
@@ -136,20 +151,21 @@ export async function getProductByHandle(
  */
 export async function getRelatedProducts(
   productId: string,
-  { limit = 8 }: { limit?: number } = {}
+  { limit = 8, locale }: { limit?: number; locale: Locale }
 ): Promise<Product[]> {
   const data = await shopifyFetch<{
     productRecommendations: ShopifyProductCard[] | null;
   }>({
     query: PRODUCT_RECOMMENDATIONS_QUERY,
     variables: { productId },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
   const related = (data.productRecommendations ?? []).map(toProduct).slice(0, limit);
   if (related.length >= limit) return related;
 
-  const bestSellers = await getProducts({ first: limit + related.length + 1 });
+  const bestSellers = await getProducts({ first: limit + related.length + 1, locale });
   const seen = new Set([productId, ...related.map((product) => product.id)]);
   for (const product of bestSellers) {
     if (related.length >= limit) break;
@@ -162,12 +178,13 @@ export async function getRelatedProducts(
  * Preserves the order of `ids`; drops any that no longer exist or aren't
  * published to the Storefront API (Shopify returns null for those).
  */
-export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+export async function getProductsByIds(ids: string[], locale: Locale): Promise<Product[]> {
   if (ids.length === 0) return [];
 
   const data = await shopifyFetch<{ nodes: (ShopifyProductCard | null)[] }>({
     query: PRODUCTS_BY_IDS_QUERY,
     variables: { ids },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 

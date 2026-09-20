@@ -11,7 +11,7 @@ function Star({ fill, size }: { fill: 0 | 0.5 | 1; size: string }) {
       <StarIcon filled={false} className={`absolute inset-0 ${size}`} />
       {fill > 0 && (
         <span
-          className="absolute inset-y-0 left-0 overflow-hidden"
+          className="absolute inset-y-0 start-0 overflow-hidden"
           style={{ width: `${fill * 100}%` }}
         >
           <StarIcon className={`max-w-none ${size}`} />

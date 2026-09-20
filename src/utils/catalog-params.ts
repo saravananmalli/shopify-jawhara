@@ -1,4 +1,4 @@
-import { SORT_OPTIONS } from "@/config/catalog";
+import { SORT_OPTION_KEYS } from "@/config/catalog";
 import type { CatalogSortKey, ProductFilterInput } from "@/types/catalog";
 
 const DEFAULT_SORT: CatalogSortKey = "RECOMMENDED";
@@ -78,7 +78,7 @@ export function parseCatalogSearchParams(
 ): CatalogQueryState {
   const sortParam = Array.isArray(params.sort) ? params.sort[0] : params.sort;
   const sort =
-    SORT_OPTIONS.find((option) => option.key === sortParam)?.key ??
+    SORT_OPTION_KEYS.find((key) => key === sortParam) ??
     DEFAULT_SORT;
 
   const rawFilters = params.filter === undefined ? [] : [params.filter].flat();

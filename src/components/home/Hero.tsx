@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import { getShopifyImageUrl, isUntrustedRemoteImage, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { HeroBanner } from "@/types/content";
 
@@ -28,6 +30,8 @@ const FALLBACK_SLIDES: HeroBanner[] = [
 ];
 
 function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolean }) {
+  const { hero } = useDictionary().home;
+
   return (
     <>
       {slide.imageUrl ? (
@@ -43,7 +47,7 @@ function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolea
           className="object-cover"
         />
       ) : (
-        <PlaceholderImage label="Campaign photography" className="absolute inset-0 h-full w-full" />
+        <PlaceholderImage label={hero.campaignPhoto} className="absolute inset-0 h-full w-full" />
       )}
 
       {slide.hasBakedInText ? (
@@ -75,7 +79,7 @@ function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolea
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <span className="mb-1 block text-xs uppercase tracking-widest text-maroon-500">
-                only Natural Diamonds
+                {hero.onlyNaturalDiamonds}
               </span>
               {slide.arabicLine && (
                 <p dir="rtl" className="font-serif text-lg text-brown-900">
@@ -112,6 +116,7 @@ const AUTO_ROTATE_INTERVAL_MS = 5000;
 const PRELOAD_NEXT_DELAY_MS = 2000;
 
 export default function Hero({ banners }: { banners: HeroBanner[] }) {
+  const { hero } = useDictionary().home;
   const slides = banners.length > 0 ? banners : FALLBACK_SLIDES;
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -167,24 +172,24 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
         <>
           <button
             onClick={() => go(-1)}
-            aria-label="Previous slide"
-            className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
+            aria-label={hero.prev}
+            className="absolute start-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
           <button
             onClick={() => go(1)}
-            aria-label="Next slide"
-            className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
+            aria-label={hero.next}
+            className="absolute end-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
 
-          <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+          <div className="absolute bottom-3 start-1/2 z-10 flex -translate-x-1/2 gap-2 rtl:translate-x-1/2">
             {slides.map((s, i) => (
               <button
                 key={s.id}
-                aria-label={`Go to slide ${i + 1}`}
+                aria-label={formatMessage(hero.goTo, { n: i + 1 })}
                 onClick={() => setIndex(i)}
                 className={`h-1.5 rounded-full shadow-sm transition-all ${
                   i === index ? "w-6 bg-white" : "w-1.5 bg-white/50"

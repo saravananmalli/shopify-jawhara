@@ -28,7 +28,7 @@ export default function FilterSectionAccordion({
           onClick={onToggle}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex w-full items-center justify-between gap-3 py-3 text-left font-sans text-[13px] font-semibold text-brown-900"
+          className="flex w-full items-center justify-between gap-3 py-3 text-start font-sans text-[13px] font-semibold text-brown-900"
         >
           <span className="flex items-center gap-2">
             {label}

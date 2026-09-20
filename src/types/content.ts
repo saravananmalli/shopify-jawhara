@@ -1,4 +1,8 @@
 export type NavLink = {
+  /** Lower-cased default-language title. Stays the same in every language, so
+   * code that recognises a menu entry ("gifts", "department") keeps working
+   * once `title` is translated. Never display it. */
+  key: string;
   title: string;
   url: string;
   items: NavLink[];

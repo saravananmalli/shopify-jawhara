@@ -3,6 +3,8 @@
 import { useState, type PointerEvent } from "react";
 import Image from "next/image";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { ProductImage } from "@/types/product";
 
@@ -24,6 +26,7 @@ export default function ProductGallery({
   /** e.g. "Dubai Flagship Exclusive" — only when a real product tag maps to one. */
   badge?: string | null;
 }) {
+  const { product: t } = useDictionary();
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomOrigin, setZoomOrigin] = useState<string | null>(null);
   const [zoomLoaded, setZoomLoaded] = useState(false);
@@ -56,7 +59,7 @@ export default function ProductGallery({
               key={image.url}
               type="button"
               onClick={() => setActiveIndex(index)}
-              aria-label={`View image ${index + 1} of ${images.length}`}
+              aria-label={formatMessage(t.viewImage, { n: index + 1, total: images.length })}
               aria-pressed={index === activeIndex}
               className={`relative size-[72px] shrink-0 overflow-hidden rounded-3xl border-2 bg-white p-[3px] ${
                 index === activeIndex ? "border-gold-600" : "border-transparent"
@@ -82,7 +85,7 @@ export default function ProductGallery({
           the reference's "framed" presentation. */}
       <div className="relative order-first flex-1 overflow-hidden rounded-3xl bg-white p-2.5 shadow-md sm:order-2">
         {badge && (
-          <span className="absolute left-4 top-4 z-10 rounded-full border border-[#E6D7BE] bg-white/95 px-3 py-1.5 font-sans text-[11px] font-bold uppercase tracking-[2.2px] text-gold-600 shadow-sm">
+          <span className="absolute start-4 top-4 z-10 rounded-full border border-[#E6D7BE] bg-white/95 px-3 py-1.5 font-sans text-[11px] font-bold uppercase tracking-[2.2px] text-gold-600 shadow-sm">
             {badge}
           </span>
         )}

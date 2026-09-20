@@ -3,10 +3,12 @@
 import ProductCard from "@/components/ui/ProductCard";
 import CarouselPagination from "@/components/ui/CarouselPagination";
 import { useScrollCarousel } from "@/hooks/useScrollCarousel";
+import { useDictionary } from "@/store/locale";
 import type { Product } from "@/types/product";
 
 /** Horizontal scroll-snap row of ProductCards with dots + prev/next. */
 export default function ProductCarousel({ products }: { products: Product[] }) {
+  const { common } = useDictionary();
   const { scrollRef, pageCount, activePage, scrollByPage, handleScroll } =
     useScrollCarousel(products.length);
 
@@ -33,7 +35,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
           activePage={activePage}
           onPrev={() => scrollByPage(-1)}
           onNext={() => scrollByPage(1)}
-          label="products"
+          label={common.products}
         />
       )}
     </>

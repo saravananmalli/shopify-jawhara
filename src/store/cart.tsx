@@ -15,10 +15,10 @@ import {
   removeCartLines,
   updateCartLines,
 } from "@/services/shopify";
+import { useDictionary, useLocale } from "@/store/locale";
 import type { Cart } from "@/types/cart";
 
 const CART_ID_KEY = "jawhara_cart_id";
-const GENERIC_ERROR = "Something went wrong with your bag. Please try again.";
 
 type CartContextValue = {
   cart: Cart | null;
@@ -36,6 +36,8 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const locale = useLocale();
+  const genericError = useDictionary().cart.genericError;
   const [cart, setCart] = useState<Cart | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,13 +47,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const existingId = window.localStorage.getItem(CART_ID_KEY);
     if (!existingId) return;
 
-    getCart(existingId)
+    getCart(existingId, locale)
       .then((existingCart) => {
         if (existingCart) setCart(existingCart);
         else window.localStorage.removeItem(CART_ID_KEY);
       })
       .catch(() => window.localStorage.removeItem(CART_ID_KEY));
-  }, []);
+  }, [locale]);
 
   const addItem = useCallback(
     async (merchandiseId: string, quantity = 1) => {
@@ -60,22 +62,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       try {
         let activeCart = cart;
         if (!activeCart) {
-          activeCart = await createCart();
+          activeCart = await createCart(locale);
           window.localStorage.setItem(CART_ID_KEY, activeCart.id);
         }
-        const updated = await addCartLines(activeCart.id, [
-          { merchandiseId, quantity },
-        ]);
+        const updated = await addCartLines(
+          activeCart.id,
+          [{ merchandiseId, quantity }],
+          locale,
+        );
         setCart(updated);
         setIsOpen(true);
       } catch (err) {
-        setError(GENERIC_ERROR);
+        setError(genericError);
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [cart]
+    [cart, locale, genericError]
   );
 
   const updateItem = useCallback(
@@ -84,18 +88,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
       try {
-        const updated = await updateCartLines(cart.id, [
-          { id: lineId, quantity },
-        ]);
+        const updated = await updateCartLines(
+          cart.id,
+          [{ id: lineId, quantity }],
+          locale,
+        );
         setCart(updated);
       } catch (err) {
-        setError(GENERIC_ERROR);
+        setError(genericError);
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [cart]
+    [cart, locale, genericError]
   );
 
   const removeItem = useCallback(
@@ -104,16 +110,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
       try {
-        const updated = await removeCartLines(cart.id, [lineId]);
+        const updated = await removeCartLines(cart.id, [lineId], locale);
         setCart(updated);
       } catch (err) {
-        setError(GENERIC_ERROR);
+        setError(genericError);
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [cart]
+    [cart, locale, genericError]
   );
 
   const openCart = useCallback(() => setIsOpen(true), []);

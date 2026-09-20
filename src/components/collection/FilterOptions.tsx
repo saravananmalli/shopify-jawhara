@@ -2,6 +2,9 @@
 
 import { DirhamSymbol } from "dirham/react";
 import { PRICE_BANDS } from "@/config/catalog";
+import { useDictionary, useLocale } from "@/store/locale";
+import { formatNumber } from "@/utils/format";
+import { formatMessage } from "@/utils/i18n";
 import {
   bandInput,
   DEALS_INPUT,
@@ -15,8 +18,6 @@ export type FilterActions = {
   currencyCode: string;
 };
 
-const formatAmount = (amount: number) => amount.toLocaleString("en-US");
-
 function Amount({
   value,
   currencyCode,
@@ -24,15 +25,16 @@ function Amount({
   value: number;
   currencyCode: string;
 }) {
+  const locale = useLocale();
   // The dirham sign is only correct for AED; any other market shows its code.
   return currencyCode === "AED" ? (
-    <span className="inline-flex items-center gap-0.5">
+    <span className="inline-flex items-center gap-0.5 rtl:flex-row-reverse">
       <DirhamSymbol size="0.85em" />
-      {formatAmount(value)}
+      {formatNumber(value, locale)}
     </span>
   ) : (
     <>
-      {currencyCode} {formatAmount(value)}
+      {currencyCode} {formatNumber(value, locale)}
     </>
   );
 }
@@ -75,12 +77,25 @@ export default function FilterOptions({
   actions: FilterActions;
 }) {
   const { active, onToggle, currencyCode } = actions;
+  const { collection: t } = useDictionary();
+
+  // Puts a node into a translated sentence, keeping each language's word order.
+  const withAmount = (template: string, amount: React.ReactNode) => {
+    const [before, after] = formatMessage(template, { amount: "\u0000" }).split("\u0000");
+    return (
+      <>
+        {before}
+        {amount}
+        {after}
+      </>
+    );
+  };
 
   if (section.kind === "deals") {
     return (
       <ul>
         <CheckRow
-          label="On sale"
+          label={t.onSale}
           checked={active.includes(DEALS_INPUT)}
           onChange={() => onToggle(DEALS_INPUT)}
         />
@@ -94,14 +109,15 @@ export default function FilterOptions({
         {PRICE_BANDS.map((band) => {
           const label =
             band.min === undefined ? (
-              <>
-                Under{" "}
-                <Amount value={band.max ?? 0} currencyCode={currencyCode} />
-              </>
+              withAmount(
+                t.under,
+                <Amount value={band.max ?? 0} currencyCode={currencyCode} />,
+              )
             ) : band.max === undefined ? (
-              <>
-                Above <Amount value={band.min} currencyCode={currencyCode} />
-              </>
+              withAmount(
+                t.above,
+                <Amount value={band.min} currencyCode={currencyCode} />,
+              )
             ) : (
               <>
                 <Amount value={band.min} currencyCode={currencyCode} />

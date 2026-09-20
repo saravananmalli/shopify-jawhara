@@ -1,12 +1,14 @@
 "use client";
 
 import { useDeliveryEstimate, useLocationUi } from "@/store/delivery";
+import { useDictionary } from "@/store/locale";
 import { MapPinIcon } from "@/components/icons";
 
 /** Product-page delivery promise for the shopper's emirate, with a way to change it. */
 export default function DeliveryEstimate({ available }: { available: boolean }) {
   const estimate = useDeliveryEstimate(available);
   const { openPicker } = useLocationUi();
+  const { delivery } = useDictionary();
 
   if (!estimate) return null;
 
@@ -22,7 +24,7 @@ export default function DeliveryEstimate({ available }: { available: boolean }) 
         onClick={openPicker}
         className="shrink-0 text-xs text-gold-700 underline underline-offset-2 hover:text-gold-600"
       >
-        Change location
+        {delivery.changeLocation}
       </button>
     </div>
   );

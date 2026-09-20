@@ -4,6 +4,8 @@ import CollectionPageView, {
 } from "@/components/collection/CollectionPageView";
 import { getCollectionMetadata } from "@/components/collection/collection-metadata";
 import { ALL_PRODUCTS_HANDLE } from "@/config/catalog";
+import { getDictionary } from "@/dictionaries";
+import { getLocale } from "@/utils/get-locale";
 
 type PageProps = { searchParams: Promise<RawSearchParams> };
 
@@ -14,8 +16,7 @@ export async function generateMetadata({
     handle: ALL_PRODUCTS_HANDLE,
     rawSearchParams: await searchParams,
     canonicalPath: "/collections",
-    description:
-      "Browse every Jawhara Jewellery piece — bridal, gold, diamonds, pearls, and more, straight from Dubai's historic Gold Souk.",
+    description: (await getDictionary(await getLocale())).meta.collectionsDescription,
   });
 }
 

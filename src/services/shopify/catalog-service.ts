@@ -1,4 +1,5 @@
 import { shopifyFetch } from "@/services/shopify/client";
+import { defaultLocale, type Locale } from "@/config/i18n";
 import { getProductsByIds } from "@/services/shopify/product-service";
 import {
   COLLECTION_SORTS,
@@ -91,8 +92,10 @@ async function getCatalogPageCore({
   after = null,
   first = CATALOG_PAGE_SIZE,
   withFilters = true,
+  locale,
 }: {
   handle: string;
+  locale: Locale;
   /** Canonical filter JSON strings — see utils/catalog-params.ts. */
   filters?: string[];
   sort?: CatalogSortKey;
@@ -109,6 +112,7 @@ async function getCatalogPageCore({
       offset: Number.parseInt(after ?? "0", 10) || 0,
       first,
       withFilters,
+      locale,
     });
   }
 
@@ -126,6 +130,7 @@ async function getCatalogPageCore({
       withFilters,
       ...COLLECTION_SORT[sort],
     },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
@@ -141,6 +146,7 @@ async function getCatalogPageCore({
       withFilters,
       ...SEARCH_SORT[sort],
     },
+    locale,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 
@@ -268,17 +274,20 @@ async function scanPage({
   sort,
   variables,
   revalidate,
+  locale,
 }: {
   handle: string;
   useSearch: boolean;
   sort: CatalogSortKey;
   variables: Record<string, unknown>;
   revalidate?: number;
+  locale: Locale;
 }): Promise<ScanPage | null> {
   if (useSearch) {
     const { search } = await shopifyFetch<{ search: ShopifyTagScanSearch }>({
       query: CATALOG_TAG_SCAN_SEARCH_QUERY,
       variables: { ...variables, ...SEARCH_SORT[sort] },
+      locale,
       revalidate,
     });
     return {
@@ -300,6 +309,7 @@ async function scanPage({
   }>({
     query: CATALOG_TAG_SCAN_COLLECTION_QUERY,
     variables: { handle, ...variables, ...COLLECTION_SORT[sort] },
+    locale,
     revalidate,
   });
   if (!collection) return null;
@@ -329,12 +339,14 @@ async function scanAll({
   sort,
   withFilters,
   revalidate,
+  locale,
 }: {
   handle: string;
   filters: unknown[];
   sort: CatalogSortKey;
   withFilters: boolean;
   revalidate?: number;
+  locale: Locale;
 }) {
   const nodes: ScanNode[] = [];
   let useSearch = false;
@@ -355,6 +367,7 @@ async function scanAll({
       sort,
       variables,
       revalidate,
+      locale,
     });
     if (!result && page === 0 && handle === ALL_PRODUCTS_HANDLE) {
       useSearch = true;
@@ -364,6 +377,7 @@ async function scanAll({
         sort,
         variables,
         revalidate,
+        locale,
       });
     }
     if (!result) return null;
@@ -383,7 +397,9 @@ async function scanAll({
  * (unlike stock/price, which are never cached). */
 const TAG_FACET_REVALIDATE_SECONDS = 300;
 
-/** Sections for TAG_FILTER_GROUPS, discovered from the collection's tags. */
+/** Sections for TAG_FILTER_GROUPS, discovered from the collection's tags.
+ * Tags aren't translated, so this scan always runs in the default language and
+ * one cached copy serves every locale. */
 async function getTagGroupFilters(handle: string): Promise<CatalogFilter[]> {
   const scan = await scanAll({
     handle,
@@ -391,6 +407,7 @@ async function getTagGroupFilters(handle: string): Promise<CatalogFilter[]> {
     sort: "RECOMMENDED",
     withFilters: false,
     revalidate: TAG_FACET_REVALIDATE_SECONDS,
+    locale: defaultLocale,
   });
   if (!scan) return [];
 
@@ -411,6 +428,7 @@ async function getCustomFilteredCatalogPage({
   offset,
   first,
   withFilters,
+  locale,
 }: {
   handle: string;
   custom: CustomFilters;
@@ -418,6 +436,7 @@ async function getCustomFilteredCatalogPage({
   offset: number;
   first: number;
   withFilters: boolean;
+  locale: Locale;
 }): Promise<CatalogPage | null> {
   const scan = await scanAll({
     handle,
@@ -425,6 +444,7 @@ async function getCustomFilteredCatalogPage({
     sort,
     withFilters,
     revalidate: PRODUCT_REVALIDATE_SECONDS,
+    locale,
   });
   if (!scan) return null;
 
@@ -434,6 +454,7 @@ async function getCustomFilteredCatalogPage({
 
   const products = await getProductsByIds(
     matchedIds.slice(offset, offset + first),
+    locale,
   );
 
   return {
@@ -462,6 +483,7 @@ export async function withCategoryCounts(
     sort: "RECOMMENDED",
     withFilters: false,
     revalidate: TAG_FACET_REVALIDATE_SECONDS,
+    locale: defaultLocale,
   });
   if (!scan) return [];
 

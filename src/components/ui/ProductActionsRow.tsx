@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { QuestionIcon, ShareIcon } from "@/components/icons";
+import { useDictionary } from "@/store/locale";
+import { formatMessage } from "@/utils/i18n";
 import type { Product } from "@/types/product";
 
 const SUPPORT_EMAIL = "Contactus@jawharajewllery.ae";
@@ -9,6 +11,7 @@ const SUPPORT_EMAIL = "Contactus@jawharajewllery.ae";
 /** Wishlist now lives next to the Add to Bag button (ProductInfo) — kept
  * out of this row to avoid showing it twice. */
 export default function ProductActionsRow({ product }: { product: Product }) {
+  const { product: t } = useDictionary();
   const [shared, setShared] = useState(false);
 
   const handleShare = async () => {
@@ -29,11 +32,11 @@ export default function ProductActionsRow({ product }: { product: Product }) {
   return (
     <div className="grid grid-cols-2 gap-4 font-sans text-sm font-semibold">
       <a
-        href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`Question about ${product.title}`)}`}
+        href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(formatMessage(t.questionSubject, { title: product.title }))}`}
         className="flex items-center justify-center gap-2 rounded-xl border border-gold-600 px-4 py-3 text-gold-600 transition-colors hover:bg-cream-100"
       >
         <QuestionIcon className="h-5 w-5 text-gold-600" />
-        Ask a Question
+        {t.askQuestion}
       </a>
       <button
         type="button"
@@ -41,7 +44,7 @@ export default function ProductActionsRow({ product }: { product: Product }) {
         className="flex items-center justify-center gap-2 rounded-xl border border-gold-600 px-4 py-3 text-gold-600 transition-colors hover:bg-cream-100"
       >
         <ShareIcon className="h-5 w-5 text-gold-600" />
-        {shared ? "Link Copied!" : "Share"}
+        {shared ? t.linkCopied : t.share}
       </button>
     </div>
   );

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import CollectionBrowser from "@/components/collection/CollectionBrowser";
 import CollectionCategoryStrip from "@/components/collection/CollectionCategoryStrip";
 import {
+  ALL_PRODUCTS_HANDLE,
   CATEGORY_MENU_HANDLE,
   GIFTS_PROMO_HANDLE,
   CATEGORY_SCOPED_MENU_COLUMNS,
@@ -19,6 +20,9 @@ import {
   parseCatalogSearchParams,
 } from "@/utils/catalog-params";
 import type { CatalogFilter } from "@/types/catalog";
+import { getDictionary } from "@/dictionaries";
+import { getLocale } from "@/utils/get-locale";
+import { localizePath } from "@/utils/locale-path";
 import { serializeJsonLd } from "@/utils/json-ld";
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -35,15 +39,18 @@ export default async function CollectionPageView({
   handle: string;
   rawSearchParams: RawSearchParams;
 }) {
+  const locale = await getLocale();
+  const { collection: t, meta } = await getDictionary(locale);
   const query = parseCatalogSearchParams(rawSearchParams);
 
   const [page, strip] = await Promise.all([
-    getCatalogPage({ handle, sort: query.sort, filters: query.filters }),
+    getCatalogPage({ handle, sort: query.sort, filters: query.filters, locale }),
     getCategoryTilesForCollection(handle, {
       mainMenuHandle: MAIN_MENU_HANDLE,
       fallbackMenuHandle: CATEGORY_MENU_HANDLE,
       scopedColumns: CATEGORY_SCOPED_MENU_COLUMNS,
       tileGroups: CATEGORY_TILE_GROUPS,
+      locale,
     }),
   ]);
 
@@ -57,7 +64,7 @@ export default async function CollectionPageView({
   if (handle === GIFTS_PROMO_HANDLE) {
     const counted = await withCategoryCounts(
       handle,
-      await getCategoryTilesFromMenu(CATEGORY_MENU_HANDLE),
+      await getCategoryTilesFromMenu(CATEGORY_MENU_HANDLE, locale),
     );
     if (counted.length > 0) {
       stripTiles = counted;
@@ -75,7 +82,7 @@ export default async function CollectionPageView({
     categoryTiles.length > 0
       ? {
           id: "category",
-          label: "Category",
+          label: t.categoryFilter,
           type: "LIST",
           values: categoryTiles.map((tile) => ({
             id: `category.${tile.handle}`,
@@ -86,10 +93,15 @@ export default async function CollectionPageView({
         }
       : null;
 
+  // Shopify has no "all" collection, so its title is ours to translate.
+  const collectionTitle =
+    handle === ALL_PRODUCTS_HANDLE ? meta.allJewellery : page.collection.title;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: page.collection.title,
+    inLanguage: locale,
+    name: collectionTitle,
     ...(page.collection.description && {
       description: page.collection.description,
     }),
@@ -98,7 +110,7 @@ export default async function CollectionPageView({
       itemListElement: page.products.map((product, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `/products/${product.handle}`,
+        url: localizePath(`/products/${product.handle}`, locale),
       })),
     },
   };
@@ -111,7 +123,7 @@ export default async function CollectionPageView({
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
         />
 
-        <h1 className="sr-only">{page.collection.title}</h1>
+        <h1 className="sr-only">{collectionTitle}</h1>
 
         <CollectionCategoryStrip
           categories={stripTiles}

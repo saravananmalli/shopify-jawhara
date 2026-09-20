@@ -17,6 +17,7 @@ export default function SelectDropdown({
   value,
   options,
   onChange,
+  optionLabel = (option) => option,
   className = "",
 }: {
   /** Accessible name — there is no visible label. */
@@ -24,6 +25,8 @@ export default function SelectDropdown({
   value: string;
   options: readonly string[];
   onChange: (value: string) => void;
+  /** Text shown for an option value, when the value itself isn't display text. */
+  optionLabel?: (option: string) => string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -83,7 +86,7 @@ export default function SelectDropdown({
     const needle = cycling ? state.text[0] : state.text;
     const from = open ? activeIndex + (cycling ? 1 : 0) : selectedIndex + (cycling ? 1 : 0);
     const ordered = [...options.keys()].map((i) => (i + from) % options.length);
-    const match = ordered.find((i) => options[i].toLowerCase().startsWith(needle));
+    const match = ordered.find((i) => optionLabel(options[i]).toLowerCase().startsWith(needle));
     if (match === undefined) return;
 
     if (!open) setOpen(true);
@@ -144,11 +147,11 @@ export default function SelectDropdown({
         aria-activedescendant={open ? optionId(activeIndex) : undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleKeyDown}
-        className={`flex h-11 w-full items-center justify-between gap-3 rounded-lg border bg-white pl-4 pr-3.5 text-left text-sm text-brown-900 transition-colors duration-300 ease-luxury hover:border-gold-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 ${
+        className={`flex h-11 w-full items-center justify-between gap-3 rounded-lg border bg-white ps-4 pe-3.5 text-start text-sm text-brown-900 transition-colors duration-300 ease-luxury hover:border-gold-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 ${
           open ? "border-gold-600 ring-2 ring-gold-600/15" : "border-gold-100"
         }`}
       >
-        <span className="truncate">{value}</span>
+        <span className="truncate">{optionLabel(value)}</span>
         <ChevronDownIcon
           className={`h-4 w-4 shrink-0 text-brown-900/60 transition-transform duration-300 ease-luxury ${
             open ? "rotate-180" : ""
@@ -164,7 +167,7 @@ export default function SelectDropdown({
           aria-label={label}
           // Keeps focus on the trigger while the pointer interacts with the list.
           onMouseDown={(event) => event.preventDefault()}
-          className="absolute left-0 top-full z-30 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-gold-100 bg-white p-1.5 shadow-lg sm:w-max sm:min-w-full sm:max-w-80"
+          className="absolute start-0 top-full z-30 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-gold-100 bg-white p-1.5 shadow-lg sm:w-max sm:min-w-full sm:max-w-80"
         >
           {options.map((option, index) => {
             const selected = option === value;
@@ -180,7 +183,7 @@ export default function SelectDropdown({
                   index === activeIndex ? "bg-cream-100" : ""
                 } ${selected ? "font-semibold text-gold-700" : "text-brown-900"}`}
               >
-                <span>{option}</span>
+                <span>{optionLabel(option)}</span>
                 {selected && <CheckIcon className="h-4 w-4 shrink-0 text-gold-600" />}
               </li>
             );

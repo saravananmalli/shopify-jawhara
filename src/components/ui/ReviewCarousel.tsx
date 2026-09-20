@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { useScrollCarousel } from "@/hooks/useScrollCarousel";
+import { useDictionary } from "@/store/locale";
 
 /** Scroll-snap row for review cards, with prev/next arrows when it overflows. */
 export default function ReviewCarousel({
@@ -12,6 +13,7 @@ export default function ReviewCarousel({
   itemCount: number;
   children: ReactNode;
 }) {
+  const { home } = useDictionary();
   const { scrollRef, pageCount, scrollByPage } = useScrollCarousel(itemCount);
 
   const arrowClass =
@@ -33,16 +35,16 @@ export default function ReviewCarousel({
           <button
             type="button"
             onClick={() => scrollByPage(-1)}
-            aria-label="Previous reviews"
-            className={`${arrowClass} left-1`}
+            aria-label={home.reviews.previous}
+            className={`${arrowClass} start-1`}
           >
             <ChevronLeftIcon className="size-4" />
           </button>
           <button
             type="button"
             onClick={() => scrollByPage(1)}
-            aria-label="Next reviews"
-            className={`${arrowClass} right-1`}
+            aria-label={home.reviews.next}
+            className={`${arrowClass} end-1`}
           >
             <ChevronRightIcon className="size-4" />
           </button>

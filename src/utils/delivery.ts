@@ -1,5 +1,6 @@
+import { formatMessage } from "@/utils/i18n";
+import type { Dictionary } from "@/dictionaries";
 import {
-  DELIVERY_LABELS,
   DELIVERY_TIME_ZONE,
   SAME_DAY_CUTOFF_HOUR,
   SAME_DAY_EMIRATES,
@@ -21,8 +22,6 @@ export function isPastSameDayCutoff(now: Date = new Date()): boolean {
   return Number(dubaiHour.format(now)) >= SAME_DAY_CUTOFF_HOUR;
 }
 
-const CUTOFF_TEXT = `${SAME_DAY_CUTOFF_HOUR - 12} PM`;
-
 /**
  * Null when the item can't ship now (out of stock) — never promise a date for
  * it. With no emirate chosen yet, quote the conservative range so a visitor
@@ -32,29 +31,33 @@ export function getDeliveryEstimate({
   emirate,
   available,
   pastCutoff,
+  t,
 }: {
   emirate: string | null;
   available: boolean;
   pastCutoff: boolean;
+  t: Dictionary["delivery"];
 }): DeliveryEstimate | null {
   if (!available) return null;
 
+  const time = formatMessage(t.cutoffTime, { hour: SAME_DAY_CUTOFF_HOUR - 12 });
+
   if (emirate === null) {
     return {
-      label: DELIVERY_LABELS.standard,
-      detail: `Same day in Dubai for orders before ${CUTOFF_TEXT}`,
+      label: t.standard,
+      detail: formatMessage(t.sameDayInDubai, { time }),
     };
   }
   if (SAME_DAY_EMIRATES.includes(emirate)) {
     return pastCutoff
       ? {
-          label: DELIVERY_LABELS.nextDay,
-          detail: `Order before ${CUTOFF_TEXT} for same-day delivery`,
+          label: t.nextDay,
+          detail: formatMessage(t.orderBeforeSameDay, { time }),
         }
       : {
-          label: DELIVERY_LABELS.sameDay,
-          detail: `Order before ${CUTOFF_TEXT}`,
+          label: t.sameDay,
+          detail: formatMessage(t.orderBefore, { time }),
         };
   }
-  return { label: DELIVERY_LABELS.standard, detail: null };
+  return { label: t.standard, detail: null };
 }

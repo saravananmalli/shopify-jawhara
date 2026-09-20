@@ -1,0 +1,466 @@
+{
+  "meta": {
+    "brand": "Jawhara Jewellery",
+    "siteTitle": "Jawhara Jewellery | Jewellers Since 1907",
+    "siteDescription": "Heritage fine jewellery from Dubai's historic Gold Souk — GIA certified solitaires and 18K/22K heirloom pieces.",
+    "productNotFound": "Product not found",
+    "productDescriptionFallback": "Shop {title} at {brand}.",
+    "collectionNotFound": "Collection not found",
+    "collectionDescriptionFallback": "Shop the {title} collection at {brand}.",
+    "allJewellery": "All Jewellery",
+    "collectionsDescription": "Browse every Jawhara Jewellery piece — bridal, gold, diamonds, pearls, and more, straight from Dubai's historic Gold Souk.",
+    "storesTitle": "Our Stores",
+    "storesDescription": "Visit a Jawhara Jewellery store near you — find addresses, opening hours, phone numbers and directions across the UAE and the GCC.",
+    "notFoundTitle": "Page not found"
+  },
+  "common": {
+    "language": "Language",
+    "switchLanguage": "Switch language",
+    "close": "Close",
+    "home": "Home",
+    "viewAll": "View All",
+    "shopAll": "Shop All",
+    "loading": "Loading…",
+    "loadingProducts": "Loading products…",
+    "loadingCollection": "Loading collection…",
+    "loadingProduct": "Loading product…",
+    "loadingRelated": "Loading related products…",
+    "loadingReviews": "Loading reviews…",
+    "breadcrumb": "Breadcrumb",
+    "previous": "Previous {label}",
+    "next": "Next {label}",
+    "categories": "categories",
+    "products": "products",
+    "reviews": "reviews",
+    "ratedOutOf5": "Rated {rating} out of 5",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "dismiss": "Dismiss",
+    "unitKm": "km"
+  },
+  "header": {
+    "heritage": "HERITAGE SINCE 1907",
+    "stores": "Stores",
+    "deliverTo": "Deliver to",
+    "selectLocation": "Select location",
+    "emirateUae": "{emirate}, UAE",
+    "logIn": "Log In",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "siteNavigation": "Site navigation",
+    "homeLabel": "{brand}, home",
+    "wishlistLabel": "Wishlist, {count}",
+    "bagLabel": "Open bag, {count}",
+    "items": {
+      "one": "{count} item",
+      "other": "{count} items"
+    },
+    "announcements": [
+      "4-Hr Delivery in Dubai on Select Pieces",
+      "Extra 10% OFF Selected Jewellery. Discount auto-applied at checkout.",
+      "Free Delivery Across UAE"
+    ],
+    "searchHint": "Search for {term}",
+    "searchSuggestions": [
+      "Ring",
+      "Pendant",
+      "Necklace",
+      "Earring",
+      "Bangle",
+      "Gold Necklace",
+      "Wedding Ring"
+    ],
+    "fallbackAllProducts": "All Products"
+  },
+  "megaMenu": {
+    "vipConcierge": "VIP Concierge",
+    "conciergeText": "Book a bespoke showroom viewing or private video consultation with our gemologists.",
+    "bookViewing": "Book Private Viewing",
+    "guaranteesTitle": "Client Guarantees:",
+    "guarantees": [
+      "100% Certified Natural Diamonds",
+      "15-Day Exchange Policy",
+      "Lifetime Jewellery Maintenance"
+    ],
+    "viewAllCreations": "View All Creations",
+    "shopCollection": "Shop the collection"
+  },
+  "footer": {
+    "onlyNaturalDiamonds": "Only Natural Diamonds",
+    "support": "24X7 Enquiry Support ( ALL Days )",
+    "general": "General",
+    "corporate": "Corporate",
+    "hr": "HR",
+    "findUsOn": "Find Us On",
+    "copyright": "Copyright - {brand} {year}",
+    "columns": [
+      {
+        "title": "Know Your Jewellery",
+        "links": [
+          "Diamond Guide",
+          "Jewellery Guide",
+          "Gemstone Guide",
+          "Gold Rate"
+        ]
+      },
+      {
+        "title": "Jawhara Advantage",
+        "links": [
+          "Free Shipping",
+          "15 days return",
+          "About Us",
+          "Our Designs",
+          "Sustainability",
+          "Certificate",
+          "Blog",
+          "Awards"
+        ]
+      },
+      {
+        "title": "Customer Service",
+        "links": [
+          "Privacy Policy",
+          "Return Policy",
+          "Order Status",
+          "Terms and Conditions",
+          "Faq"
+        ]
+      },
+      {
+        "title": "About Us",
+        "links": [
+          "Our Story",
+          "Press",
+          "Blog",
+          "Careers"
+        ]
+      }
+    ]
+  },
+  "features": [
+    "Jewellery Certification",
+    "Free Shipping Across UAE",
+    "Complimentary Engraving",
+    "15-Day Exchange Policy",
+    "Lifetime Jewellery Maintenance",
+    "Award-Winning Jeweller"
+  ],
+  "home": {
+    "hero": {
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "goTo": "Go to slide {n}",
+      "onlyNaturalDiamonds": "only Natural Diamonds",
+      "campaignPhoto": "Campaign photography"
+    },
+    "categories": {
+      "eyebrow": "Find Your Perfect Piece",
+      "title": "Shop By Category",
+      "empty": "No collections yet — create some in Shopify Admin → Products → Collections (with an image set) and they'll appear here."
+    },
+    "masterpieces": {
+      "eyebrow": "Our Finest Creations",
+      "title": "Signature Masterpieces",
+      "subtitle": "GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces.",
+      "tabs": {
+        "all": "All Masterpieces",
+        "under5000": "Under AED 5,000",
+        "solitaires": "Solitaires",
+        "everyday": "Everyday Luxury"
+      }
+    },
+    "trending": {
+      "eyebrow": "Fresh & Favoured",
+      "title": "Trending Now in the UAE",
+      "subtitle": "New arrivals from our atelier and the pieces our clients are choosing most.",
+      "tabs": {
+        "newArrivals": "New Arrivals",
+        "bestSellers": "Best Sellers",
+        "uaeGifts": "Trending UAE Gifts"
+      }
+    },
+    "shelfEyebrow": "Haute Vitrine",
+    "loadError": "Couldn't load these products. Please try again.",
+    "noMatchYet": "No products match “{label}” yet.",
+    "atelier": {
+      "chip": "High Jewellery Atelier",
+      "headingLine1": "Master Craftsmanship,",
+      "headingLine2": "Crowned in Arabian Gold.",
+      "body": "Inspired by a century of connoisseurship, Jawhara marries the goldsmithing traditions of Dubai's Gold Souk with GIA certified diamonds and gemstones. Each piece is hand-finished in 18K or 22K gold, hallmarked, and looked after for life by our Dubai boutiques.",
+      "cardTitle": "GIA Certified Diamond Atelier",
+      "cardText": "Natural solitaires, hallmarked 18K and 22K gold, and lifetime jewellery maintenance.",
+      "photoLabel": "Atelier photography",
+      "stats": [
+        {
+          "title": "GIA",
+          "subtitle": "Certified Diamonds",
+          "desc": "Natural solitaires graded and certified by GIA."
+        },
+        {
+          "title": "18K & 22K",
+          "subtitle": "Hallmarked Gold",
+          "desc": "Heirloom pieces crafted in hallmarked 18K and 22K gold."
+        },
+        {
+          "title": "Lifetime",
+          "subtitle": "Jewellery Care",
+          "desc": "Complimentary maintenance and engraving at our Dubai boutiques."
+        }
+      ],
+      "exploreSolitaires": "Explore Solitaires",
+      "engagementRings": "Engagement Rings"
+    },
+    "occasions": {
+      "eyebrow": "Curated By Moment",
+      "title": "Shop by Occasion"
+    },
+    "reviews": {
+      "eyebrow": "Loved by Clients",
+      "title": "What Our Customers Say",
+      "subtitle": "Honest words from those who chose Jawhara for their most treasured moments.",
+      "previous": "Previous reviews",
+      "next": "Next reviews"
+    },
+    "testimonials": {
+      "title": "Words from Our Clients",
+      "average": "average from {count} client reviews"
+    },
+    "newsletter": {
+      "eyebrow": "The Jawhara Circle • UAE",
+      "title": "New Jewellery, Previews & Private Offers",
+      "body": "Be the first to see new gold, diamond and pearl collections, receive exclusive offers, and get gift ideas for every occasion.",
+      "emailLabel": "Email address",
+      "placeholder": "Enter your email address...",
+      "subscribe": "Subscribe",
+      "thanks": "Thank you — you're on the list."
+    }
+  },
+  "product": {
+    "addToBag": "Add to Bag",
+    "added": "Added!",
+    "addedToBag": "Added to bag",
+    "addToBagWithTotal": "Add to Shopping Bag • {total}",
+    "outOfStock": "Out of Stock",
+    "designCode": "Design Code:",
+    "specification": "Specification",
+    "customerReviewLink": "({count})",
+    "customerReviews": {
+      "one": "{count} customer review",
+      "other": "{count} customer reviews"
+    },
+    "ratedFromReviews": "Rated {rating} out of 5 from {reviews}",
+    "reviewsCount": {
+      "one": "{count} review",
+      "other": "{count} reviews"
+    },
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "wishlistAdd": "Add {title} to wishlist",
+    "wishlistRemove": "Remove {title} from wishlist",
+    "askQuestion": "Ask a Question",
+    "questionSubject": "Question about {title}",
+    "share": "Share",
+    "linkCopied": "Link Copied!",
+    "viewImage": "View image {n} of {total}",
+    "youMayAlsoLike": "You May Also Like",
+    "recentlyViewed": "Recently Viewed",
+    "recentlyViewedLoading": "Loading recently viewed products…",
+    "recentlyViewedError": "Couldn't load your recently viewed products.",
+    "specs": {
+      "collection": "Collection",
+      "sku": "SKU",
+      "metal": "Metal Type",
+      "color": "Color",
+      "purity": "Diamond Clarity",
+      "gemstone": "Diamond Color",
+      "specifications": "Diamond Ct",
+      "gross_weight": "Gross Weight"
+    },
+    "badges": {
+      "new arrival": "New Arrival",
+      "limited edition": "Limited Edition",
+      "gift pick": "Gift Pick",
+      "trending": "Trending",
+      "exclusive": "Exclusive",
+      "bestseller": "Dubai Bestseller",
+      "flagship exclusive": "Dubai Flagship Exclusive"
+    },
+    "reviewsSection": {
+      "title": "Customer Reviews",
+      "basedOn": "Based on {reviews}",
+      "averageRating": "Average rating {average} out of 5",
+      "starLabel": {
+        "one": "{count} star",
+        "other": "{count} stars"
+      },
+      "showAll": "Show all {count} reviews",
+      "verifiedPurchase": "Verified Purchase",
+      "customerReview": "Customer Review",
+      "anonymousName": "Customer"
+    }
+  },
+  "cart": {
+    "bagLabel": "Shopping bag",
+    "title": "Your Bag ({count})",
+    "close": "Close bag",
+    "dismissError": "Dismiss error",
+    "empty": "Your bag is empty.",
+    "decrease": "Decrease quantity of {title}",
+    "increase": "Increase quantity of {title}",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout",
+    "genericError": "Something went wrong with your bag. Please try again."
+  },
+  "search": {
+    "label": "Search",
+    "inputLabel": "Search jewellery",
+    "placeholder": "Search jewellery...",
+    "close": "Close search",
+    "trending": "Trending:",
+    "searching": "Searching...",
+    "noResults": "No results for “{query}”.",
+    "error": "Something went wrong loading results. Please try again.",
+    "tabs": {
+      "related": "Related",
+      "latest": "Latest Design",
+      "bestseller": "Best Seller",
+      "trending": "Trending",
+      "new": "New Arrivals"
+    }
+  },
+  "collection": {
+    "all": "All",
+    "chips": {
+      "newArrival": "New Arrival",
+      "bestseller": "Bestseller",
+      "trending": "Trending"
+    },
+    "productsCount": {
+      "one": "{count} Product",
+      "other": "{count} Products"
+    },
+    "showResults": "Show {label}",
+    "clearAll": "Clear all",
+    "clearAllFilters": "Clear all filters",
+    "showAllFilters": "Show All Filters",
+    "filters": "Filters",
+    "closeFilters": "Close filters",
+    "sortBy": "Sort By:",
+    "sort": {
+      "RECOMMENDED": "Recommended",
+      "BEST_SELLING": "Best Selling",
+      "NEWEST": "New In",
+      "PRICE_ASC": "Price: Low to High",
+      "PRICE_DESC": "Price: High to Low"
+    },
+    "noMatch": "No pieces match your filters.",
+    "noProducts": "No products in this collection yet.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "loadMoreError": "Couldn't load more pieces. Please try again.",
+    "showing": "Showing {shown} of {total}",
+    "shopByCategory": "Shop by category",
+    "categoryFilter": "Category",
+    "price": "Price",
+    "deals": "Deals",
+    "onSale": "On sale",
+    "under": "Under {amount}",
+    "above": "Above {amount}",
+    "groups": {
+      "metal": "Metal",
+      "stone": "Stone",
+      "stone-color": "Stone color",
+      "shape": "Shape",
+      "brand": "Brand"
+    },
+    "tagValues": {
+      "18k yellow gold": "18K Yellow Gold",
+      "18k rose gold": "18K Rose Gold",
+      "18k white gold": "18K White Gold",
+      "22k yellow gold": "22K Yellow Gold",
+      "21k yellow gold": "21K Yellow Gold",
+      "platinum": "Platinum",
+      "silver": "Silver",
+      "diamond": "Diamond",
+      "pearl": "Pearl",
+      "ruby": "Ruby",
+      "emerald": "Emerald",
+      "sapphire": "Sapphire"
+    }
+  },
+  "delivery": {
+    "sameDay": "Same Day Delivery",
+    "nextDay": "Next Day Delivery",
+    "standard": "1-2 Day Delivery",
+    "sameDayInDubai": "Same day in Dubai for orders before {time}",
+    "orderBeforeSameDay": "Order before {time} for same-day delivery",
+    "orderBefore": "Order before {time}",
+    "cutoffTime": "{hour} PM",
+    "changeLocation": "Change location",
+    "modalTitle": "Delivery Location",
+    "useMyLocation": "Use my current location",
+    "locating": "Locating...",
+    "geoError": "Couldn't get your location. Please choose a city below, or check your browser's location permission.",
+    "geoOutside": "Your location is outside the UAE. Please choose the emirate you want your order delivered to.",
+    "orChooseCity": "or choose a city",
+    "searchCities": "Search cities...",
+    "searchCitiesLabel": "Search cities",
+    "noCities": "No cities match “{query}”.",
+    "uae": "UAE",
+    "promptTitle": "See your delivery time",
+    "promptBody": "Allow location access and we'll show whether your order can arrive today. It's only used to pick your emirate.",
+    "allowLocation": "Allow location",
+    "chooseManually": "Choose manually",
+    "locationLabel": "Delivery location",
+    "emirates": {
+      "Dubai": "Dubai",
+      "Abu Dhabi": "Abu Dhabi",
+      "Sharjah": "Sharjah",
+      "Ajman": "Ajman",
+      "Ras Al Khaimah": "Ras Al Khaimah",
+      "Fujairah": "Fujairah",
+      "Umm Al Quwain": "Umm Al Quwain",
+      "Al Ain": "Al Ain"
+    }
+  },
+  "stores": {
+    "heading": "Find a Jawhara Store Near You",
+    "intro": "Visit us in person to explore our full collection and get expert advice.",
+    "empty": "Our store locations will be listed here soon.",
+    "searchLabel": "Search stores by name or location",
+    "searchPlaceholder": "Search stores by name or location…",
+    "clearSearch": "Clear search",
+    "filterCountry": "Filter by country",
+    "filterRegion": "Filter by region",
+    "allCountries": "All Countries",
+    "allRegions": "All Regions",
+    "showNearby": "Show nearby stores",
+    "updateLocation": "Update my location",
+    "locating": "Locating…",
+    "locationDenied": "We couldn't access your location. You can still browse all stores below.",
+    "noMatch": "No stores match your search.",
+    "storesCount": {
+      "one": "{count} store",
+      "other": "{count} stores"
+    },
+    "showingIn": "Showing {stores} in {place}",
+    "showingAll": "Showing all {stores}{order}",
+    "sortedByDistance": " · sorted by distance",
+    "shownFirst": " · {place} stores shown first",
+    "nearest": "Nearest to you",
+    "kmAway": "{distance} km away",
+    "directions": "Directions",
+    "directionsTo": "Directions to {name} (opens in a new tab)"
+  },
+  "errors": {
+    "notFoundTitle": "We couldn't find that page",
+    "notFoundBody": "The piece or collection you're looking for may have moved or is no longer available.",
+    "browseCollections": "Browse collections",
+    "backHome": "Back to home",
+    "somethingWrong": "Something went wrong",
+    "loadFailed": "We couldn't load this page. Please try again in a moment.",
+    "tryAgain": "Try again",
+    "reference": "Reference: {digest}"
+  }
+}

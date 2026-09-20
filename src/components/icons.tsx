@@ -1,5 +1,10 @@
 type IconProps = { className?: string };
 
+/** Only icons that point somewhere mirror in RTL (previous/next, "go"
+ * arrows). Object icons — search, heart, bag, user, share, close — keep their
+ * shape: mirroring them would be wrong, not more Arabic. */
+const FLIP_IN_RTL = "rtl:-scale-x-100";
+
 export function SearchIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
@@ -56,7 +61,7 @@ export function MapPinIcon({ className }: IconProps) {
 
 export function ChevronLeftIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" className={`${className ?? ""} ${FLIP_IN_RTL}`} aria-hidden>
       <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -72,7 +77,7 @@ export function ChevronDownIcon({ className }: IconProps) {
 
 export function ChevronRightIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" className={`${className ?? ""} ${FLIP_IN_RTL}`} aria-hidden>
       <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -80,7 +85,7 @@ export function ChevronRightIcon({ className }: IconProps) {
 
 export function ArrowUpRightIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+    <svg viewBox="0 0 24 24" fill="none" className={`${className ?? ""} ${FLIP_IN_RTL}`} aria-hidden>
       <path d="M7 17L17 7M8 7h9v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );

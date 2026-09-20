@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useDictionary } from "@/store/locale";
 import { getDeliveryEstimate, isPastSameDayCutoff } from "@/utils/delivery";
 import { emirateFromCoords, isEmirateName } from "@/utils/emirates";
 
@@ -244,5 +245,6 @@ export function useLocationUi() {
 
 export function useDeliveryEstimate(available: boolean) {
   const { emirate, pastCutoff } = useDelivery();
-  return getDeliveryEstimate({ emirate, available, pastCutoff });
+  const { delivery } = useDictionary();
+  return getDeliveryEstimate({ emirate, available, pastCutoff, t: delivery });
 }

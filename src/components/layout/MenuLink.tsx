@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, type ComponentProps } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { MenuIntentContext } from "@/hooks/useMenuIntent";
 
 /** A link inside a mega-menu panel: prefetched only once its menu is armed. */
