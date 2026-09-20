@@ -10,12 +10,13 @@ import Newsletter from "@/components/home/Newsletter";
 import {
   getCollectionGroups,
   getHeroBanners,
+  getCollectionProducts,
   getLatestReviews,
   getOccasions,
   getProducts,
   getTestimonials,
 } from "@/services/shopify";
-import { ATELIER_COLLECTION_HANDLE } from "@/config/catalog";
+import { ATELIER_COLLECTION_HANDLE, MASTERPIECES_COLLECTION_HANDLE } from "@/config/catalog";
 
 /** Real Shopify collections powering the homepage "Shop By Category" strip
  * — the plain, material-agnostic collections (not the "Gold Rings" /
@@ -29,16 +30,15 @@ const SHOP_BY_CATEGORY_HANDLES = [
   "bangles",
 ];
 
-/** Each tab is a real Shopify Storefront search-query filter — tag the
- * matching products in Shopify Admin → Products → [product] → Tags with
- * exactly: "solitaire", "ready-for-hand-delivery", "trending". Until
- * you do, those tabs honestly show "no products match" rather than
- * faking a result. */
+/** Each tab is backed by real Shopify data — a price filter or an existing
+ * collection (any collection handle works; products and their order are
+ * managed in Admin → Products → Collections). A tab with nothing in it
+ * honestly shows "no products match" rather than faking a result. */
 const MASTERPIECE_TABS: ProductTab[] = [
   { label: "All Masterpieces", mode: "initial" },
   { label: "Under AED 5,000", mode: "query", query: "variants.price:<5000" },
-  { label: "Solitaires", mode: "query", query: "tag:solitaire" },
-  { label: "Ready for Hand Delivery", mode: "query", query: "tag:ready-for-hand-delivery" },
+  { label: "Solitaires", mode: "collection", handle: "solitaire" },
+  { label: "Everyday Luxury", mode: "collection", handle: "everyday-luxury" },
 ];
 
 const TRENDING_TABS: ProductTab[] = [
@@ -52,9 +52,14 @@ const TRENDING_TABS: ProductTab[] = [
 const HOME_REVALIDATE_SECONDS = 600;
 
 export default async function Home() {
-  const [products, collections, heroBanners, occasions, testimonials, reviews] =
+  const [products, signatureProducts, collections, heroBanners, occasions, testimonials, reviews] =
     await Promise.all([
       getProducts({ first: 8, revalidate: HOME_REVALIDATE_SECONDS }),
+      // A curation problem must not take the homepage down — fall back to best sellers.
+      getCollectionProducts({
+        handle: MASTERPIECES_COLLECTION_HANDLE,
+        revalidate: HOME_REVALIDATE_SECONDS,
+      }).catch(() => []),
       getCollectionGroups({
         categories: SHOP_BY_CATEGORY_HANDLES,
         atelier: [ATELIER_COLLECTION_HANDLE],
@@ -77,11 +82,11 @@ export default async function Home() {
       <CategoryStrip categories={categories} />
       <FeaturesBar />
       <ProductGridSection
-        eyebrow="Haute Vitrine"
+        eyebrow="Our Finest Creations"
         title="Signature Masterpieces"
         subtitle="GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces."
         tabs={MASTERPIECE_TABS}
-        products={products.slice(0, 4)}
+        products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
       />
       <AtelierSection
         image={

@@ -6,13 +6,15 @@ import ProductCarousel from "@/components/ui/ProductCarousel";
 import ProductShelf from "@/components/ui/ProductShelf";
 import { ProductCarouselSkeleton } from "@/components/ui/Skeleton";
 import { ChevronRightIcon } from "@/components/icons";
-import { getProducts, searchProducts } from "@/services/shopify";
+import { filterProducts, getCollectionProducts, getProducts } from "@/services/shopify";
 import type { Product } from "@/types/product";
 
 /**
  * "initial" reuses the products already fetched server-side for this
  * section (no refetch); "query" runs a real Shopify search-query filter
- * (price range, tag, ...); "sort" re-fetches with a different sort key.
+ * (price range, tag, ...); "collection" lists an existing Shopify
+ * collection's products in their Admin order; "sort" re-fetches with a
+ * different sort key.
  * Every tab is backed by a real Shopify query — a tab with no matching
  * products (e.g. a tag nothing is tagged with yet) shows a real empty
  * state, never fake results.
@@ -20,6 +22,7 @@ import type { Product } from "@/types/product";
 export type ProductTab =
   | { label: string; mode: "initial" }
   | { label: string; mode: "query"; query: string }
+  | { label: string; mode: "collection"; handle: string }
   | {
       label: string;
       mode: "sort";
@@ -71,8 +74,10 @@ export default function ProductGridSection({
       try {
         const result =
           tab.mode === "query"
-            ? await searchProducts({ query: tab.query, first: 12 })
-            : await getProducts({ sortKey: tab.sortKey, first: 12 });
+            ? await filterProducts({ query: tab.query, first: 12 })
+            : tab.mode === "collection"
+              ? await getCollectionProducts({ handle: tab.handle, first: 12 })
+              : await getProducts({ sortKey: tab.sortKey, first: 12 });
         if (!cancelled) setFetchedProducts(result);
       } catch {
         if (!cancelled)

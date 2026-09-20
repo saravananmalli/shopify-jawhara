@@ -18,6 +18,22 @@ export const PRODUCTS_QUERY = /* GraphQL */ `
   ${PRODUCT_CARD_FRAGMENT}
 `;
 
+/** Default `products` order is COLLECTION_DEFAULT — the manual order set in Shopify Admin. */
+export const COLLECTION_PRODUCTS_QUERY = /* GraphQL */ `
+  query CollectionProducts($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      products(first: $first) {
+        edges {
+          node {
+            ...ProductCardFields
+          }
+        }
+      }
+    }
+  }
+  ${PRODUCT_CARD_FRAGMENT}
+`;
+
 export const SEARCH_PRODUCTS_QUERY = /* GraphQL */ `
   query SearchProducts($query: String!, $first: Int!) {
     products(first: $first, query: $query) {

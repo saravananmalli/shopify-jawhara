@@ -40,7 +40,7 @@ export default function CategoryStrip({
       <div className="mx-auto flex max-w-8xl items-end justify-between px-4">
         <div>
           <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-800">
-            Haute Classifications
+            Find Your Perfect Piece
           </p>
           <h2 className="mt-1 font-sans text-[32px] font-normal text-gold-600">Shop By Category</h2>
         </div>

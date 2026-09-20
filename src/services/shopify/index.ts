@@ -3,6 +3,8 @@ export {
   getProducts,
   getProductByHandle,
   searchProducts,
+  filterProducts,
+  getCollectionProducts,
   getRelatedProducts,
   getProductsByIds,
 } from "@/services/shopify/product-service";
