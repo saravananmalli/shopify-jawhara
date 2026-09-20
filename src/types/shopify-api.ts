@@ -155,6 +155,21 @@ export type ShopifyTestimonialMetaobject = {
   active: ShopifyMetaobjectField;
 };
 
+export type ShopifyStoreLocationMetaobject = {
+  id: string;
+  name: ShopifyMetaobjectField;
+  address: ShopifyMetaobjectField;
+  country: ShopifyMetaobjectField;
+  region: ShopifyMetaobjectField;
+  phone: ShopifyMetaobjectField;
+  hours: ShopifyMetaobjectField;
+  mapLink: ShopifyMetaobjectField;
+  latitude: ShopifyMetaobjectField;
+  longitude: ShopifyMetaobjectField;
+  displayOrder: ShopifyMetaobjectField;
+  active: ShopifyMetaobjectField;
+};
+
 export type ShopifySitemapNode = {
   handle: string;
   updatedAt?: string | null;

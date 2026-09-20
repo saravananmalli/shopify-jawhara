@@ -276,6 +276,51 @@ export const TESTIMONIALS_QUERY = /* GraphQL */ `
   }
 `;
 
+export const STORE_LOCATIONS_QUERY = /* GraphQL */ `
+  query StoreLocations($first: Int!) {
+    metaobjects(type: "store_location", first: $first) {
+      edges {
+        node {
+          id
+          name: field(key: "name") {
+            value
+          }
+          address: field(key: "address") {
+            value
+          }
+          country: field(key: "country") {
+            value
+          }
+          region: field(key: "region") {
+            value
+          }
+          phone: field(key: "phone") {
+            value
+          }
+          hours: field(key: "hours") {
+            value
+          }
+          mapLink: field(key: "map_link") {
+            value
+          }
+          latitude: field(key: "latitude") {
+            value
+          }
+          longitude: field(key: "longitude") {
+            value
+          }
+          displayOrder: field(key: "display_order") {
+            value
+          }
+          active: field(key: "active") {
+            value
+          }
+        }
+      }
+    }
+  }
+`;
+
 /** Handles only — the sitemap doesn't need images, prices or variants. */
 export const SITEMAP_QUERY = /* GraphQL */ `
   query Sitemap($first: Int!) {

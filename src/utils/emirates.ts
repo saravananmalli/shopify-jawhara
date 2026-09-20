@@ -1,3 +1,5 @@
+import { distanceKm } from "@/utils/geo";
+
 export type Emirate = {
   name: string;
   lat: number;
@@ -15,27 +17,9 @@ export const UAE_EMIRATES: Emirate[] = [
   { name: "Al Ain", lat: 24.2075, lng: 55.7447 },
 ];
 
-function haversineDistanceKm(
-  a: { lat: number; lng: number },
-  b: { lat: number; lng: number }
-) {
-  const R = 6371;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-  const lat1 = (a.lat * Math.PI) / 180;
-  const lat2 = (b.lat * Math.PI) / 180;
-
-  const sinDLat = Math.sin(dLat / 2);
-  const sinDLng = Math.sin(dLng / 2);
-  const h =
-    sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLng * sinDLng;
-
-  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
-}
-
 export function nearestEmirate(coords: { lat: number; lng: number }): Emirate {
   return UAE_EMIRATES.reduce((closest, emirate) =>
-    haversineDistanceKm(coords, emirate) < haversineDistanceKm(coords, closest)
+    distanceKm(coords, emirate) < distanceKm(coords, closest)
       ? emirate
       : closest
   );
@@ -47,7 +31,7 @@ const MAX_MATCH_DISTANCE_KM = 250;
 
 export function emirateFromCoords(coords: { lat: number; lng: number }): Emirate | null {
   const nearest = nearestEmirate(coords);
-  return haversineDistanceKm(coords, nearest) <= MAX_MATCH_DISTANCE_KM ? nearest : null;
+  return distanceKm(coords, nearest) <= MAX_MATCH_DISTANCE_KM ? nearest : null;
 }
 
 export function isEmirateName(value: unknown): value is string {

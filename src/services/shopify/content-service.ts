@@ -2,6 +2,7 @@ import { shopifyFetch } from "@/services/shopify/client";
 import {
   sortByDisplayOrder,
   sortOccasionsByDisplayOrder,
+  sortStoreNodes,
   sortTestimonialsByDisplayOrder,
   toBrand,
   toCategoryTile,
@@ -12,6 +13,7 @@ import {
   toNavLinks,
   toOccasion,
   toSitemapEntry,
+  toStoreLocation,
   toTestimonial,
 } from "@/services/shopify/adapters";
 import {
@@ -24,6 +26,7 @@ import {
   MENU_QUERY,
   OCCASIONS_QUERY,
   SITEMAP_QUERY,
+  STORE_LOCATIONS_QUERY,
   TESTIMONIALS_QUERY,
 } from "@/graphql/queries";
 import type {
@@ -34,6 +37,7 @@ import type {
   NavLink,
   Occasion,
   SitemapEntry,
+  StoreLocation,
   Testimonial,
 } from "@/types/content";
 import type {
@@ -46,8 +50,11 @@ import type {
   ShopifyMenuItem,
   ShopifyOccasionMetaobject,
   ShopifySitemapNode,
+  ShopifyStoreLocationMetaobject,
   ShopifyTestimonialMetaobject,
 } from "@/types/shopify-api";
+import { resolveMapLinkCoordinates } from "@/services/map-link-service";
+import { parseCoordinates } from "@/utils/geo";
 
 const CONTENT_REVALIDATE_SECONDS = 3600; // stable content — rule #22
 
@@ -299,6 +306,40 @@ export async function getTestimonials({
     .map((edge) => edge.node)
     .filter((node) => node.active?.value === "true" && node.quote?.value);
   return sortTestimonialsByDisplayOrder(nodes).map(toTestimonial);
+}
+
+/**
+ * Returns [] when the `store_location` metaobject definition hasn't been
+ * created yet, or every entry is hidden — the page shows a real empty state.
+ * An entry is hidden only by an explicit `active = false`, so stores added
+ * without the field still show.
+ *
+ * Position: the `latitude`/`longitude` fields win; otherwise it is read from
+ * the Google Maps link (short links are resolved on the server), so pasting
+ * a map link into Admin is enough.
+ */
+export async function getStoreLocations(): Promise<StoreLocation[]> {
+  const data = await shopifyFetch<{
+    metaobjects: { edges: { node: ShopifyStoreLocationMetaobject }[] };
+  }>({
+    query: STORE_LOCATIONS_QUERY,
+    variables: { first: 250 },
+    revalidate: CONTENT_REVALIDATE_SECONDS,
+  });
+
+  const nodes = data.metaobjects.edges
+    .map((edge) => edge.node)
+    .filter((node) => node.active?.value !== "false" && node.name?.value?.trim());
+
+  return Promise.all(
+    sortStoreNodes(nodes).map(async (node) =>
+      toStoreLocation(
+        node,
+        parseCoordinates(node.latitude?.value, node.longitude?.value) ??
+          (await resolveMapLinkCoordinates(node.mapLink?.value)),
+      ),
+    ),
+  );
 }
 
 /** Storefront API caps a page at 250; a catalogue past that needs pagination. */

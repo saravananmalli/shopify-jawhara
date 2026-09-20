@@ -1,7 +1,8 @@
 import { PRODUCT_SPEC_FIELDS } from "@/config/product-specs";
 import { formatMetafieldValue, formatMoney } from "@/utils/format";
 import { brandName } from "@/config/site";
-import { isSafeCheckoutUrl, toSafeInternalPath } from "@/utils/safe-url";
+import { isSafeCheckoutUrl, isSafeHttpsUrl, toSafeInternalPath } from "@/utils/safe-url";
+import type { Coordinates } from "@/utils/geo";
 import type { Money } from "@/types/money";
 import type { Product, ProductDetail, ProductImage, ProductVariant } from "@/types/product";
 import type { Cart, CartLine } from "@/types/cart";
@@ -19,6 +20,7 @@ import type {
   NavLink,
   Occasion,
   SitemapEntry,
+  StoreLocation,
   Testimonial,
 } from "@/types/content";
 import type {
@@ -39,6 +41,7 @@ import type {
   ShopifyProductCard,
   ShopifyProductDetail,
   ShopifySitemapNode,
+  ShopifyStoreLocationMetaobject,
   ShopifyTestimonialMetaobject,
 } from "@/types/shopify-api";
 
@@ -323,6 +326,41 @@ export function sortTestimonialsByDisplayOrder(
   return [...nodes].sort(
     (a, b) =>
       Number(a.displayOrder?.value ?? 0) - Number(b.displayOrder?.value ?? 0)
+  );
+}
+
+// Phone numbers pasted from Google Maps carry invisible bidi/format marks
+// (e.g. U+202C) that break `tel:` links and leave stray gaps in the text.
+const INVISIBLE_FORMAT_CHARS = /[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g;
+const cleanText = (value: string | null | undefined) =>
+  (value ?? "").replace(INVISIBLE_FORMAT_CHARS, "").trim();
+
+export function toStoreLocation(
+  node: ShopifyStoreLocationMetaobject,
+  coordinates: Coordinates | null,
+): StoreLocation {
+  const mapLink = cleanText(node.mapLink?.value);
+  return {
+    id: node.id,
+    name: cleanText(node.name?.value),
+    address: cleanText(node.address?.value),
+    country: cleanText(node.country?.value),
+    region: cleanText(node.region?.value),
+    phone: cleanText(node.phone?.value),
+    hours: cleanText(node.hours?.value),
+    mapLink: isSafeHttpsUrl(mapLink) ? mapLink : "",
+    coordinates,
+  };
+}
+
+/** Manual order first, then A–Z so stores without an order still list stably. */
+export function sortStoreNodes(
+  nodes: ShopifyStoreLocationMetaobject[]
+): ShopifyStoreLocationMetaobject[] {
+  return [...nodes].sort(
+    (a, b) =>
+      Number(a.displayOrder?.value ?? 0) - Number(b.displayOrder?.value ?? 0) ||
+      (a.name?.value ?? "").localeCompare(b.name?.value ?? "")
   );
 }
 
