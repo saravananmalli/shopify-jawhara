@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
+import { useLocale } from "@/store/locale";
 import { getShopifyImageUrl, isUntrustedRemoteImage, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { HeroBanner } from "@/types/content";
 
@@ -72,7 +73,7 @@ function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolea
       ) : (
         <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:p-10">
           {slide.eyebrow && (
-            <span className="font-serif text-5xl italic text-gold-700 drop-shadow-sm sm:text-6xl">
+            <span className="font-serif text-4xl italic text-gold-700 drop-shadow-sm sm:text-6xl">
               {slide.eyebrow}
             </span>
           )}
@@ -111,6 +112,10 @@ function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolea
 }
 
 const AUTO_ROTATE_INTERVAL_MS = 5000;
+// Least horizontal travel (px) that counts as a swipe rather than a tap.
+const SWIPE_THRESHOLD_PX = 40;
+// Native aspect of the Shopify banners (their headline is part of the photo).
+const BANNER_ASPECT = "aspect-[2.38/1]";
 // Mount the next slide's photo this long after the current one, so it is ready
 // before the rotation but never competes with the first slide (the LCP image).
 const PRELOAD_NEXT_DELAY_MS = 2000;
@@ -118,6 +123,10 @@ const PRELOAD_NEXT_DELAY_MS = 2000;
 export default function Hero({ banners }: { banners: HeroBanner[] }) {
   const { hero } = useDictionary().home;
   const slides = banners.length > 0 ? banners : FALLBACK_SLIDES;
+  // Photos carrying their own headline must not be cropped on a phone, or the
+  // marketing copy is cut off at the edges: show them whole. Slides with text
+  // overlaid by us need the room, so they keep a taller fluid height.
+  const showWholeBanner = slides.every((slide) => slide.hasBakedInText);
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   // Slides whose <Image> is mounted. Rendering every slide up front would
@@ -126,6 +135,33 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
 
   const go = (delta: number) =>
     setIndex((prev) => (prev + delta + slides.length) % slides.length);
+
+  const isRtl = useLocale() === "ar";
+  // Pointer events, not touch events: with `touch-pan-y` the browser keeps
+  // vertical scrolling and hands horizontal drags to us instead of cancelling
+  // the gesture, and the same code covers mouse drag and pen.
+  const dragStartX = useRef<number | null>(null);
+  const didSwipe = useRef(false);
+  const handlePointerDown = (event: PointerEvent) => {
+    dragStartX.current = event.clientX;
+    didSwipe.current = false;
+  };
+  const handlePointerUp = (event: PointerEvent) => {
+    if (dragStartX.current === null) return;
+    const deltaX = event.clientX - dragStartX.current;
+    dragStartX.current = null;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX) return;
+    didSwipe.current = true;
+    // Swiping toward the start edge advances, in either reading direction.
+    go(deltaX < 0 !== isRtl ? 1 : -1);
+  };
+  // A swipe that starts and ends on the slide's link must not also follow it.
+  const suppressClickAfterSwipe = (event: MouseEvent) => {
+    if (!didSwipe.current) return;
+    didSwipe.current = false;
+    event.preventDefault();
+    event.stopPropagation();
+  };
 
   useEffect(() => {
     if (slides.length <= 1 || isPaused) return;
@@ -149,9 +185,16 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
 
   return (
     <section
-      className="relative h-[420px] w-full overflow-hidden sm:h-[600px]"
+      className={`relative w-full touch-pan-y overflow-hidden sm:aspect-auto sm:h-[42vw] sm:max-h-[calc(100svh-12rem)] sm:min-h-60 ${
+        showWholeBanner ? BANNER_ASPECT : "h-[clamp(13rem,58vw,16rem)]"
+      }`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => (dragStartX.current = null)}
+      onClickCapture={suppressClickAfterSwipe}
+      onDragStart={(event) => event.preventDefault()}
     >
       {slides.map((slide, i) => {
         if (i !== index && !mounted.has(i)) return null;
@@ -173,28 +216,33 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
           <button
             onClick={() => go(-1)}
             aria-label={hero.prev}
-            className="absolute start-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
+            className="absolute start-4 top-1/2 z-10 hidden h-10 w-10 sm:flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
           <button
             onClick={() => go(1)}
             aria-label={hero.next}
-            className="absolute end-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
+            className="absolute end-4 top-1/2 z-10 hidden h-10 w-10 sm:flex -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-brown-900 hover:bg-white"
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
 
-          <div className="absolute bottom-3 start-1/2 z-10 flex -translate-x-1/2 gap-2 rtl:translate-x-1/2">
+          <div className="absolute bottom-0 start-1/2 z-10 flex -translate-x-1/2 rtl:translate-x-1/2">
             {slides.map((s, i) => (
               <button
                 key={s.id}
                 aria-label={formatMessage(hero.goTo, { n: i + 1 })}
                 onClick={() => setIndex(i)}
-                className={`h-1.5 rounded-full shadow-sm transition-all ${
-                  i === index ? "w-6 bg-white" : "w-1.5 bg-white/50"
-                }`}
-              />
+                aria-current={i === index}
+                className="flex h-8 items-center px-1"
+              >
+                <span
+                  className={`block h-1.5 rounded-full shadow-sm transition-all ${
+                    i === index ? "w-6 bg-white" : "w-1.5 bg-white/50"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </>

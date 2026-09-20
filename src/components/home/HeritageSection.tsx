@@ -6,7 +6,7 @@ import { CalendarIcon } from "@/components/icons";
 export default function HeritageSection() {
   return (
     <section className="bg-cream-100">
-      <div className="mx-auto grid max-w-8xl grid-cols-1 gap-8 px-4 py-14 lg:grid-cols-2 lg:items-center">
+      <div className="grid page-container grid-cols-1 gap-8 py-14 lg:grid-cols-2 lg:items-center">
         <div>
           <Chip tone="deep" className="mb-3">
             <CalendarIcon className="h-3.5 w-3.5" /> Jewellers Since 1907 &bull; 118 Years of Heritage

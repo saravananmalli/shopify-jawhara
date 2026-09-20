@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, type PointerEvent } from "react";
+import { useRef, useState, type PointerEvent } from "react";
 import Image from "next/image";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
-import { useDictionary } from "@/store/locale";
+import { useDictionary, useLocale } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { ProductImage } from "@/types/product";
@@ -15,6 +15,8 @@ const THUMBNAIL_IMAGE_WIDTH = 144;
 // first time the mouse enters — the resting page keeps the lighter 1200px one.
 const ZOOM_SCALE = 2.2;
 const ZOOM_IMAGE_WIDTH = 2400;
+// Least horizontal travel (px) that counts as a swipe rather than a tap.
+const SWIPE_THRESHOLD_PX = 40;
 
 export default function ProductGallery({
   images,
@@ -27,6 +29,7 @@ export default function ProductGallery({
   badge?: string | null;
 }) {
   const { product: t } = useDictionary();
+  const isRtl = useLocale() === "ar";
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomOrigin, setZoomOrigin] = useState<string | null>(null);
   const [zoomLoaded, setZoomLoaded] = useState(false);
@@ -40,6 +43,23 @@ export default function ProductGallery({
     const y = clamp(((event.clientY - rect.top) / rect.height) * 100);
     setZoomOrigin(`${x}% ${y}%`);
     setZoomLoaded(true);
+  };
+
+  // Touch/pen swipe between photos. `touch-pan-y` on the image keeps vertical
+  // page scroll while handing horizontal drags to these handlers. Mouse is left
+  // to the hover zoom above.
+  const swipeStartX = useRef<number | null>(null);
+  const handleSwipeStart = (event: PointerEvent) => {
+    swipeStartX.current = event.pointerType === "mouse" ? null : event.clientX;
+  };
+  const handleSwipeEnd = (event: PointerEvent) => {
+    if (swipeStartX.current === null) return;
+    const deltaX = event.clientX - swipeStartX.current;
+    swipeStartX.current = null;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX) return;
+    // Swiping toward the start edge shows the next photo, in either direction.
+    const step = deltaX < 0 !== isRtl ? 1 : -1;
+    setActiveIndex((current) => Math.min(images.length - 1, Math.max(0, current + step)));
   };
 
   if (images.length === 0) {
@@ -90,7 +110,11 @@ export default function ProductGallery({
           </span>
         )}
         <div
-          className="relative aspect-square w-full cursor-zoom-in overflow-hidden rounded-3xl"
+          className="relative aspect-square w-full cursor-zoom-in touch-pan-y overflow-hidden rounded-3xl"
+          onPointerDown={handleSwipeStart}
+          onPointerUp={handleSwipeEnd}
+          onPointerCancel={() => (swipeStartX.current = null)}
+          onDragStart={(event) => event.preventDefault()}
           onPointerEnter={handlePointerMove}
           onPointerMove={handlePointerMove}
           onPointerLeave={() => setZoomOrigin(null)}
@@ -114,6 +138,18 @@ export default function ProductGallery({
             }
           />
         </div>
+        {images.length > 1 && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center gap-1.5 sm:hidden" aria-hidden>
+            {images.map((image, index) => (
+              <span
+                key={image.url}
+                className={`h-1.5 rounded-full transition-all ${
+                  index === activeIndex ? "w-5 bg-gold-600" : "w-1.5 bg-brown-900/25"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

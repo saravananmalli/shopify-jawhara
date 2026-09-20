@@ -57,6 +57,7 @@ export default function LocationModal({
 
   return (
     <div
+      inert={!open}
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-luxury ${
         open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
       }`}
@@ -68,7 +69,7 @@ export default function LocationModal({
         role="dialog"
         aria-modal="true"
         aria-label={t.locationLabel}
-        className={`relative flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-transform duration-300 ease-luxury ${
+        className={`relative flex max-h-[85dvh] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-2xl transition-transform duration-300 ease-luxury ${
           open ? "scale-100" : "scale-95"
         }`}
       >
@@ -80,7 +81,7 @@ export default function LocationModal({
           <button
             onClick={onClose}
             aria-label={common.close}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/20"
+            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/20"
           >
             <CloseIcon className="h-5 w-5" />
           </button>

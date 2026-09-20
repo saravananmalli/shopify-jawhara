@@ -12,7 +12,7 @@ export default async function CustomerReviews({ reviews }: { reviews: Review[] }
 
   return (
     <section aria-labelledby="home-reviews-heading" className="bg-cream-200">
-      <div className="mx-auto max-w-8xl px-4 py-12">
+      <div className="page-container py-12">
         <div className="mb-6">
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
             {t.eyebrow}

@@ -50,7 +50,7 @@ export default function OurCollectionsMegaMenu({
       {hasContent && (
         <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
-            <div className="mx-auto grid max-w-8xl grid-cols-6 gap-x-8 gap-y-5 px-4 py-6">
+            <div className="grid page-container grid-cols-6 gap-x-8 gap-y-5 py-6">
               {link.items.map((item) => (
                 <MenuLink
                   key={item.title}

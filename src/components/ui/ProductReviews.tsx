@@ -26,7 +26,7 @@ function Frame({ title, children }: { title: string; children: React.ReactNode }
       aria-labelledby="customer-reviews-heading"
       className="scroll-mt-48 border-t border-review-track"
     >
-      <div className="mx-auto max-w-8xl px-4 py-10">
+      <div className="page-container py-10">
         <h2
           id="customer-reviews-heading"
           className="mb-6 font-heading-serif text-xl font-bold text-gold-600 md:text-2xl"

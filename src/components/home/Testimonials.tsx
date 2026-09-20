@@ -26,7 +26,7 @@ export default async function Testimonials({ testimonials }: { testimonials: Tes
     testimonials.reduce((sum, review) => sum + review.rating, 0) / testimonials.length;
 
   return (
-    <section className="mx-auto max-w-8xl px-4 py-14 text-center">
+    <section className="page-container py-14 text-center">
       <div className="mb-2 flex justify-center">
         <Stars rating={Math.round(average)} className="h-4 w-4" />
       </div>

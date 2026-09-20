@@ -10,15 +10,14 @@ import { useDictionary, useLocale } from "@/store/locale";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import {
   SearchIcon,
-  UserIcon,
-  HeartIcon,
-  BagIcon,
   MenuIcon,
   CloseIcon,
   ChevronDownIcon,
 } from "@/components/icons";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
+import CountBadge from "@/components/ui/CountBadge";
+import NavIcon from "@/components/ui/NavIcon";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLazyDialog } from "@/hooks/useLazyDialog";
 import { AnnouncementTicker, SearchHint } from "@/components/layout/HeaderTickers";
@@ -98,6 +97,11 @@ export default function Header({
       ? navLinks
       : [{ key: "all products", title: t.header.fallbackAllProducts, url: "/collections/all", items: [] }];
   const itemsLabel = (count: number) => pluralize(locale, count, t.header.items);
+  const deliveryLabel = emirate
+    ? formatMessage(t.header.emirateUae, {
+        emirate: (t.delivery.emirates as Record<string, string>)[emirate] ?? emirate,
+      })
+    : t.header.selectLocation;
   const logoSrc = brand.logoUrl ?? FALLBACK_LOGO;
 
   return (
@@ -110,8 +114,8 @@ export default function Header({
       }`}
     >
       {/* Top utility bar */}
-      <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 px-4 py-2 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
-        <div className="mx-auto flex max-w-8xl items-center justify-between">
+      <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 py-2 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
+        <div className="page-container flex items-center justify-between">
           <span className="flex items-center gap-1.5 font-medium">
             {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
             <img src="/brand/icons/badge-white.svg" alt="" aria-hidden className="h-5 w-5" />
@@ -136,15 +140,18 @@ export default function Header({
       </div>
 
       {/* Main row: search / logo / account */}
-      <div className="border-b border-gold-100 bg-white px-4 py-4">
-        <div className="mx-auto flex max-w-8xl items-center justify-between gap-4">
-          <button
-            className="lg:hidden"
-            onClick={() => setMobileOpen(true)}
-            aria-label={t.header.openMenu}
-          >
-            <MenuIcon className="h-6 w-6" />
-          </button>
+      <div className="border-b border-gold-100 bg-white py-3 sm:py-4 [@media(min-width:1024px)_and_(max-height:800px)]:py-2.5">
+        <div className="page-container flex items-center justify-between gap-4">
+          {/* flex-1 like the right-hand cluster, so the logo sits centred. */}
+          <div className="flex flex-1 lg:hidden">
+            <button
+              className="-ms-2 flex h-11 w-11 items-center justify-center"
+              onClick={() => setMobileOpen(true)}
+              aria-label={t.header.openMenu}
+            >
+              <MenuIcon className="h-6 w-6" />
+            </button>
+          </div>
 
           <div className="hidden flex-1 items-center gap-3 lg:flex">
             <button
@@ -165,12 +172,7 @@ export default function Header({
                   {t.header.deliverTo}
                 </span>
                 <span className="flex items-center gap-1 text-sm font-semibold leading-none">
-                  {emirate
-                    ? formatMessage(t.header.emirateUae, {
-                        emirate:
-                          (t.delivery.emirates as Record<string, string>)[emirate] ?? emirate,
-                      })
-                    : t.header.selectLocation}
+                  {deliveryLabel}
                   <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
                 </span>
               </span>
@@ -198,53 +200,94 @@ export default function Header({
               height={70}
               priority
               unoptimized={isUntrustedRemoteImage(logoSrc)}
-              className="h-16 w-auto"
+              className="h-12 w-auto sm:h-16 [@media(min-width:1024px)_and_(max-height:800px)]:h-14"
             />
           </Link>
 
-          <div className="flex flex-1 items-center justify-end gap-5 text-sm">
+          <div className="flex flex-1 items-center justify-end gap-2 text-sm sm:gap-5">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              onPointerEnter={loadSearchOverlay}
+              onFocus={loadSearchOverlay}
+              className="flex h-11 w-11 items-center justify-center lg:hidden"
+              aria-haspopup="dialog"
+              aria-label={t.search.label}
+            >
+              <SearchIcon className="h-5 w-5" />
+            </button>
             <Link
               href="/account"
               className="hidden items-center gap-1.5 sm:flex"
             >
-              <UserIcon className="h-5 w-5" />
+              <NavIcon name="account" className="h-6 w-6" />
               {t.header.logIn}
             </Link>
             <Link
               href="/wishlist"
-              className="relative hidden sm:block"
+              className="-me-2 flex h-11 w-11 items-center justify-center sm:me-0 sm:h-auto sm:w-auto"
               aria-label={formatMessage(t.header.wishlistLabel, { count: itemsLabel(wishlistCount) })}
             >
-              <HeartIcon className="h-5 w-5" />
-              {wishlistCount > 0 && (
-                <span className="absolute -end-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold-600 text-[10px] text-white">
-                  {wishlistCount}
-                </span>
-              )}
+              <span className="relative">
+                <NavIcon name="wishlist" className="h-6 w-6" />
+                {wishlistCount > 0 && <CountBadge count={wishlistCount} />}
+              </span>
             </Link>
             <button
               onClick={openCart}
               onPointerEnter={loadCartDrawer}
               onFocus={loadCartDrawer}
-              className="flex items-center gap-2"
+              className="hidden h-11 w-11 items-center justify-center gap-2 md:-me-2 md:flex lg:me-0 lg:h-auto lg:w-auto"
               aria-label={formatMessage(t.header.bagLabel, { count: itemsLabel(itemCount) })}
             >
               <span className="relative">
-                <BagIcon className="h-5 w-5" />
-                {itemCount > 0 && (
-                  <span className="absolute -end-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold-600 text-[10px] text-white">
-                    {itemCount}
-                  </span>
-                )}
+                <NavIcon name="cart" className="h-6 w-6" />
+                {itemCount > 0 && <CountBadge count={itemCount} />}
               </span>
             </button>
           </div>
         </div>
       </div>
 
+      {/* Delivery location and language on their own row below lg, where the
+          main row has no room for them. The language pill is phone-only: from
+          sm the gold utility bar above carries it. */}
+      <div className="border-b border-gold-100 bg-cream-200/80 lg:hidden">
+        <div className="page-container flex items-center justify-between gap-3 py-1.5">
+          <button
+            type="button"
+            onClick={openLocation}
+            onPointerEnter={loadLocationModal}
+            onFocus={loadLocationModal}
+            className="flex min-h-11 min-w-0 items-center gap-2 text-start"
+          >
+            <Image
+              src="/brand/icons/location.webp"
+              alt=""
+              width={24}
+              height={24}
+              className="h-6 w-6 shrink-0"
+            />
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="font-sans text-xs leading-none text-brown-900/60">
+                {t.header.deliverTo}
+              </span>
+              <span className="flex items-center gap-1 text-sm font-semibold leading-tight text-brown-900">
+                <span className="truncate">{deliveryLabel}</span>
+                <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
+              </span>
+            </span>
+          </button>
+          <LanguageSwitcher
+            showFlag
+            className="flex min-h-10 shrink-0 items-center gap-2 rounded-lg border border-gold-100 bg-white px-3 text-sm font-semibold text-brown-900 sm:hidden"
+          />
+        </div>
+      </div>
+
       {/* Category nav */}
-      <nav className="relative hidden border-b border-gold-100 bg-cream-200/80 px-4 lg:block">
-        <ul className="mx-auto flex max-w-8xl flex-wrap items-center gap-6 py-3 text-[13px] font-medium tracking-[1.4px] text-brown-900">
+      <nav className="relative hidden border-b border-gold-100 bg-cream-200/80 lg:block">
+        <ul className="page-container flex flex-wrap items-center gap-x-4 py-3 text-[12px] font-medium tracking-[0.8px] text-brown-900 xl:gap-x-6 xl:text-[13px] xl:tracking-[1.4px]">
           {links.map((link, index) => {
             const title = link.key;
             const key = `${link.title}-${index}`;
@@ -298,7 +341,7 @@ export default function Header({
             }
             return <MegaMenuItem key={key} link={link} isActive={isActive} />;
           })}
-          <li className="ms-auto flex items-center gap-1.5 whitespace-nowrap text-gold-700">
+          <li className="ms-auto hidden items-center gap-1.5 whitespace-nowrap text-gold-700 2xl:flex">
             {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
             <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
             {t.header.heritage}
@@ -308,6 +351,7 @@ export default function Header({
 
       {/* Mobile menu */}
       <div
+        inert={!mobileOpen}
         className={`fixed inset-0 z-50 flex transition-opacity duration-300 ease-luxury lg:hidden ${
           mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
@@ -325,7 +369,7 @@ export default function Header({
             mobileOpen ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex shrink-0 items-center justify-between">
             <Image
               src={getShopifyImageUrl(logoSrc, LOGO_IMAGE_WIDTH_MOBILE)}
               alt={brand.logoAlt}
@@ -334,7 +378,11 @@ export default function Header({
               unoptimized={isUntrustedRemoteImage(logoSrc)}
               className="h-10 w-auto"
             />
-            <button onClick={() => setMobileOpen(false)} aria-label={t.header.closeMenu}>
+            <button
+              onClick={() => setMobileOpen(false)}
+              aria-label={t.header.closeMenu}
+              className="-me-2 flex h-11 w-11 items-center justify-center"
+            >
               <CloseIcon className="h-5 w-5" />
             </button>
           </div>
@@ -344,7 +392,7 @@ export default function Header({
               setMobileOpen(false);
               setSearchOpen(true);
             }}
-            className="flex items-center gap-2 overflow-hidden rounded-full border border-gold-100 bg-white px-4 py-2 text-start"
+            className="flex min-h-11 shrink-0 items-center gap-2 overflow-hidden rounded-full border border-gold-100 bg-white px-4 py-2 text-start"
             aria-haspopup="dialog"
           >
             <SearchIcon className="h-4 w-4 shrink-0 text-gold-700" />
@@ -352,7 +400,7 @@ export default function Header({
               <SearchHint />
             </span>
           </button>
-          <ul className="flex flex-col gap-1 text-sm">
+          <ul className="flex shrink-0 flex-col gap-1 text-sm">
             {links.map((link, index) => (
               <MobileNavItem
                 key={`${link.title}-${index}`}
@@ -361,7 +409,23 @@ export default function Header({
               />
             ))}
           </ul>
-          <div className="mt-auto border-t border-gold-100 pt-4 text-sm">
+          <div className="flex shrink-0 flex-col border-t border-gold-100 pt-2 text-sm">
+            <Link
+              href="/stores"
+              onClick={() => setMobileOpen(false)}
+              className="flex min-h-11 items-center gap-2 font-medium text-gold-700 sm:hidden"
+            >
+              <Image
+                src="/brand/icons/store.webp"
+                alt=""
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+              {t.header.stores}
+            </Link>
+          </div>
+          <div className="mt-auto shrink-0 border-t border-gold-100 pt-4 text-sm">
             <LanguageSwitcher className="font-medium text-gold-700" />
           </div>
         </div>

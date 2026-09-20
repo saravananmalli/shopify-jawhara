@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: PageParams) {
 
   return (
     <>
-      <section className="mx-auto max-w-8xl px-4 py-8">
+      <section className="page-container py-8">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "@/components/ui/Link";
 import CarouselPagination from "@/components/ui/CarouselPagination";
 import { useScrollCarousel } from "@/hooks/useScrollCarousel";
+import { CATEGORY_TILE_IMAGE_CLASS, CATEGORY_TILE_WIDTH_CLASS } from "@/config/layout";
 import {
   buildCatalogQueryString,
   inCollectionInput,
@@ -14,7 +15,7 @@ import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { CategoryTile } from "@/types/content";
 
-// 2x the fixed tile width (226px).
+// 2x the largest tile width (226px).
 const TILE_IMAGE_WIDTH = 452;
 
 /** This page's URL with the category filter toggled and every other filter kept. */
@@ -56,7 +57,7 @@ export default function CollectionCategoryStrip({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="snap-x snap-mandatory overflow-x-auto pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-mx-(--page-gutter) scroll-px-(--page-gutter) snap-x snap-mandatory overflow-x-auto px-(--page-gutter) pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex gap-4">
           {categories.map((category) => {
@@ -73,7 +74,7 @@ export default function CollectionCategoryStrip({
                 )
               : `/collections/${category.handle}`;
             return (
-              <li key={category.id} className="w-[226px] shrink-0 snap-start">
+              <li key={category.id} className={`${CATEGORY_TILE_WIDTH_CLASS} shrink-0 snap-start`}>
                 <Link
                   href={href}
                   scroll={!scope}
@@ -90,7 +91,7 @@ export default function CollectionCategoryStrip({
                       isCurrent ? "border-gold-600" : "border-transparent"
                     }`}
                   >
-                    <div className="relative h-[240px] w-full overflow-hidden rounded-xl bg-cream-100">
+                    <div className={`relative w-full overflow-hidden rounded-xl bg-cream-100 ${CATEGORY_TILE_IMAGE_CLASS}`}>
                       {category.imageUrl && (
                         <Image
                           src={getShopifyImageUrl(
@@ -99,7 +100,7 @@ export default function CollectionCategoryStrip({
                           )}
                           alt={category.imageAlt}
                           fill
-                          sizes="226px"
+                          sizes="(min-width: 640px) 226px, 42vw"
                           placeholder="blur"
                           blurDataURL={IMAGE_BLUR_DATA_URL}
                           className="object-cover transition-transform duration-300 ease-luxury group-hover:scale-105"

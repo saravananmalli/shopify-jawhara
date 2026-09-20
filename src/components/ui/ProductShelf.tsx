@@ -21,7 +21,7 @@ export default function ProductShelf({
 
   return (
     <section className="border-y border-[#E3D5BC]/60">
-      <div className="mx-auto max-w-8xl px-4 py-10">
+      <div className="page-container py-10">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">

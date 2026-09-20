@@ -65,7 +65,7 @@ export default function JewelleryMegaMenu({
       {hasColumns && (
         <MenuPanel armed={armed}>
           <div className="w-full border-t border-gold-100 bg-white normal-case shadow-xl">
-            <div className="mx-auto flex max-w-8xl gap-10 px-4 py-6">
+            <div className="flex page-container gap-10 py-6">
               <div className="w-56 shrink-0 border-e border-gold-100 pe-6">
                 {departmentColumn && (
                   <>
@@ -127,7 +127,7 @@ export default function JewelleryMegaMenu({
               ))}
             </div>
 
-            <div className="mx-auto flex max-w-8xl flex-wrap items-center justify-between gap-3 border-t border-gold-100 px-4 py-4">
+            <div className="flex page-container flex-wrap items-center justify-between gap-3 border-t border-gold-100 py-4">
               <p className="flex flex-wrap items-center gap-4 text-xs text-brown-900/70">
                 <span className="font-semibold text-brown-900">{t.guaranteesTitle}</span>
                 {t.guarantees.map((item) => (

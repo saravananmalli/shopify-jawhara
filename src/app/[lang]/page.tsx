@@ -20,19 +20,11 @@ import { getDictionary, type Dictionary } from "@/dictionaries";
 import { getLocale } from "@/utils/get-locale";
 import { localeAlternates } from "@/utils/seo";
 import type { Metadata } from "next";
-import { ATELIER_COLLECTION_HANDLE, MASTERPIECES_COLLECTION_HANDLE } from "@/config/catalog";
-
-/** Real Shopify collections powering the homepage "Shop By Category" strip
- * — the plain, material-agnostic collections (not the "Gold Rings" /
- * "Diamond Rings" / "Pearl Rings" material-line variants). */
-const SHOP_BY_CATEGORY_HANDLES = [
-  "rings",
-  "earrings",
-  "pendants",
-  "necklace",
-  "bracelet",
-  "bangles",
-];
+import {
+  ATELIER_COLLECTION_HANDLE,
+  MASTERPIECES_COLLECTION_HANDLE,
+  SHOP_BY_CATEGORY_HANDLES,
+} from "@/config/catalog";
 
 /** Each tab is backed by real Shopify data — a price filter or an existing
  * collection (any collection handle works; products and their order are

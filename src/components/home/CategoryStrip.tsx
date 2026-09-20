@@ -13,11 +13,12 @@ import type { CategoryTile } from "@/types/content";
 const CATEGORY_IMAGE_WIDTH = 640;
 
 /** Aligns the strip's start edge with the heading above it (inside
- * max-w-8xl) while letting the tiles bleed off the far edge of the
+ * page-container) while letting the tiles bleed off the far edge of the
  * viewport — the same "peek" pattern used by the reference design. Sized
  * so spacer + the row's gap-4 (1rem) together equal the container's own
- * left inset, since the flex gap already contributes part of that inset. */
-const SPACER_WIDTH = "max(0px, calc((100vw - 1440px) / 2))";
+ * left inset (centering margin + fluid gutter). */
+const SPACER_WIDTH =
+  "calc(max(0px, (100vw - var(--container-max-width)) / 2) + var(--page-gutter) - 1rem)";
 
 /** These collections are named "Gold Rings", "Diamond Rings", "Pearl
  * Rings"... per material line, but the tile caption should read the plain
@@ -39,7 +40,7 @@ export default function CategoryStrip({
 
   return (
     <section className="bg-white py-10">
-      <div className="mx-auto flex max-w-8xl items-end justify-between px-4">
+      <div className="flex page-container items-end justify-between">
         <div>
           <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-800">
             {t.home.categories.eyebrow}
@@ -55,7 +56,7 @@ export default function CategoryStrip({
       </div>
 
       {categories.length === 0 ? (
-        <p className="mx-auto mt-6 max-w-8xl rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-6 text-center text-sm text-brown-900/60 sm:mx-4">
+        <p className="mx-(--page-gutter) mt-6 rounded-xl border border-dashed border-gold-200 bg-cream-100 px-4 py-6 text-center text-sm text-brown-900/60">
           {t.home.categories.empty}
         </p>
       ) : (
@@ -63,7 +64,7 @@ export default function CategoryStrip({
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pe-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pe-(--page-gutter) [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {/* A real flex child, not container padding — padding-inline-start
                 on a scrollable flex container gets treated as already-scrolled
@@ -74,15 +75,15 @@ export default function CategoryStrip({
               <Link
                 key={cat.id}
                 href={`/collections/${cat.handle}`}
-                className="w-72 shrink-0 snap-start sm:w-80"
+                className="w-[min(11rem,52vw)] shrink-0 snap-start sm:w-80"
               >
-                <div className="relative h-[400px] w-full overflow-hidden rounded-2xl bg-cream-100">
+                <div className="relative aspect-[4/5] sm:aspect-[18/25] w-full overflow-hidden rounded-2xl bg-cream-100">
                   {cat.imageUrl && (
                     <Image
                       src={getShopifyImageUrl(cat.imageUrl, CATEGORY_IMAGE_WIDTH)}
                       alt={cat.imageAlt}
                       fill
-                      sizes="(min-width: 640px) 320px, 288px"
+                      sizes="(min-width: 640px) 320px, 52vw"
                       placeholder="blur"
                       blurDataURL={IMAGE_BLUR_DATA_URL}
                       className="object-cover"

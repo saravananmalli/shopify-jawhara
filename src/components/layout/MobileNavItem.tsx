@@ -26,6 +26,7 @@ export default function MobileNavItem({
   const [expanded, setExpanded] = useState(false);
   const hasChildren = link.items.length > 0;
 
+  const rowPadding = depth === 0 ? "py-3" : "py-2";
   const headingClass =
     depth === 0
       ? "uppercase tracking-wide"
@@ -39,7 +40,7 @@ export default function MobileNavItem({
         <Link
           href={link.url}
           onClick={onNavigate}
-          className={`block py-3 ${headingClass}`}
+          className={`block ${rowPadding} ${headingClass}`}
         >
           <DirhamText text={link.title} />
         </Link>
@@ -53,7 +54,7 @@ export default function MobileNavItem({
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className={`flex w-full items-center justify-between py-3 ${headingClass}`}
+        className={`flex w-full items-center justify-between ${rowPadding} ${headingClass}`}
       >
         <DirhamText text={link.title} />
         <ChevronDownIcon
@@ -65,7 +66,7 @@ export default function MobileNavItem({
 
       {expanded && (
         <ul
-          className={`flex flex-col ps-3 ${depth === 0 ? "gap-4 pb-4" : "mt-2 gap-2"}`}
+          className={`flex flex-col ps-3 ${depth === 0 ? "gap-1 pb-3" : "gap-0"}`}
         >
           {link.items.map((child) => (
             <MobileNavItem

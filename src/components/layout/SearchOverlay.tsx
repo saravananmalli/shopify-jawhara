@@ -105,6 +105,7 @@ export default function SearchOverlay({
 
   return (
     <div
+      inert={!open}
       className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury ${
         open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
       }`}
@@ -115,7 +116,7 @@ export default function SearchOverlay({
         role="dialog"
         aria-modal="true"
         aria-label={t.label}
-        className={`absolute inset-x-0 top-0 max-h-[85vh] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-luxury ${
+        className={`absolute inset-x-0 top-0 max-h-[85dvh] overflow-y-auto bg-white shadow-xl transition-transform duration-300 ease-luxury ${
           open ? "translate-y-0" : "-translate-y-4"
         }`}
       >

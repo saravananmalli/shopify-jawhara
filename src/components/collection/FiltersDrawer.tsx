@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CloseIcon } from "@/components/icons";
 import FilterOptions, {
   type FilterActions,
@@ -47,14 +47,6 @@ export default function FiltersDrawer({
       return next;
     });
 
-  useEffect(() => {
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, []);
-
   return (
     <div className="fixed inset-0 z-50">
       <button
@@ -79,7 +71,7 @@ export default function FiltersDrawer({
             type="button"
             onClick={onClose}
             aria-label={t.closeFilters}
-            className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-cream-100"
+            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-cream-100"
           >
             <CloseIcon className="h-5 w-5" />
           </button>

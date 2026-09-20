@@ -10,7 +10,7 @@ export default function CarouselPagination({
   onPrev,
   onNext,
   label,
-  className = "mx-auto mt-4 max-w-8xl px-4",
+  className = "mt-4 page-container",
 }: {
   pageCount: number;
   activePage: number;

@@ -28,7 +28,7 @@ export default async function Footer({
 
   return (
     <footer className="border-t border-gold-100 bg-cream-100">
-      <div className="mx-auto max-w-8xl px-4 py-12">
+      <div className="page-container py-12">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <div className="flex items-center gap-2 text-gold-700">
@@ -47,19 +47,19 @@ export default async function Footer({
                   by the surrounding Arabic paragraph. */}
               <p className="mt-2 text-brown-900/70">
                 {t.footer.general}:{" "}
-                <a dir="ltr" href="mailto:Contactus@jawharajewllery.ae" className="text-gold-700 underline">
+                <a dir="ltr" href="mailto:Contactus@jawharajewllery.ae" className="break-all text-gold-700 underline">
                   Contactus@jawharajewllery.ae
                 </a>
               </p>
               <p className="text-brown-900/70">
                 {t.footer.corporate}:{" "}
-                <a dir="ltr" href="mailto:b2b@jawharajewllery.ae" className="text-gold-700 underline">
+                <a dir="ltr" href="mailto:b2b@jawharajewllery.ae" className="break-all text-gold-700 underline">
                   b2b@jawharajewllery.ae
                 </a>
               </p>
               <p className="text-brown-900/70">
                 {t.footer.hr}:{" "}
-                <a dir="ltr" href="mailto:careers@jawharajewllery.ae" className="text-gold-700 underline">
+                <a dir="ltr" href="mailto:careers@jawharajewllery.ae" className="break-all text-gold-700 underline">
                   careers@jawharajewllery.ae
                 </a>
               </p>
@@ -83,9 +83,9 @@ export default async function Footer({
         </div>
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gold-100 pt-6 sm:flex-row">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span className="text-sm font-medium">{t.footer.findUsOn}</span>
-            <ul className="flex items-center gap-2">
+            <ul className="flex flex-wrap items-center gap-2">
               {SOCIALS.map((s) => (
                 <li key={s}>
                   <Link

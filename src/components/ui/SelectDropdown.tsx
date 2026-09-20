@@ -19,6 +19,8 @@ export default function SelectDropdown({
   onChange,
   optionLabel = (option) => option,
   className = "",
+  size = "md",
+  menuAlign = "fill",
 }: {
   /** Accessible name — there is no visible label. */
   label: string;
@@ -28,6 +30,11 @@ export default function SelectDropdown({
   /** Text shown for an option value, when the value itself isn't display text. */
   optionLabel?: (option: string) => string;
   className?: string;
+  /** "sm" is a 40px trigger, for toolbars that sit next to other 40px buttons. */
+  size?: "md" | "sm";
+  /** "end" opens a content-width list anchored to the trigger's end edge (never
+   * wider than the screen), for a trigger too narrow to hold its own options. */
+  menuAlign?: "fill" | "end";
 }) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -147,7 +154,7 @@ export default function SelectDropdown({
         aria-activedescendant={open ? optionId(activeIndex) : undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleKeyDown}
-        className={`flex h-11 w-full items-center justify-between gap-3 rounded-lg border bg-white ps-4 pe-3.5 text-start text-sm text-brown-900 transition-colors duration-300 ease-luxury hover:border-gold-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 ${
+        className={`flex ${size === "sm" ? "h-10" : "h-11"} w-full items-center justify-between gap-3 rounded-lg border bg-white ps-4 pe-3.5 text-start text-sm text-brown-900 transition-colors duration-300 ease-luxury hover:border-gold-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 ${
           open ? "border-gold-600 ring-2 ring-gold-600/15" : "border-gold-100"
         }`}
       >
@@ -167,7 +174,11 @@ export default function SelectDropdown({
           aria-label={label}
           // Keeps focus on the trigger while the pointer interacts with the list.
           onMouseDown={(event) => event.preventDefault()}
-          className="absolute start-0 top-full z-30 mt-1.5 max-h-64 w-full overflow-y-auto rounded-xl border border-gold-100 bg-white p-1.5 shadow-lg sm:w-max sm:min-w-full sm:max-w-80"
+          className={`absolute top-full z-30 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-gold-100 bg-white p-1.5 shadow-lg ${
+            menuAlign === "end"
+              ? "end-0 w-max min-w-full max-w-[min(20rem,calc(100vw-2rem))]"
+              : "start-0 w-full sm:w-max sm:min-w-full sm:max-w-80"
+          }`}
         >
           {options.map((option, index) => {
             const selected = option === value;

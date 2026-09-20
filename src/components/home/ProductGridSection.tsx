@@ -103,15 +103,17 @@ export default function ProductGridSection({
       title={title}
       subtitle={subtitle}
       actions={
-        <div className="flex flex-col items-end gap-3">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 max-w-full flex-col items-start gap-3 sm:items-end">
+          {/* One swipeable row on phones (bleeding to the screen edges) so a long
+              tab list never wraps onto extra lines; wraps normally from sm. */}
+          <div className="-mx-(--page-gutter) flex max-w-[100vw] scroll-px-(--page-gutter) snap-x items-center gap-2 overflow-x-auto px-(--page-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:max-w-full sm:flex-wrap sm:scroll-px-0 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
             {tabs.map((tab, i) => (
               <button
                 key={tab.label}
                 type="button"
                 onClick={() => setActiveTabIndex(i)}
                 aria-pressed={i === activeTabIndex}
-                className={`rounded-full px-3.5 py-1.5 font-sans text-xs font-medium transition-colors ${
+                className={`shrink-0 snap-start whitespace-nowrap rounded-full px-3.5 py-2 font-sans text-xs font-medium transition-colors sm:py-1.5 ${
                   i === activeTabIndex
                     ? "bg-gold-600 text-white"
                     : "border border-gold-200 text-brown-900/70 hover:bg-cream-100"

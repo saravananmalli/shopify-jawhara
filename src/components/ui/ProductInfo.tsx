@@ -187,7 +187,7 @@ export default function ProductInfo({
 
       <DeliveryEstimate available={available} />
 
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         {available && <QuantitySelector value={quantity} onChange={setQuantity} />}
 
         {selectedVariant && available ? (
@@ -197,13 +197,13 @@ export default function ProductInfo({
             label={formatMessage(t.addToBagWithTotal, {
               total: formatMoney(price.amount * quantity, price.currencyCode, locale),
             })}
-            className="flex-1 h-12 rounded-xl! text-[14px]!"
+            className="order-last h-12 min-w-full rounded-xl! text-[14px]! sm:order-none sm:min-w-0 sm:flex-1"
           />
         ) : (
           <button
             type="button"
             disabled
-            className="flex-1 h-12 rounded-xl bg-cream-100 px-4 font-sans text-[14px] font-semibold uppercase tracking-wide text-brown-900/40"
+            className="order-last h-12 min-w-full rounded-xl bg-cream-100 px-4 sm:order-none sm:min-w-0 sm:flex-1 font-sans text-[14px] font-semibold uppercase tracking-wide text-brown-900/40"
           >
             {t.outOfStock}
           </button>
@@ -212,7 +212,7 @@ export default function ProductInfo({
         <WishlistButton
           product={product}
           iconClassName="h-5 w-5"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cream-100 transition-colors hover:bg-cream-200"
+          className="ms-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cream-100 transition-colors hover:bg-cream-200 sm:ms-0"
         />
       </div>
     </div>

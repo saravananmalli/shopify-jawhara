@@ -27,6 +27,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
 
   return (
     <div
+      inert={!visible}
       className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury ${
         visible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
       }`}
@@ -46,7 +47,11 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
             <BagIcon className="h-5 w-5" />{" "}
             {formatMessage(t.title, { count: cart?.totalQuantity ?? 0 })}
           </h2>
-          <button onClick={closeCart} aria-label={t.close}>
+          <button
+            onClick={closeCart}
+            aria-label={t.close}
+            className="-me-2 flex h-11 w-11 items-center justify-center"
+          >
             <CloseIcon className="h-5 w-5" />
           </button>
         </div>
@@ -57,7 +62,11 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
             className="flex items-center justify-between gap-3 border-b border-error-100 bg-error-50 px-5 py-3 text-sm text-error-700"
           >
             <span>{error}</span>
-            <button onClick={dismissError} aria-label={t.dismissError} className="shrink-0">
+            <button
+              onClick={dismissError}
+              aria-label={t.dismissError}
+              className="-me-2 flex h-11 w-11 shrink-0 items-center justify-center"
+            >
               <CloseIcon className="h-4 w-4" />
             </button>
           </div>

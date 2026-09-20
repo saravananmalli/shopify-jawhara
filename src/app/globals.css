@@ -65,6 +65,10 @@
      mapped below) instead of the default `max-w-7xl` (1280px). */
   --container-max-width: 1440px;
 
+  /* Horizontal page margin, shared by every section so left/right edges line
+     up: 16px on the smallest phones, easing up to 40px on wide screens. */
+  --page-gutter: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+
   /* Latin (Poppins) is loaded in the root layout as --font-latin. */
   --font-sans: var(--font-latin);
 }
@@ -171,6 +175,15 @@
   /* Registers `max-w-8xl` (Tailwind's naming convention continues the
      existing 3xl…7xl scale) as the site's container utility. */
   --container-8xl: var(--container-max-width);
+}
+
+/* The one page container: centred, capped at --container-max-width, with the
+   fluid gutter as inline padding (border-box, so the cap includes it). */
+@utility page-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--container-max-width);
+  padding-inline: var(--page-gutter);
 }
 
 body {

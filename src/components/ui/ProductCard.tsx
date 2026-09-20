@@ -17,7 +17,7 @@ import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
 
-// 2x the largest rendered width (25vw of the 1440px max-w-8xl container).
+// 2x the largest rendered width (a quarter of the 1440px page container).
 const PRODUCT_IMAGE_WIDTH = 800;
 
 // Memoised: listing pages re-render their whole grid on every filter-drawer
@@ -45,33 +45,34 @@ export default memo(function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="group relative flex flex-col rounded-3xl border border-[#E6D7BE]/60 bg-white p-3.5 shadow-sm"
+      className="group relative flex h-full flex-col rounded-2xl border border-[#E6D7BE]/60 bg-white p-2.5 shadow-sm sm:rounded-3xl sm:p-3.5"
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
-        {badge && <Chip className="absolute start-3 top-3 z-10">{badge}</Chip>}
+        {badge && <Chip className="absolute start-2 top-2 z-10 max-w-[calc(100%-3.75rem)] text-center leading-tight sm:start-3 sm:top-3">{badge}</Chip>}
 
         {/* Wishlist / quick-add — hidden until hover or keyboard focus,
             then pop outward into place (per the design brief: "out from
             in"). Pointer-events are toggled with the animation so the
-            invisible resting state isn't clickable. */}
-        <div className="pointer-events-none absolute end-3 top-3 z-10 flex origin-top-right rtl:origin-top-left scale-75 flex-col gap-2 opacity-0 transition-all duration-300 ease-luxury group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:scale-100 group-focus-within:opacity-100">
+            invisible resting state isn't clickable. Touch screens have no
+            hover, so there they are always shown. */}
+        <div className="pointer-events-none pointer-coarse:pointer-events-auto pointer-coarse:scale-100 pointer-coarse:opacity-100 absolute end-2 top-2 z-10 sm:end-3 sm:top-3 flex origin-top-right rtl:origin-top-left scale-75 flex-col gap-2 opacity-0 transition-all duration-300 ease-luxury group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:scale-100 group-focus-within:opacity-100">
           <WishlistButton
             product={product}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 pointer-coarse:h-10 pointer-coarse:w-10"
           />
           {product.available && product.defaultVariant ? (
             <AddToCartButton
               variantId={product.defaultVariant.id}
               iconOnly
-              className="h-9 w-9 rounded-full bg-white text-brown-900/70 shadow-sm ring-1 ring-black/5 hover:text-gold-700"
+              className="h-9 w-9 rounded-full bg-white text-brown-900/70 shadow-sm ring-1 ring-black/5 hover:text-gold-700 pointer-coarse:h-10 pointer-coarse:w-10"
             />
           ) : (
             <button
               type="button"
               disabled
               aria-label={common.outOfStock}
-              className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-full bg-white text-brown-900/30 shadow-sm ring-1 ring-black/5"
+              className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-full bg-white text-brown-900/30 shadow-sm ring-1 ring-black/5 pointer-coarse:h-10 pointer-coarse:w-10"
             >
               <BagIcon className="h-4 w-4" />
             </button>
@@ -124,14 +125,14 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         </Link>
       </div>
 
-      <div className="mt-4 flex items-center gap-2 font-sans">
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-sans sm:mt-4">
         {discountPercent !== null && discountPercent > 0 && (
           <span className="flex items-center gap-0.5 text-sm font-semibold text-[#008042]">
             <ArrowDownIcon className="h-3.5 w-3.5" />
             {discountPercent}%
           </span>
         )}
-        <span className="flex items-center gap-0.5 text-[18px] font-bold text-brown-900 rtl:flex-row-reverse">
+        <span className="flex items-center gap-0.5 text-base font-bold text-brown-900 rtl:flex-row-reverse sm:text-[18px]">
           <DirhamSymbol size="0.85em" />
           {formatNumber(product.price.amount, locale)}
         </span>
@@ -144,12 +145,12 @@ export default memo(function ProductCard({ product }: { product: Product }) {
       </div>
 
       <Link href={`/products/${product.handle}`}>
-        <h3 dir="auto" className="mt-2 line-clamp-1 font-sans text-[14px] text-brown-900">
+        <h3 dir="auto" className="mt-1.5 line-clamp-2 min-h-[2.5em] font-sans text-[13px] leading-snug text-brown-900 sm:mt-2 sm:text-[14px]">
           {product.title}
         </h3>
       </Link>
 
-      <div className="mt-2 flex items-center gap-2 font-sans text-sm">
+      <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1.5 pt-2 font-sans text-sm">
         {product.rating && (
           <span className="flex items-center gap-1">
             <RatingStars rating={product.rating.average} size="md" />
@@ -163,7 +164,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
           </span>
         )}
         {delivery && (
-          <span className="ms-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
+          <span className="ms-auto max-w-full rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-2.5 py-1 text-[11px] font-medium leading-tight text-white sm:px-3 sm:text-xs">
             {delivery.label}
           </span>
         )}

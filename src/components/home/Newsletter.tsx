@@ -15,7 +15,7 @@ export default function Newsletter() {
 
   return (
     <section className="border-t border-gold-100 bg-cream-100">
-      <div className="mx-auto flex max-w-8xl flex-col items-start justify-between gap-4 px-4 py-10 sm:flex-row sm:items-center">
+      <div className="flex page-container flex-col items-start justify-between gap-4 py-10 sm:flex-row sm:items-center">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-gold-800">
             {t.eyebrow}

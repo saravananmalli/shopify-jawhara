@@ -21,7 +21,7 @@ export default async function AtelierSection({
 
   return (
     <section className="bg-[#FAF8F5]">
-      <div className="mx-auto grid max-w-8xl grid-cols-1 gap-10 px-4 py-16 lg:grid-cols-2 lg:items-center">
+      <div className="grid page-container grid-cols-1 gap-10 py-16 lg:grid-cols-2 lg:items-center">
         <div className="relative">
           {image ? (
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
@@ -77,16 +77,16 @@ export default async function AtelierSection({
             ))}
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex gap-2 sm:gap-3">
             <Link
               href={`/collections/${ATELIER_COLLECTION_HANDLE}`}
-              className="flex items-center gap-2 rounded-full bg-gold-600 px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider text-white hover:bg-gold-700"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gold-600 px-3 py-3 text-center font-sans text-[11px] font-bold uppercase tracking-wider text-white hover:bg-gold-700 sm:flex-none sm:gap-2 sm:px-6 sm:text-xs"
             >
               {t.exploreSolitaires} <ChevronRightIcon className="h-4 w-4" />
             </Link>
             <Link
               href="/collections/engagement-rings"
-              className="flex items-center gap-2 rounded-full border border-gold-300 px-6 py-3 font-sans text-xs font-bold uppercase tracking-wider text-gold-600"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-gold-300 px-3 py-3 text-center font-sans text-[11px] font-bold uppercase tracking-wider text-gold-600 sm:flex-none sm:gap-2 sm:px-6 sm:text-xs"
             >
               <SparkleIcon className="h-4 w-4" /> {t.engagementRings}
             </Link>
