@@ -26,7 +26,7 @@ function Frame({ children }: { children: React.ReactNode }) {
       <div className="mx-auto max-w-8xl px-4 py-10">
         <h2
           id="customer-reviews-heading"
-          className="mb-6 font-heading-serif text-xl font-bold text-brown-900 md:text-2xl"
+          className="mb-6 font-heading-serif text-xl font-bold text-gold-600 md:text-2xl"
         >
           Customer Reviews
         </h2>

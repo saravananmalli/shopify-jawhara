@@ -32,6 +32,19 @@ export async function getProducts({
   return data.products.edges.map((edge) => toProduct(edge.node));
 }
 
+const MAX_SEARCH_LENGTH = 100;
+
+/** The query is a GraphQL variable (not concatenated), but Shopify still parses
+ * it as search syntax — strip the operators so shoppers can't inject field
+ * filters (`tag:…`, `-vendor:…`, quoted/grouped clauses) and cap its length. */
+function toSafeSearchTerm(query: string): string {
+  return query
+    .replace(/[:"()\\<>{}[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, MAX_SEARCH_LENGTH);
+}
+
 export async function searchProducts({
   query,
   first = 8,
@@ -39,11 +52,14 @@ export async function searchProducts({
   query: string;
   first?: number;
 }): Promise<Product[]> {
+  const safeQuery = toSafeSearchTerm(query);
+  if (!safeQuery) return [];
+
   const data = await shopifyFetch<{
     products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: SEARCH_PRODUCTS_QUERY,
-    variables: { query, first },
+    variables: { query: safeQuery, first },
     revalidate: PRODUCT_REVALIDATE_SECONDS,
   });
 

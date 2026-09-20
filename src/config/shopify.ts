@@ -8,6 +8,13 @@ if (!storeDomain || !storefrontToken || !apiVersion) {
   );
 }
 
+// Interpolated into request URLs and the CSP, so it must be a bare hostname.
+if (!/^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/i.test(storeDomain)) {
+  throw new Error(
+    "NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN must be a bare hostname (no protocol, path or port)."
+  );
+}
+
 export const shopifyConfig = {
   storeDomain,
   storefrontToken,

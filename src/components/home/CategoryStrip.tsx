@@ -39,10 +39,10 @@ export default function CategoryStrip({
     <section className="bg-white py-10">
       <div className="mx-auto flex max-w-8xl items-end justify-between px-4">
         <div>
-          <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-700">
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-800">
             Haute Classifications
           </p>
-          <h2 className="mt-1 font-sans text-[32px] font-normal">Shop By Category</h2>
+          <h2 className="mt-1 font-sans text-[32px] font-normal text-gold-600">Shop By Category</h2>
         </div>
         <Link
           href="/collections"

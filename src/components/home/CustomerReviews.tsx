@@ -10,10 +10,10 @@ export default function CustomerReviews({ reviews }: { reviews: Review[] }) {
     <section aria-labelledby="home-reviews-heading" className="bg-cream-200">
       <div className="mx-auto max-w-8xl px-4 py-12">
         <div className="mb-6">
-          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-700">
+          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
             Loved by Clients
           </p>
-          <h2 id="home-reviews-heading" className="mt-1 font-sans text-3xl font-normal">
+          <h2 id="home-reviews-heading" className="mt-1 font-sans text-3xl font-normal text-gold-600">
             What Our Customers Say
           </h2>
           <p className="mt-1 font-sans text-sm text-brown-900/60">

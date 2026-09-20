@@ -8,13 +8,13 @@ export default function HeritageSection() {
     <section className="bg-cream-100">
       <div className="mx-auto grid max-w-8xl grid-cols-1 gap-8 px-4 py-14 lg:grid-cols-2 lg:items-center">
         <div>
-          <Chip className="mb-3">
+          <Chip tone="deep" className="mb-3">
             <CalendarIcon className="h-3.5 w-3.5" /> Jewellers Since 1907 &bull; 118 Years of Heritage
           </Chip>
-          <h2 className="font-serif text-3xl leading-tight sm:text-4xl">
+          <h2 className="font-serif text-3xl leading-tight text-gold-600 sm:text-4xl">
             From Dubai Gold Souk to Global Splendor:
             <br />
-            <span className="text-gold-700 italic">
+            <span className="text-gold-600 italic">
               The Arabian Bridal &amp; Bespoke Atelier.
             </span>
           </h2>

@@ -52,7 +52,6 @@ export const CART_QUERY = /* GraphQL */ `
 export const BRAND_QUERY = /* GraphQL */ `
   query Brand {
     shop {
-      name
       brand {
         logo {
           image {

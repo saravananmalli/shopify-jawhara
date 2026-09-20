@@ -13,6 +13,33 @@ import type { WishlistItem } from "@/types/wishlist";
 
 const WISHLIST_STORAGE_KEY = "jawhara_wishlist";
 
+const MAX_WISHLIST_ITEMS = 200;
+
+/** localStorage is editable by the shopper (or leftover from an older build),
+ * so re-check the shape and drop anything that could reach a link or image. */
+function isWishlistItem(value: unknown): value is WishlistItem {
+  if (!value || typeof value !== "object") return false;
+  const item = value as Record<string, unknown>;
+  const image = item.image as Record<string, unknown> | null | undefined;
+  const price = item.price as Record<string, unknown> | null | undefined;
+  return (
+    typeof item.id === "string" &&
+    typeof item.handle === "string" &&
+    /^[\w-]{1,255}$/.test(item.handle) &&
+    typeof item.title === "string" &&
+    (image === null ||
+      (typeof image === "object" &&
+        typeof image.url === "string" &&
+        image.url.startsWith("https://cdn.shopify.com/") &&
+        typeof image.altText === "string")) &&
+    !!price &&
+    typeof price === "object" &&
+    typeof price.amount === "number" &&
+    typeof price.currencyCode === "string" &&
+    typeof price.formatted === "string"
+  );
+}
+
 type WishlistContextValue = {
   items: WishlistItem[];
   isInWishlist: (productId: string) => boolean;
@@ -36,7 +63,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     Promise.resolve().then(() => {
       try {
         const raw = window.localStorage.getItem(WISHLIST_STORAGE_KEY);
-        if (raw) setItems(JSON.parse(raw));
+        const parsed: unknown = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(parsed)) {
+          setItems(parsed.filter(isWishlistItem).slice(0, MAX_WISHLIST_ITEMS));
+        }
       } catch {
         // Corrupt or blocked storage — start empty rather than throwing.
       } finally {

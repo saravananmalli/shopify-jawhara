@@ -14,3 +14,7 @@ function resolveSiteUrl(): string {
 }
 
 export const siteUrl = resolveSiteUrl();
+
+/** Customer-facing brand name (footer, logo alt, labels). Kept here rather than
+ * read from Shopify's shop name, which is the store's admin/checkout name. */
+export const brandName = "Jawhara Jewellery";

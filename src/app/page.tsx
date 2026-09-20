@@ -2,7 +2,7 @@ import Hero from "@/components/home/Hero";
 import CategoryStrip from "@/components/home/CategoryStrip";
 import FeaturesBar from "@/components/home/FeaturesBar";
 import ProductGridSection, { type ProductTab } from "@/components/home/ProductGridSection";
-import HorlogerieSection from "@/components/home/HorlogerieSection";
+import AtelierSection from "@/components/home/AtelierSection";
 import ShopByOccasionSection from "@/components/home/ShopByOccasionSection";
 import CustomerReviews from "@/components/home/CustomerReviews";
 import Testimonials from "@/components/home/Testimonials";
@@ -15,6 +15,7 @@ import {
   getProducts,
   getTestimonials,
 } from "@/services/shopify";
+import { ATELIER_COLLECTION_HANDLE } from "@/config/catalog";
 
 /** Real Shopify collections powering the homepage "Shop By Category" strip
  * — the plain, material-agnostic collections (not the "Gold Rings" /
@@ -56,7 +57,7 @@ export default async function Home() {
       getProducts({ first: 8, revalidate: HOME_REVALIDATE_SECONDS }),
       getCollectionGroups({
         categories: SHOP_BY_CATEGORY_HANDLES,
-        horlogerie: ["horlogerie"],
+        atelier: [ATELIER_COLLECTION_HANDLE],
       }),
       getHeroBanners(),
       getOccasions(),
@@ -68,7 +69,7 @@ export default async function Home() {
       }),
     ]);
 
-  const { categories, horlogerie: [horlogerieCollection] } = collections;
+  const { categories, atelier: [atelierCollection] } = collections;
 
   return (
     <>
@@ -82,10 +83,10 @@ export default async function Home() {
         tabs={MASTERPIECE_TABS}
         products={products.slice(0, 4)}
       />
-      <HorlogerieSection
+      <AtelierSection
         image={
-          horlogerieCollection?.imageUrl
-            ? { url: horlogerieCollection.imageUrl, alt: horlogerieCollection.imageAlt }
+          atelierCollection?.imageUrl
+            ? { url: atelierCollection.imageUrl, alt: atelierCollection.imageAlt }
             : null
         }
       />

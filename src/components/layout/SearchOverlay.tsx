@@ -118,6 +118,7 @@ export default function SearchOverlay({
               <input
                 type="search"
                 autoFocus
+                maxLength={100}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search jewellery..."

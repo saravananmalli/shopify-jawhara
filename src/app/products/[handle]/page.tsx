@@ -10,6 +10,7 @@ import ProductInfo from "@/components/ui/ProductInfo";
 import ProductActionsRow from "@/components/ui/ProductActionsRow";
 import ProductReviews, { ProductReviewsSkeleton } from "@/components/ui/ProductReviews";
 import { getProductByHandle } from "@/services/shopify";
+import { serializeJsonLd } from "@/utils/json-ld";
 import { getProductBadge } from "@/utils/product-badge";
 
 type PageParams = { params: Promise<{ handle: string }> };
@@ -72,7 +73,7 @@ export default async function ProductPage({ params }: PageParams) {
       <section className="mx-auto max-w-8xl px-4 py-8">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
         />
 
         <Breadcrumb

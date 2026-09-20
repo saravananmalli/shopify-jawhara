@@ -11,14 +11,22 @@ const CHIP_STYLE =
 export default function Chip({
   children,
   className = "",
+  tone = "light",
 }: {
   children: ReactNode;
   className?: string;
+  /** "dark" is for chips sitting on a brown/photo overlay; "deep" is the
+   * deeper gold used as an eyebrow above a primary-gold heading. */
+  tone?: "light" | "dark" | "deep";
 }) {
+  const TONE_STYLES = {
+    light: "border-[#E6D7BE] bg-cream-100 text-gold-600",
+    deep: "border-[#E6D7BE] bg-cream-100 text-gold-800",
+    dark: "border-cream-50/15 bg-cream-50/10 text-cream-50",
+  } as const;
+  const toneStyle = TONE_STYLES[tone];
   return (
-    <span
-      className={`${CHIP_STYLE} border-[#E6D7BE] bg-cream-100 px-2.5 py-1 text-gold-600 ${className}`}
-    >
+    <span className={`${CHIP_STYLE} ${toneStyle} px-2.5 py-1 ${className}`}>
       {children}
     </span>
   );

@@ -30,7 +30,7 @@ export default function Testimonials({ testimonials }: { testimonials: Testimoni
         {average.toFixed(1)} / 5.0
         <span className="sr-only"> average from {testimonials.length} client reviews</span>
       </p>
-      <h2 className="mt-2 font-serif text-3xl">Words from Our Clients</h2>
+      <h2 className="mt-2 font-serif text-3xl text-gold-600">Words from Our Clients</h2>
 
       <ul className="mt-8 grid grid-cols-1 gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((review) => (

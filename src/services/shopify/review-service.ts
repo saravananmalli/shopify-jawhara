@@ -74,13 +74,19 @@ async function fetchPublishedReviews(): Promise<JudgemeReview[] | null> {
   return collected.filter((review) => review.curated === "ok" && !review.hidden);
 }
 
+// Judge.me is a third party: bound what we render rather than trusting it.
+const MAX_TITLE_LENGTH = 200;
+const MAX_BODY_LENGTH = 5000;
+const MAX_NAME_LENGTH = 80;
+
 function toReview(review: JudgemeReview): Review {
+  const rating = Number(review.rating);
   return {
     id: String(review.id),
-    rating: review.rating,
-    title: review.title?.trim() ?? "",
-    body: review.body?.trim() ?? "",
-    reviewerName: review.reviewer?.name?.trim() || "Customer",
+    rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0,
+    title: (review.title?.trim() ?? "").slice(0, MAX_TITLE_LENGTH),
+    body: (review.body?.trim() ?? "").slice(0, MAX_BODY_LENGTH),
+    reviewerName: (review.reviewer?.name?.trim() || "Customer").slice(0, MAX_NAME_LENGTH),
     verifiedPurchase: review.verified === "buyer",
     createdAt: review.created_at,
   };

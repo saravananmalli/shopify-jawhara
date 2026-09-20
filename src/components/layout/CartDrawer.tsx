@@ -35,7 +35,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
         }`}
       >
         <div className="flex items-center justify-between border-b border-gold-100 px-5 py-4">
-          <h2 className="flex items-center gap-2 font-serif text-lg text-gold-700">
+          <h2 className="flex items-center gap-2 font-serif text-lg text-gold-600">
             <BagIcon className="h-5 w-5" /> Your Bag ({cart?.totalQuantity ?? 0})
           </h2>
           <button onClick={closeCart} aria-label="Close bag">

@@ -19,10 +19,10 @@ export default function ProductShelf({
       <div className="mx-auto max-w-8xl px-4 py-10">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-700">
+            <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
               {eyebrow}
             </p>
-            <h2 className="mt-1 font-sans text-3xl font-normal">{title}</h2>
+            <h2 className="mt-1 font-sans text-3xl font-normal text-gold-600">{title}</h2>
             {subtitle && (
               <p className="mt-1 font-sans text-sm text-brown-900/60">{subtitle}</p>
             )}

@@ -14,15 +14,15 @@ export default function Newsletter() {
     <section className="border-t border-gold-100 bg-cream-100">
       <div className="mx-auto flex max-w-8xl flex-col items-start justify-between gap-4 px-4 py-10 sm:flex-row sm:items-center">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-gold-700">
-            Le Cercle Privé &bull; UAE
+          <p className="text-xs font-semibold uppercase tracking-widest text-gold-800">
+            The Jawhara Circle &bull; UAE
           </p>
-          <h2 className="mt-1 font-serif text-2xl">
-            Private Salon Privileges &amp; Previews
+          <h2 className="mt-1 font-serif text-2xl text-gold-600">
+            New Jewellery, Previews &amp; Private Offers
           </h2>
           <p className="mt-1 max-w-md text-sm text-brown-900/60">
-            Receive priority invitations to high jewellery exhibitions in Dubai, bespoke
-            gemstone arrivals, and private concierge alerts.
+            Be the first to see new gold, diamond and pearl collections, receive exclusive
+            offers, and get gift ideas for every occasion.
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export default function Newsletter() {
               type="submit"
               className="shrink-0 rounded-full bg-gold-600 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-gold-700"
             >
-              Request Invitation
+              Subscribe
             </button>
           </form>
         )}

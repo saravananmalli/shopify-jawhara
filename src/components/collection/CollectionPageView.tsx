@@ -19,6 +19,7 @@ import {
   parseCatalogSearchParams,
 } from "@/utils/catalog-params";
 import type { CatalogFilter } from "@/types/catalog";
+import { serializeJsonLd } from "@/utils/json-ld";
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
 
@@ -107,7 +108,7 @@ export default async function CollectionPageView({
       <section className="mx-auto max-w-8xl pb-16 pt-3">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
         />
 
         <h1 className="sr-only">{page.collection.title}</h1>
