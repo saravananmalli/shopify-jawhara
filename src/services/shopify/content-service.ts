@@ -53,13 +53,13 @@ const CONTENT_REVALIDATE_SECONDS = 3600; // stable content — rule #22
 
 export async function getBrand(): Promise<Brand> {
   const data = await shopifyFetch<{
-    shop: { name: string; brand: ShopifyBrand | null };
+    shop: { brand: ShopifyBrand | null };
   }>({
     query: BRAND_QUERY,
     revalidate: CONTENT_REVALIDATE_SECONDS,
   });
 
-  return toBrand(data.shop.name, data.shop.brand);
+  return toBrand(data.shop.brand);
 }
 
 /**

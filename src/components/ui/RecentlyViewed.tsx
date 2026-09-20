@@ -9,6 +9,7 @@ import type { Product } from "@/types/product";
 
 const STORAGE_KEY = "jawhara_recently_viewed";
 const MAX_STORED = 12;
+const PRODUCT_ID_PATTERN = /^gid:\/\/shopify\/Product\/\d+$/;
 
 type Status = "idle" | "loading" | "ready" | "error";
 
@@ -31,7 +32,9 @@ export default function RecentlyViewed({ currentProductId }: { currentProductId:
       try {
         const parsed: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
         if (Array.isArray(parsed)) {
-          stored = parsed.filter((id): id is string => typeof id === "string");
+          stored = parsed
+            .filter((id): id is string => typeof id === "string" && PRODUCT_ID_PATTERN.test(id))
+            .slice(0, MAX_STORED);
         }
       } catch {
         // Corrupt or blocked storage — treat as no history.

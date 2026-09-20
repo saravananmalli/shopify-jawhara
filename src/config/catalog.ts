@@ -36,6 +36,9 @@ export const CATEGORY_MENU_HANDLE = "collections";
  * instead of leading to other collection pages. */
 export const GIFTS_PROMO_HANDLE = "gift";
 
+/** Shopify collection whose image and link back the homepage atelier section. */
+export const ATELIER_COLLECTION_HANDLE = "solitaire";
+
 export const CATEGORY_SCOPED_MENU_COLUMNS = ["curations & style"];
 
 export const SORT_OPTIONS: { key: CatalogSortKey; label: string }[] = [

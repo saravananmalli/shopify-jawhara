@@ -69,7 +69,7 @@ export default function FiltersDrawer({
         className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-xl"
       >
         <div className="flex items-center justify-between border-b border-gold-100 px-5 py-3">
-          <h2 className="font-sans text-lg font-medium text-brown-900">
+          <h2 className="font-sans text-lg font-medium text-gold-600">
             Filters
           </h2>
           <button

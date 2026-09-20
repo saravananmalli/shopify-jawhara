@@ -8,7 +8,7 @@
    * Jawhara brand palette — taken directly from the production
    * ../jawhara-jewelry/frontend/src/styles/_variables.scss token file
    * (the real brand SCSS variables), not sampled/estimated from a screenshot.
-   * Values without a direct source (gold-700, gold-900, brown-800, maroon-600,
+   * Values without a direct source (gold-700, gold-800, gold-900, brown-800, maroon-600,
    * error-700) are computed darker/lighter shades of their nearest real token.
    */
   --color-cream-50: #faf7f2; /* $cream-bg-light */
@@ -22,6 +22,8 @@
   --color-gold-600: #967123; /* = gold-500. Components mostly use -600 for CTA
     fills; kept equal to -500 so the real primary is what actually renders. */
   --color-gold-700: #7a5c1c; /* computed ~18% darker than primary, for hover/emphasis */
+  --color-gold-800: #5c4517; /* computed ~40% darker than primary — the eyebrow
+    line above section headings, so it reads clearly darker than the gold h2 */
   --color-gold-900: #3c3528; /* = $text-dark */
 
   --color-brown-800: #8b7355; /* $primary-gold-dark — a real token, distinct
@@ -97,6 +99,7 @@
   --color-gold-500: var(--color-gold-500);
   --color-gold-600: var(--color-gold-600);
   --color-gold-700: var(--color-gold-700);
+  --color-gold-800: var(--color-gold-800);
   --color-gold-900: var(--color-gold-900);
 
   --color-brown-800: var(--color-brown-800);

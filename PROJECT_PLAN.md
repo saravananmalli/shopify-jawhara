@@ -43,7 +43,7 @@ Legend: ✅ done · 🟡 partial · ❌ not started
 | Shop by category | ✅ | `CategoryStrip.tsx`. Uses a **hardcoded handle list** in `app/page.tsx` (kept on request) |
 | Features bar | ✅ | `FeaturesBar.tsx` |
 | Product grid | ✅ | `ProductGridSection.tsx` with tabs |
-| Story sections | ✅ | `HeritageSection`, `HorlogerieSection`, `ShopByOccasionSection` |
+| Story sections | ✅ | `HeritageSection`, `AtelierSection`, `ShopByOccasionSection` |
 | Testimonials carousel | 🟡 | Reads `testimonial` metaobjects from Shopify (hidden when none). Still a grid, not a carousel. Not re-checked this review. Needs the `testimonial` definition + entries in Shopify Admin |
 | Footer with links | 🟡 | Built. Has `FALLBACK_COLUMNS` and a hardcoded socials list — confirm links come from Shopify menus |
 

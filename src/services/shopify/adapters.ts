@@ -1,5 +1,7 @@
 import { PRODUCT_SPEC_FIELDS } from "@/config/product-specs";
 import { formatMetafieldValue, formatMoney } from "@/utils/format";
+import { brandName } from "@/config/site";
+import { isSafeCheckoutUrl, toSafeInternalPath } from "@/utils/safe-url";
 import type { Money } from "@/types/money";
 import type { Product, ProductDetail, ProductImage, ProductVariant } from "@/types/product";
 import type { Cart, CartLine } from "@/types/cart";
@@ -192,10 +194,17 @@ function toCartLine(
   };
 }
 
+function assertSafeCheckoutUrl(url: string): string {
+  // Fail closed: the drawer links straight to this, so a non-https value
+  // (javascript:, data:) must never be rendered as the checkout button.
+  if (!isSafeCheckoutUrl(url)) throw new Error("Shopify returned an unsafe checkout URL");
+  return url;
+}
+
 export function toCart(cart: ShopifyCart): Cart {
   return {
     id: cart.id,
-    checkoutUrl: cart.checkoutUrl,
+    checkoutUrl: assertSafeCheckoutUrl(cart.checkoutUrl),
     totalQuantity: cart.totalQuantity,
     subtotal: toMoney(cart.cost.subtotalAmount),
     total: toMoney(cart.cost.totalAmount),
@@ -203,11 +212,11 @@ export function toCart(cart: ShopifyCart): Cart {
   };
 }
 
-export function toBrand(shopName: string, brand: ShopifyBrand | null): Brand {
+export function toBrand(brand: ShopifyBrand | null): Brand {
   return {
-    name: shopName,
+    name: brandName,
     logoUrl: brand?.logo?.image?.url ?? null,
-    logoAlt: brand?.logo?.image?.altText ?? `${shopName} logo`,
+    logoAlt: brand?.logo?.image?.altText ?? `${brandName} logo`,
     slogan: brand?.slogan ?? null,
     shortDescription: brand?.shortDescription ?? null,
   };
@@ -223,14 +232,7 @@ export function toNavLinks(items: ShopifyMenuItem[]): NavLink[] {
 
 /** Shopify menu URLs are absolute (https://store.myshopify.com/...) —
  * convert to a relative path so Next.js <Link> handles them client-side. */
-function toRelativeUrl(url: string): string {
-  try {
-    const parsed = new URL(url);
-    return `${parsed.pathname}${parsed.search}${parsed.hash}` || "/";
-  } catch {
-    return url;
-  }
-}
+const toRelativeUrl = (url: string) => toSafeInternalPath(url, "/");
 
 export function toCategoryTile(collection: ShopifyCollection): CategoryTile {
   return {
@@ -265,7 +267,7 @@ export function toHeroBanner(node: ShopifyHeroBannerMetaobject): HeroBanner {
     englishLine: node.englishLine?.value ?? "",
     badgeLabel: node.badgeLabel?.value ?? "",
     badgeValue: node.badgeValue?.value ?? "",
-    href: node.href?.value ?? "/collections/all",
+    href: toSafeInternalPath(node.href?.value, "/collections/all"),
   };
 }
 
@@ -290,7 +292,7 @@ export function toOccasion(node: ShopifyOccasionMetaobject): Occasion {
     badgeLabel: node.badgeLabel?.value ?? "",
     badgeText: node.badgeText?.value ?? "",
     ctaLabel: node.ctaLabel?.value ?? "",
-    ctaHref: node.ctaUrl?.value ?? "/collections/all",
+    ctaHref: toSafeInternalPath(node.ctaUrl?.value, "/collections/all"),
   };
 }
 

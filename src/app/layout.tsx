@@ -26,7 +26,7 @@ const sans = Poppins({
 
 const title = "Jawhara Jewellery | Jewellers Since 1907";
 const description =
-  "Heritage fine jewellery from Dubai's historic Gold Souk — GIA certified solitaires, 18K/22K heirloom pieces, and Haute Horlogerie timepieces.";
+  "Heritage fine jewellery from Dubai's historic Gold Souk — GIA certified solitaires and 18K/22K heirloom pieces.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
