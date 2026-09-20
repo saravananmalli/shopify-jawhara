@@ -9,7 +9,7 @@ export default function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   const { common } = useDictionary();
 
   return (
-    <nav aria-label={common.breadcrumb} className="font-sans text-sm text-brown-900/60">
+    <nav aria-label={common.breadcrumb} className="font-sans text-xs text-brown-900/60 sm:text-sm">
       <ol className="flex flex-wrap items-center gap-2">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex items-center gap-2">

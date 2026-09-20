@@ -19,7 +19,7 @@ export default function LocationPrompt() {
   return (
     <aside
       aria-label={t.locationLabel}
-      className="fixed inset-x-4 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 flex items-start gap-3 rounded-2xl border border-gold-100 bg-white p-4 font-sans shadow-xl sm:inset-x-auto sm:start-4 sm:max-w-sm"
+      className="fixed inset-x-4 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 transition-[bottom] duration-300 ease-luxury [html[data-nav-hidden=true]_&]:bottom-4 flex items-start gap-3 rounded-2xl border border-gold-100 bg-white p-4 font-sans shadow-xl sm:inset-x-auto sm:start-4 sm:max-w-sm"
     >
       <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
       <div className="min-w-0 flex-1">
