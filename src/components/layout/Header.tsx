@@ -13,6 +13,7 @@ import {
   MenuIcon,
   CloseIcon,
   AwardIcon,
+  ChevronDownIcon,
 } from "@/components/icons";
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
@@ -25,6 +26,7 @@ import GiftsMegaMenu from "@/components/layout/GiftsMegaMenu";
 import OurCollectionsMegaMenu from "@/components/layout/OurCollectionsMegaMenu";
 import ImageCategoryMegaMenu from "@/components/layout/ImageCategoryMegaMenu";
 import MobileNavItem from "@/components/layout/MobileNavItem";
+import { useDelivery, useLocationUi } from "@/store/delivery";
 import { getShopifyImageUrl, isUntrustedRemoteImage } from "@/utils/shopify-image";
 import type { Brand, Collection, NavLink } from "@/types/content";
 
@@ -69,14 +71,18 @@ export default function Header({
   const { items: wishlistItems } = useWishlist();
   const wishlistCount = wishlistItems.length;
   const pathname = usePathname();
-  const [locationOpen, setLocationOpen] = useState(false);
-  const [emirate, setEmirate] = useState("Dubai");
+  const { emirate, setEmirate } = useDelivery();
+  const {
+    open: locationOpen,
+    openPicker: openLocation,
+    closePicker: closeLocation,
+    detectLocation,
+  } = useLocationUi();
   const [searchOpen, setSearchOpen] = useState(false);
 
   // Stable identities: useFocusTrap re-runs (and re-focuses) when onClose changes.
   const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
-  const closeLocation = useCallback(() => setLocationOpen(false), []);
 
   useFocusTrap(mobileMenuRef, mobileOpen, closeMobileMenu);
 
@@ -134,23 +140,26 @@ export default function Header({
 
           <div className="hidden flex-1 items-center gap-3 lg:flex">
             <button
-              onClick={() => setLocationOpen(true)}
+              onClick={openLocation}
               onPointerEnter={loadLocationModal}
               onFocus={loadLocationModal}
-              className="flex shrink-0 flex-col items-start gap-0.5 px-1 py-1 text-brown-900/80 hover:text-gold-700"
+              className="flex shrink-0 items-center gap-0 px-1 py-1 text-gold-600 hover:text-gold-700"
             >
-              <span className="text-[10px] uppercase tracking-wide text-brown-900/50">
-                Deliver to
-              </span>
-              <span className="flex items-center gap-1.5 text-sm">
-                <Image
-                  src="/brand/icons/location.webp"
-                  alt=""
-                  width={16}
-                  height={16}
-                  className="h-4 w-4"
-                />
-                {emirate}, UAE
+              <Image
+                src="/brand/icons/location.webp"
+                alt=""
+                width={24}
+                height={24}
+                className="h-6 w-6 shrink-0"
+              />
+              <span className="flex flex-col items-start gap-0.5 text-left">
+                <span className="font-sans text-[10px] font-semibold uppercase tracking-widest text-gold-800">
+                  Deliver to
+                </span>
+                <span className="flex items-center gap-1 text-sm font-semibold">
+                  {emirate ? `${emirate}, UAE` : "Select location"}
+                  <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
+                </span>
               </span>
             </button>
             <button
@@ -354,6 +363,7 @@ export default function Header({
           onClose={closeLocation}
           selected={emirate}
           onSelect={setEmirate}
+          onDetect={detectLocation}
         />
       )}
     </header>

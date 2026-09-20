@@ -9,6 +9,7 @@ import WishlistButton from "@/components/ui/WishlistButton";
 import Chip from "@/components/ui/Chip";
 import RatingStars from "@/components/ui/RatingStars";
 import { ArrowDownIcon, BagIcon } from "@/components/icons";
+import { useDeliveryEstimate } from "@/store/delivery";
 import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
@@ -24,6 +25,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
     : null;
 
   const badge = getProductBadge(product.tags);
+  const delivery = useDeliveryEstimate(product.available);
 
   // The photo after the featured one (typically a model / alternate shot).
   const secondaryImage =
@@ -153,9 +155,11 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             </span>
           </span>
         )}
-        <span className="ml-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
-          1-3 Day Delivery
-        </span>
+        {delivery && (
+          <span className="ml-auto rounded-full bg-gradient-to-r from-[#D6A33F] to-[#78591F] px-3 py-1 text-xs font-medium text-white">
+            {delivery.label}
+          </span>
+        )}
       </div>
     </div>
   );

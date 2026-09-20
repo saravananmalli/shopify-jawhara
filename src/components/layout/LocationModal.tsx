@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { UAE_EMIRATES, nearestEmirate } from "@/utils/emirates";
+import type { DetectResult } from "@/store/delivery";
+import { UAE_EMIRATES } from "@/utils/emirates";
 import {
   CheckIcon,
   CloseIcon,
@@ -11,18 +12,20 @@ import {
   SearchIcon,
 } from "@/components/icons";
 
-type GeoStatus = "idle" | "locating" | "error";
+type GeoStatus = "idle" | "locating" | "error" | "outside";
 
 export default function LocationModal({
   open,
   onClose,
   selected,
   onSelect,
+  onDetect,
 }: {
   open: boolean;
   onClose: () => void;
-  selected: string;
+  selected: string | null;
   onSelect: (city: string) => void;
+  onDetect: () => Promise<DetectResult>;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState("");
@@ -34,25 +37,15 @@ export default function LocationModal({
     e.name.toLowerCase().includes(search.trim().toLowerCase())
   );
 
-  function useCurrentLocation() {
-    if (!("geolocation" in navigator)) {
-      setGeoStatus("error");
-      return;
-    }
+  async function useCurrentLocation() {
     setGeoStatus("locating");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const nearest = nearestEmirate({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-        onSelect(nearest.name);
-        setGeoStatus("idle");
-        onClose();
-      },
-      () => setGeoStatus("error"),
-      { timeout: 10000 }
-    );
+    const result = await onDetect();
+    if (result === "ok") {
+      setGeoStatus("idle");
+      onClose();
+    } else {
+      setGeoStatus(result);
+    }
   }
 
   return (
@@ -99,6 +92,13 @@ export default function LocationModal({
             <p role="alert" className="-mt-2 text-xs text-error-700">
               Couldn&apos;t get your location. Please choose a city below, or
               check your browser&apos;s location permission.
+            </p>
+          )}
+
+          {geoStatus === "outside" && (
+            <p role="alert" className="-mt-2 text-xs text-error-700">
+              Your location is outside the UAE. Please choose the emirate you
+              want your order delivered to.
             </p>
           )}
 

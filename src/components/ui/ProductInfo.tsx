@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DirhamSymbol } from "dirham/react";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import AccordionItem from "@/components/ui/AccordionItem";
+import DeliveryEstimate from "@/components/ui/DeliveryEstimate";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import WishlistButton from "@/components/ui/WishlistButton";
 import RatingStars from "@/components/ui/RatingStars";
@@ -172,6 +173,8 @@ export default function ProductInfo({
           </AccordionItem>
         </div>
       )}
+
+      <DeliveryEstimate available={available} />
 
       <div className="mt-4 flex items-center gap-3">
         {available && <QuantitySelector value={quantity} onChange={setQuantity} />}
