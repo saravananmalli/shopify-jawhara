@@ -253,7 +253,7 @@
     "addToBag": "أضف إلى الحقيبة",
     "added": "تمت الإضافة!",
     "addedToBag": "تمت الإضافة إلى الحقيبة",
-    "addToBagWithTotal": "أضف إلى حقيبة التسوق • {total}",
+    "addToBagWithTotal": "أضف إلى الحقيبة • {total}",
     "outOfStock": "غير متوفر",
     "designCode": "رمز التصميم:",
     "specification": "المواصفات",
@@ -501,8 +501,8 @@
     "label": "التنقل على الجوال",
     "home": "الرئيسية",
     "categories": "الفئات",
+    "ourCollections": "المجموعات",
     "account": "حسابي",
-    "cart": "السلة",
     "sheetTitle": "تسوّق حسب الفئة",
     "allJewellery": "جميع المجوهرات",
     "closeSheet": "إغلاق الفئات"

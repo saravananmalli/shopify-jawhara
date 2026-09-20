@@ -249,7 +249,7 @@
     "addToBag": "Add to Bag",
     "added": "Added!",
     "addedToBag": "Added to bag",
-    "addToBagWithTotal": "Add to Shopping Bag • {total}",
+    "addToBagWithTotal": "Add to Bag • {total}",
     "outOfStock": "Out of Stock",
     "designCode": "Design Code:",
     "specification": "Specification",
@@ -477,8 +477,8 @@
     "label": "Mobile navigation",
     "home": "Home",
     "categories": "Categories",
+    "ourCollections": "Collections",
     "account": "Account",
-    "cart": "Cart",
     "sheetTitle": "Shop by Category",
     "allJewellery": "All Jewellery",
     "closeSheet": "Close categories"

@@ -49,7 +49,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
-        {badge && <Chip className="absolute start-2 top-2 z-10 max-w-[calc(100%-3.75rem)] text-center leading-tight sm:start-3 sm:top-3">{badge}</Chip>}
+        {badge && <Chip className="absolute start-2 top-2 z-10 max-w-[calc(100%-3.75rem)] text-center text-[9px]! leading-tight sm:start-3 sm:top-3 sm:text-[11px]!">{badge}</Chip>}
 
         {/* Wishlist / quick-add — hidden until hover or keyboard focus,
             then pop outward into place (per the design brief: "out from
@@ -59,22 +59,23 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         <div className="pointer-events-none pointer-coarse:pointer-events-auto pointer-coarse:scale-100 pointer-coarse:opacity-100 absolute end-2 top-2 z-10 sm:end-3 sm:top-3 flex origin-top-right rtl:origin-top-left scale-75 flex-col gap-2 opacity-0 transition-all duration-300 ease-luxury group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:scale-100 group-focus-within:opacity-100">
           <WishlistButton
             product={product}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 pointer-coarse:h-10 pointer-coarse:w-10"
+            iconClassName="h-3.5 w-3.5 sm:h-4 sm:w-4"
+            className="flex h-6 w-6 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:pointer-coarse:h-10 sm:pointer-coarse:w-10"
           />
           {product.available && product.defaultVariant ? (
             <AddToCartButton
               variantId={product.defaultVariant.id}
               iconOnly
-              className="h-9 w-9 rounded-full bg-white text-brown-900/70 shadow-sm ring-1 ring-black/5 hover:text-gold-700 pointer-coarse:h-10 pointer-coarse:w-10"
+              className="h-6 w-6 sm:h-9 sm:w-9 rounded-full bg-white text-brown-900/70 shadow-sm ring-1 ring-black/5 hover:text-gold-700 sm:pointer-coarse:h-10 sm:pointer-coarse:w-10"
             />
           ) : (
             <button
               type="button"
               disabled
               aria-label={common.outOfStock}
-              className="flex h-9 w-9 cursor-not-allowed items-center justify-center rounded-full bg-white text-brown-900/30 shadow-sm ring-1 ring-black/5 pointer-coarse:h-10 pointer-coarse:w-10"
+              className="flex h-6 w-6 sm:h-9 sm:w-9 cursor-not-allowed items-center justify-center rounded-full bg-white text-brown-900/30 shadow-sm ring-1 ring-black/5 sm:pointer-coarse:h-10 sm:pointer-coarse:w-10"
             >
-              <BagIcon className="h-4 w-4" />
+              <BagIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </button>
           )}
         </div>
