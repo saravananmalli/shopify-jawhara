@@ -39,17 +39,17 @@ export default function CarouselPagination({
           type="button"
           onClick={onPrev}
           aria-label={formatMessage(common.previous, { label })}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
+          className="flex h-[34px] w-[34px] items-center justify-center rounded-full border sm:h-10 sm:w-10 border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
         >
-          <ChevronLeftIcon className="h-4 w-4" />
+          <ChevronLeftIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </button>
         <button
           type="button"
           onClick={onNext}
           aria-label={formatMessage(common.next, { label })}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
+          className="flex h-[34px] w-[34px] items-center justify-center rounded-full border sm:h-10 sm:w-10 border-[#D6D3D1] text-brown-900 transition-colors hover:bg-cream-100"
         >
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </button>
       </div>
     </div>

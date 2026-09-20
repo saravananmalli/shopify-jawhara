@@ -17,7 +17,7 @@ export default function ReviewCarousel({
   const { scrollRef, pageCount, scrollByPage } = useScrollCarousel(itemCount);
 
   const arrowClass =
-    "absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white text-brown-900 shadow-md ring-1 ring-black/5 transition-colors hover:bg-cream-100";
+    "absolute top-1/2 z-10 flex size-[34px] -translate-y-1/2 sm:size-10 items-center justify-center rounded-full bg-white text-brown-900 shadow-md ring-1 ring-black/5 transition-colors hover:bg-cream-100";
 
   return (
     <div className="relative">
@@ -38,7 +38,7 @@ export default function ReviewCarousel({
             aria-label={home.reviews.previous}
             className={`${arrowClass} start-1`}
           >
-            <ChevronLeftIcon className="size-4" />
+            <ChevronLeftIcon className="size-3.5 sm:size-4" />
           </button>
           <button
             type="button"
@@ -46,7 +46,7 @@ export default function ReviewCarousel({
             aria-label={home.reviews.next}
             className={`${arrowClass} end-1`}
           >
-            <ChevronRightIcon className="size-4" />
+            <ChevronRightIcon className="size-3.5 sm:size-4" />
           </button>
         </>
       )}
