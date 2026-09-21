@@ -115,7 +115,7 @@ export default function BottomNav({
       isActive[tab] ? "font-semibold text-gold-600" : "text-brown-900/50"
     }`;
   const iconClass = (tab: TabKey) =>
-    `h-[26px] w-[26px] transition-transform duration-(--motion-fast) ease-luxury ${
+    `h-[22px] w-[22px] transition-transform duration-(--motion-fast) ease-luxury ${
       isActive[tab] ? "scale-105" : ""
     }`;
 

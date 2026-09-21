@@ -8,6 +8,7 @@ const NAV_ICON_SRC = {
   account: "/brand/icons/nav/account.webp",
   cart: "/brand/icons/nav/cart.webp",
   support: "/brand/icons/support.webp",
+  search: "/brand/icons/search.svg",
 } as const;
 
 export type NavIconName = keyof typeof NAV_ICON_SRC;
