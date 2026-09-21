@@ -128,7 +128,7 @@ export default function BottomNav({
           holds the cart drawer and mobile menu, which must cover this bar. */}
       <nav
         aria-label={t.label}
-        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-black/[0.08] bg-white pt-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-luxury md:hidden [html[data-nav-hidden=true]_&]:translate-y-[calc(100%+1.5rem)]"
+        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-black/[0.08] bg-white pt-1 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-luxury md:hidden [html[data-nav-hidden=true]_&]:translate-y-[calc(100%+1.5rem)]"
       >
         <Link
           href="/"
