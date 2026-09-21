@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CollectionPageView, {
   type RawSearchParams,
 } from "@/components/collection/CollectionPageView";
+import { ALL_PRODUCTS_HANDLE } from "@/config/catalog";
 import { getCollectionMetadata } from "@/components/collection/collection-metadata";
 
 type PageProps = {
@@ -33,6 +34,10 @@ export default async function CollectionPage({
     searchParams,
   ]);
   return (
-    <CollectionPageView handle={handle} rawSearchParams={rawSearchParams} />
+    <CollectionPageView
+      handle={handle}
+      rawSearchParams={rawSearchParams}
+      ourCollectionsLanding={handle === ALL_PRODUCTS_HANDLE}
+    />
   );
 }

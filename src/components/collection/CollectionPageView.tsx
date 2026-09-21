@@ -14,6 +14,8 @@ import {
   getCatalogPage,
   getCategoryTilesForCollection,
   getCategoryTilesFromMenu,
+  getMenu,
+  getMenuCollectionTiles,
   withCategoryCounts,
 } from "@/services/shopify";
 import {
@@ -36,9 +38,14 @@ export type RawSearchParams = Record<string, string | string[] | undefined>;
 export default async function CollectionPageView({
   handle,
   rawSearchParams,
+  ourCollectionsLanding = false,
 }: {
   handle: string;
   rawSearchParams: RawSearchParams;
+  /** The "Our Collections" menu link lands on the all-products page; on it the
+   * category strip is the collections listed under that menu item (365, Ada…)
+   * instead of the product categories. */
+  ourCollectionsLanding?: boolean;
 }) {
   const locale = await getLocale();
   const { collection: t, meta } = await getDictionary(locale);
@@ -72,6 +79,16 @@ export default async function CollectionPageView({
       stripTiles = counted;
       stripScope = { basePath: `/collections/${handle}`, query };
     }
+  }
+
+  if (ourCollectionsLanding) {
+    const [menu, tilesByItem] = await Promise.all([
+      getMenu(MAIN_MENU_HANDLE, locale),
+      getMenuCollectionTiles(MAIN_MENU_HANDLE, locale),
+    ]);
+    // Matched by the default-language key so it works in Arabic too.
+    const ours = tilesByItem[menu.findIndex((link) => link.key === "our collections")] ?? [];
+    if (ours.length > 0) stripTiles = ours;
   }
 
   // Inside a curation (e.g. "Trending Collections") the filters gain a
