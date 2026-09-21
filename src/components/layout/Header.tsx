@@ -257,13 +257,13 @@ export default function Header({
           main row has no room for them. The language pill is phone-only: from
           sm the gold utility bar above carries it. */}
       <div className="border-b border-gold-100 bg-cream-200/80 lg:hidden">
-        <div className="page-container flex items-center justify-between gap-3 py-1.5">
+        <div className="page-container flex items-center justify-between gap-3 py-1.5 max-sm:py-0.5">
           <button
             type="button"
             onClick={openLocation}
             onPointerEnter={loadLocationModal}
             onFocus={loadLocationModal}
-            className="flex min-h-11 min-w-0 items-center text-start text-gold-600 hover:text-gold-700"
+            className="flex min-h-11 min-w-0 items-center text-start text-gold-600 max-sm:min-h-9 hover:text-gold-700"
           >
             <Image
               src="/brand/icons/location.webp"
@@ -272,11 +272,11 @@ export default function Header({
               height={24}
               className="h-6 w-6 shrink-0"
             />
-            <span className="flex min-w-0 flex-col items-start gap-1">
-              <span className="font-sans text-[10px] font-semibold uppercase leading-none tracking-widest text-gold-800">
+            <span className="flex min-w-0 flex-col items-start gap-1 max-sm:gap-0">
+              <span className="font-sans text-[9px] font-semibold uppercase leading-none tracking-widest text-gold-800 sm:text-[10px]">
                 {t.header.deliverTo}
               </span>
-              <span className="flex items-center gap-1 text-sm font-semibold leading-none">
+              <span className="flex items-center gap-1 text-[12px] font-semibold leading-none sm:text-sm">
                 <span className="truncate">{deliveryLabel}</span>
                 <ChevronDownIcon className="h-4 w-4 shrink-0 text-brown-900/50" />
               </span>
@@ -284,7 +284,7 @@ export default function Header({
           </button>
           <LanguageSwitcher
             showFlag
-            className="flex min-h-10 shrink-0 items-center gap-2 rounded-lg border border-gold-100 bg-white px-3 text-sm font-semibold text-brown-900 sm:hidden"
+            className="flex min-h-8 shrink-0 items-center gap-2 px-3 text-sm font-semibold text-brown-900 sm:hidden"
           />
         </div>
       </div>
