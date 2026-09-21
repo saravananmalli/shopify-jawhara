@@ -71,7 +71,7 @@ export default function BottomNav({
   type SheetLink = { key: string; href: string; title: string; imageUrl: string | null; imageAlt: string };
   // Shopify's automatic "all products" page first, then the real categories.
   const categoryLinks: SheetLink[] = [
-    { key: ALL_PRODUCTS_HANDLE, href: `/collections/${ALL_PRODUCTS_HANDLE}`, title: t.allJewellery, imageUrl: null, imageAlt: "" },
+    { key: ALL_PRODUCTS_HANDLE, href: "/collections", title: t.allJewellery, imageUrl: null, imageAlt: "" },
     ...categories.map((category) => ({
       key: category.handle,
       href: `/collections/${category.handle}`,
