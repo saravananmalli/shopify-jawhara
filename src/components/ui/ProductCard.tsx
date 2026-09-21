@@ -45,7 +45,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="group relative flex h-full flex-col rounded-2xl border border-[#E6D7BE]/60 bg-white p-2 shadow-sm min-[400px]:p-2.5 sm:rounded-3xl sm:p-3.5"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E6D7BE]/60 bg-white shadow-sm sm:rounded-3xl"
       onPointerEnter={requestSecondary}
     >
       <div className="relative">
@@ -81,7 +81,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         </div>
 
         <Link href={`/products/${product.handle}`} className="block">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream-50">
+          <div className="relative aspect-square overflow-hidden bg-cream-50">
             {product.image ? (
               <>
                 <Image
@@ -126,6 +126,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         </Link>
       </div>
 
+      <div className="flex flex-1 flex-col px-2 pb-2 pt-[2px]">
       <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-sans sm:mt-4">
         {discountPercent !== null && discountPercent > 0 && (
           <span className="flex items-center gap-0.5 text-sm font-semibold text-[#008042]">
@@ -177,6 +178,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
             {delivery.label}
           </span>
         )}
+      </div>
       </div>
     </div>
   );
