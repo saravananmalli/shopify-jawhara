@@ -152,7 +152,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         </h3>
       </Link>
 
-      <div className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-1.5 pt-2 font-sans text-sm sm:gap-x-2">
+      <div className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-1.5 pt-1 font-sans text-sm sm:gap-x-2">
         {product.rating && (
           <span className="flex items-center gap-1">
             {/* Phones: one star and the review count — five stars take a whole
