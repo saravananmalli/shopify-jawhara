@@ -41,10 +41,18 @@ export default function ProductInfo({
 }) {
   const locale = useLocale();
   const { common, product: t } = useDictionary();
+  // Shopify gives a product with no real options a placeholder "Title: Default
+  // Title" option — that isn't something to show.
   const optionNames = [
-    ...new Set(product.variants.flatMap((variant) => variant.options.map((o) => o.name))),
+    ...new Set(
+      product.variants.flatMap((variant) =>
+        variant.options
+          .filter((o) => !(o.name === "Title" && o.value === "Default Title"))
+          .map((o) => o.name),
+      ),
+    ),
   ];
-  const showOptionPicker = product.variants.length > 1;
+  const showOptionPicker = optionNames.length > 0;
 
   const [selection, setSelection] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
@@ -133,7 +141,14 @@ export default function ProductInfo({
                 {name}
               </p>
               <div className="flex flex-wrap gap-2">
-                {values.map((value) => {
+                {/* A single value (e.g. a ring sold in one size) is information,
+                    not a choice — shown as a plain chip, not a button. */}
+                {values.length === 1 && (
+                  <span className="inline-flex h-8 items-center rounded-xl border border-gold-600 bg-gold-600 px-[14px] font-sans text-[14px] font-normal uppercase tracking-wide text-white">
+                    {values[0]}
+                  </span>
+                )}
+                {values.length > 1 && values.map((value) => {
                   const isSelected = selection[name] === value;
                   const candidateVariant = product.variants.find((variant) =>
                     matchesSelection(variant, { ...selection, [name]: value }),
