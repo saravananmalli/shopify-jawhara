@@ -120,7 +120,7 @@ export default function Header({
       {/* Top utility bar */}
       <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 py-1.5 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
         <div className="page-container flex items-center justify-between">
-          {/* The heritage line lives in the category nav (2xl) and the mobile menu. */}
+          {/* The heritage line lives in the category nav (xl) and the mobile menu. */}
           <Link href="/pages/contact" className="flex items-center gap-1.5 font-medium hover:underline">
             <NavIcon name="support" tinted className="h-5 w-5" />
             {t.header.customerService}
@@ -347,7 +347,7 @@ export default function Header({
             }
             return <MegaMenuItem key={key} link={link} isActive={isActive} />;
           })}
-          <li className="ms-auto hidden items-center gap-1.5 whitespace-nowrap text-gold-700 2xl:flex">
+          <li className="ms-auto hidden items-center gap-1.5 whitespace-nowrap text-gold-700 xl:flex">
             {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
             <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
             {t.header.heritage}
