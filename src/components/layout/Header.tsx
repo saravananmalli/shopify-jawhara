@@ -413,7 +413,12 @@ export default function Header({
               />
             ))}
           </ul>
-          <div className="flex shrink-0 flex-col border-t border-gold-100 pt-2 text-sm">
+          <div className="flex shrink-0 flex-col border-t border-gold-100 pt-2 text-sm max-sm:border-t-0 max-sm:pt-0">
+            <p className="flex min-h-11 items-center gap-2 text-xs font-medium tracking-wide text-gold-700">
+              {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
+              <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
+              {t.header.heritage}
+            </p>
             <Link
               href="/stores"
               onClick={() => setMobileOpen(false)}
