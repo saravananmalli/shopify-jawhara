@@ -291,7 +291,7 @@ export default function Header({
 
       {/* Category nav */}
       <nav className="relative hidden border-b border-gold-100 bg-cream-200/80 lg:block">
-        <ul className="page-container flex flex-wrap items-center gap-x-4 py-3 text-[12px] font-medium tracking-[0.8px] text-brown-900 xl:gap-x-6 xl:text-[13px] xl:tracking-[1.4px]">
+        <ul className="page-container flex flex-wrap items-center gap-x-4 py-3 text-[14px] font-medium tracking-[0.8px] text-brown-900 xl:gap-x-6 xl:tracking-[1.4px]">
           {links.map((link, index) => {
             const title = link.key;
             const key = `${link.title}-${index}`;

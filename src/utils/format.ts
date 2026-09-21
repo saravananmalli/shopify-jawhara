@@ -34,7 +34,8 @@ export function formatMoney(
  * without lowercasing the rest, so it can't fix an all-caps Shopify title.
  */
 export function toTitleCase(text: string) {
-  return text.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  // Word starts only (not after an apostrophe), so "MEN'S" -> "Men's".
+  return text.toLowerCase().replace(/(^|[\s\-/&(])(\w)/g, (_, lead: string, char: string) => lead + char.toUpperCase());
 }
 
 const METAFIELD_UNITS: Record<Locale, Record<string, string>> = {

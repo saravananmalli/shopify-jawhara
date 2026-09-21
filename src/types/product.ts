@@ -15,6 +15,8 @@ export type ProductVariant = {
   price: Money;
   compareAtPrice: Money | null;
   options: { name: string; value: string }[];
+  /** The variant's own photo (e.g. the colour's shot); null when none is set or on list views. */
+  image: ProductImage | null;
 };
 
 /**

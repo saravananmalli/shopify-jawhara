@@ -31,8 +31,11 @@ function matchesSelection(variant: ProductVariant, selection: Record<string, str
 export default function ProductInfo({
   product,
   rating,
+  onVariantChange,
 }: {
   product: ProductDetail;
+  /** Fired when the shopper picks an option, with the variant it resolves to. */
+  onVariantChange?: (variant: ProductVariant) => void;
   /** Real Judge.me rating from Shopify; null/undefined hides the row. */
   rating?: RatingSummary | null;
 }) {
@@ -126,7 +129,7 @@ export default function ProductInfo({
           ];
           return (
             <div key={name} className="mt-5">
-              <p className="mb-2 font-sans text-xs font-semibold uppercase tracking-wide text-brown-900/60">
+              <p className="mb-2 font-sans text-xs font-semibold uppercase tracking-wide text-gold-600">
                 {name}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -139,13 +142,16 @@ export default function ProductInfo({
                     <button
                       key={value}
                       type="button"
-                      onClick={() => setSelection((s) => ({ ...s, [name]: value }))}
+                      onClick={() => {
+                        setSelection({ ...selection, [name]: value });
+                        if (candidateVariant) onVariantChange?.(candidateVariant);
+                      }}
                       aria-pressed={isSelected}
                       disabled={!candidateVariant}
-                      className={`rounded-full border px-4 py-2 font-sans text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                      className={`h-8 rounded-xl border px-[14px] font-sans text-[14px] font-normal uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                         isSelected
-                          ? "border-gold-600 bg-gold-600 text-white"
-                          : "border-gold-200 text-brown-900/80 hover:bg-cream-100"
+                          ? "border-gold-600 bg-gold-600 text-white hover:bg-gold-700"
+                          : "border-gold-200 bg-transparent text-gold-600 hover:bg-cream-100"
                       }`}
                     >
                       {value}

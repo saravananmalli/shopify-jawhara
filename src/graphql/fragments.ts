@@ -25,7 +25,7 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     featuredImage {
       ...ImageFields
     }
-    images(first: 8) {
+    images(first: 30) {
       edges {
         node {
           ...ImageFields
@@ -54,6 +54,9 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
           id
           title
           availableForSale
+          image {
+            ...ImageFields
+          }
           price {
             amount
             currencyCode
@@ -76,7 +79,7 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
 /**
  * List views (homepage shelves, search, collection grids, carousels). A card
  * only shows the featured photo, a hover photo, price, first-variant quick-add
- * and rating, so this stays far smaller than ProductFields (8 images, 25
+ * and rating, so this stays far smaller than ProductFields (30 images, 25
  * variants, description) — the difference is large across a 24-card page.
  */
 export const PRODUCT_CARD_FRAGMENT = /* GraphQL */ `

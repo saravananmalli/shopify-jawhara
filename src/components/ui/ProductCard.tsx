@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, type PointerEvent } from "react";
+import { memo, useEffect, useRef, useState, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { DirhamSymbol } from "dirham/react";
@@ -19,6 +19,8 @@ import type { Product } from "@/types/product";
 
 // 2x the largest rendered width (a quarter of the 1440px page container).
 const PRODUCT_IMAGE_WIDTH = 800;
+// The hover photo is only a glimpse, so it is fetched smaller (~15KB vs ~25KB).
+const SECONDARY_IMAGE_WIDTH = 500;
 
 // Memoised: listing pages re-render their whole grid on every filter-drawer
 // toggle or pending state, but a card's `product` object is stable.
@@ -35,16 +37,48 @@ export default memo(function ProductCard({ product }: { product: Product }) {
   // The photo after the featured one (typically a model / alternate shot).
   const secondaryImage =
     product.images.find((image) => image.url !== product.image?.url) ?? null;
-  // Fetched on the first mouse hover, not up front: a listing page would
-  // otherwise download a second photo for every card nobody hovers.
+  // Preloaded, at idle time, once the card is on or near the screen, on devices that
+  // can hover — waiting for the hover itself meant a visible delay while the
+  // photo downloaded. Touch screens never show it, so they never fetch it, and
+  // cards far down the page don't either.
+  const cardRef = useRef<HTMLDivElement>(null);
   const [secondaryRequested, setSecondaryRequested] = useState(false);
   const [secondaryLoaded, setSecondaryLoaded] = useState(false);
   const requestSecondary = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse") setSecondaryRequested(true);
   };
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || !secondaryImage || secondaryRequested) return;
+    if (!window.matchMedia("(hover: hover)").matches) return;
+    // Safari has no requestIdleCallback; a short timeout stands in for it.
+    const hasIdleCallback = typeof window.requestIdleCallback === "function";
+    let handle: number | undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        // Wait for the browser to be idle so the photos that are actually
+        // visible (and the page's scripts) load first.
+        const request = () => setSecondaryRequested(true);
+        handle = hasIdleCallback
+          ? window.requestIdleCallback(request, { timeout: 3000 })
+          : window.setTimeout(request, 1000);
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(card);
+    return () => {
+      observer.disconnect();
+      if (handle === undefined) return;
+      if (hasIdleCallback) window.cancelIdleCallback(handle);
+      else window.clearTimeout(handle);
+    };
+  }, [secondaryImage, secondaryRequested]);
 
   return (
     <div
+      ref={cardRef}
       className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E6D7BE]/60 bg-white shadow-sm sm:rounded-3xl"
       onPointerEnter={requestSecondary}
     >
@@ -91,20 +125,22 @@ export default memo(function ProductCard({ product }: { product: Product }) {
                   sizes="(min-width: 1024px) 25vw, 50vw"
                   placeholder="blur"
                   blurDataURL={IMAGE_BLUR_DATA_URL}
-                  className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-[opacity,transform] duration-(--motion-slow) ease-luxury ${
+                  className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-[opacity,transform] ease-luxury ${
                     secondaryLoaded
-                      ? "group-hover:opacity-0 group-focus-within:opacity-0"
-                      : "group-hover:scale-105"
+                      ? "duration-(--motion-fast) group-hover:opacity-0 group-focus-within:opacity-0"
+                      : "duration-(--motion-slow) group-hover:scale-105"
                   }`}
                 />
                 {secondaryImage && secondaryRequested && (
                   <Image
-                    src={getShopifyImageUrl(secondaryImage.url, PRODUCT_IMAGE_WIDTH)}
+                    src={getShopifyImageUrl(secondaryImage.url, SECONDARY_IMAGE_WIDTH)}
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
+                    loading="eager"
+                    fetchPriority="low"
                     onLoad={() => setSecondaryLoaded(true)}
-                    className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-opacity duration-(--motion-slow) ease-luxury ${
+                    className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-opacity duration-(--motion-fast) ease-luxury ${
                       secondaryLoaded
                         ? "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
                         : "opacity-0"
