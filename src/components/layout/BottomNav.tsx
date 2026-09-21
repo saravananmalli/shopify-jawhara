@@ -52,14 +52,18 @@ export default function BottomNav({
   const sheetOpen = openSheet !== null;
   useFocusTrap(sheetRef, sheetOpen, closeSheet);
 
+  // The Our Collections landing, or any collection linked under it (e.g. Ada).
+  const onCollectionsTab =
+    pathname === ourCollectionsUrl ||
+    collectionTiles.some((tile) => pathname === `/collections/${tile.handle}`);
+
   const isActive: Record<TabKey, boolean> = {
     home: pathname === "/" && !sheetOpen,
-    // Any other collection page belongs to Categories, except the Our
-    // Collections landing itself.
+    // Any other collection page belongs to Categories.
     categories:
       openSheet === "categories" ||
-      (!sheetOpen && pathname.startsWith("/collections") && pathname !== ourCollectionsUrl),
-    collections: openSheet === "collections" || (!sheetOpen && pathname === ourCollectionsUrl),
+      (!sheetOpen && pathname.startsWith("/collections") && !onCollectionsTab),
+    collections: openSheet === "collections" || (!sheetOpen && onCollectionsTab),
     account: false, // leaves the site for Shopify, so it never shows as current
   };
 
