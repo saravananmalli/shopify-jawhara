@@ -91,7 +91,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
                   sizes="(min-width: 1024px) 25vw, 50vw"
                   placeholder="blur"
                   blurDataURL={IMAGE_BLUR_DATA_URL}
-                  className={`object-contain transition-[opacity,transform] duration-(--motion-slow) ease-luxury ${
+                  className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-[opacity,transform] duration-(--motion-slow) ease-luxury ${
                     secondaryLoaded
                       ? "group-hover:opacity-0 group-focus-within:opacity-0"
                       : "group-hover:scale-105"
@@ -104,7 +104,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
                     onLoad={() => setSecondaryLoaded(true)}
-                    className={`object-contain transition-opacity duration-(--motion-slow) ease-luxury ${
+                    className={`object-contain max-sm:scale-130 max-sm:translate-y-[30px] transition-opacity duration-(--motion-slow) ease-luxury ${
                       secondaryLoaded
                         ? "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
                         : "opacity-0"
