@@ -209,6 +209,26 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Tailwind v4 no longer gives buttons the pointer cursor; restore it for every
+   clickable control. In the base layer so utilities (cursor-not-allowed,
+   cursor-zoom-in) still win. */
+@layer base {
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  label[for],
+  [role="button"]:not([aria-disabled="true"]),
+  input:is([type="checkbox"], [type="radio"], [type="submit"], [type="button"]):not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
 @keyframes announcement-fade {
   from {
     opacity: 0;

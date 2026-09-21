@@ -10,6 +10,7 @@ import { useMenuIntent } from "@/hooks/useMenuIntent";
 import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { NavLink, Collection } from "@/types/content";
+import { toTitleCase } from "@/utils/format";
 
 // 2x the fixed 224px promo tile width.
 const GIFTS_PROMO_IMAGE_WIDTH = 480;
@@ -49,11 +50,11 @@ export default function GiftsMegaMenu({
       <Link
         href={link.url}
         aria-haspopup={hasContent ? "true" : undefined}
-        className={`flex items-center gap-1 whitespace-nowrap uppercase outline-none transition-colors hover:text-gold-700 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300 ${
+        className={`flex items-center gap-1 whitespace-nowrap capitalize outline-none transition-colors hover:text-gold-700 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300 ${
           isActive ? "text-gold-700" : ""
         }`}
       >
-        <DirhamText text={link.title} />
+        <DirhamText text={toTitleCase(link.title)} />
         {hasContent && (
           <ChevronDownIcon className="h-3 w-3 transition-transform duration-200 ease-luxury group-hover:rotate-180 group-focus-within:rotate-180" />
         )}
