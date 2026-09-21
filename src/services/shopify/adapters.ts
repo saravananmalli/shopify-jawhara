@@ -83,6 +83,7 @@ function toVariant(
         ? toMoney(variant.compareAtPrice)
         : null,
     options: variant.selectedOptions,
+    image: variant.image ? toImage(variant.image, variant.title) : null,
   };
 }
 
@@ -154,8 +155,19 @@ export function toProductDetail(product: ShopifyProductDetail, locale: Locale): 
     if (variantSku) specValues.set("sku", variantSku);
   }
 
+  const base = toProduct(product);
+  // The gallery is capped at 8 photos, so a colour's own photo can fall outside
+  // it — append any missing variant photo so selecting that colour can show it.
+  const galleryUrls = new Set(base.images.map((image) => image.url));
+  const variantImages = base.variants.flatMap((variant) =>
+    variant.image && !galleryUrls.has(variant.image.url)
+      ? (galleryUrls.add(variant.image.url), [variant.image])
+      : []
+  );
+
   return {
-    ...toProduct(product),
+    ...base,
+    images: [...base.images, ...variantImages],
     designCode: product.designCode?.value ?? null,
     specifications: PRODUCT_SPEC_FIELDS.flatMap((field) => {
       const value = specValues.get(field.key);

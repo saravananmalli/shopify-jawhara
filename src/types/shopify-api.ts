@@ -43,6 +43,8 @@ export type ShopifyProductCard = {
         price: ShopifyMoney;
         compareAtPrice: ShopifyMoney | null;
         selectedOptions: { name: string; value: string }[];
+        /** Only requested on the detail page (PRODUCT_FRAGMENT), not on cards. */
+        image?: ShopifyImage | null;
       };
     }[];
   };

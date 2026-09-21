@@ -2,11 +2,10 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import ProductGallery from "@/components/ui/ProductGallery";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import RelatedProducts, { RelatedProductsSkeleton } from "@/components/ui/RelatedProducts";
 import ProductFeatures from "@/components/ui/ProductFeatures";
-import ProductInfo from "@/components/ui/ProductInfo";
+import ProductMain from "@/components/ui/ProductMain";
 import ProductActionsRow from "@/components/ui/ProductActionsRow";
 import ProductReviews, { ProductReviewsSkeleton } from "@/components/ui/ProductReviews";
 import { getProductByHandle } from "@/services/shopify";
@@ -97,21 +96,15 @@ export default async function ProductPage({ params }: PageParams) {
           ]}
         />
 
-        <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-start xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-          <ProductGallery images={product.images} title={product.title} badge={badge} />
-
-          <div>
-            <ProductInfo product={product} rating={ratingSummary} />
-
-            <div className="mt-6">
-              <ProductActionsRow product={product} />
-            </div>
-
-            <div className="mt-6">
-              <ProductFeatures />
-            </div>
+        <ProductMain product={product} rating={ratingSummary} badge={badge}>
+          <div className="mt-6">
+            <ProductActionsRow product={product} />
           </div>
-        </div>
+
+          <div className="mt-6">
+            <ProductFeatures />
+          </div>
+        </ProductMain>
       </section>
 
       {ratingSummary && (
