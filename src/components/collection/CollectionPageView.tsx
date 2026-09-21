@@ -7,6 +7,7 @@ import {
   GIFTS_PROMO_HANDLE,
   CATEGORY_SCOPED_MENU_COLUMNS,
   CATEGORY_TILE_GROUPS,
+  JEWELLERY_CATEGORY_HANDLES,
   MAIN_MENU_HANDLE,
 } from "@/config/catalog";
 import {
@@ -48,6 +49,7 @@ export default async function CollectionPageView({
     getCategoryTilesForCollection(handle, {
       mainMenuHandle: MAIN_MENU_HANDLE,
       fallbackMenuHandle: CATEGORY_MENU_HANDLE,
+      fallbackHandles: JEWELLERY_CATEGORY_HANDLES,
       scopedColumns: CATEGORY_SCOPED_MENU_COLUMNS,
       tileGroups: CATEGORY_TILE_GROUPS,
       locale,

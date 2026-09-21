@@ -159,9 +159,10 @@ export async function getCategoryTilesByHandles(
 
 /**
  * Tiles for a collection page's category strip: the links in the same
- * main-menu column as `handle` (with their collection images), else the
- * fallback menu. Falls back too when that column has no tile with an image
- * yet, so the page never shows an empty strip.
+ * main-menu column as `handle` (with their collection images), else a tile
+ * group, else `fallbackHandles` (the plain product categories, for pages in no
+ * column such as "all"), else the fallback menu. Falls through when a source
+ * has no tile with an image yet, so the page never shows an empty strip.
  *
  * For a *curation* column (see CATEGORY_SCOPED_MENU_COLUMNS) it also returns
  * `categoryTiles`: the product categories, for a second row that narrows the
@@ -172,12 +173,14 @@ export async function getCategoryTilesForCollection(
   {
     mainMenuHandle,
     fallbackMenuHandle,
+    fallbackHandles,
     scopedColumns,
     tileGroups,
     locale,
   }: {
     mainMenuHandle: string;
     fallbackMenuHandle: string;
+    fallbackHandles: string[];
     scopedColumns: string[];
     tileGroups: string[][];
     locale: Locale;
@@ -215,12 +218,21 @@ export async function getCategoryTilesForCollection(
     ? await getCategoryTilesByHandles(tileGroup, locale)
     : [];
 
+  // A page in no column or group (e.g. "all") shows the plain product
+  // categories, so it matches the homepage strip and the category pages.
+  const categoryHandleTiles =
+    siblings.length === 0 && groupTiles.length === 0
+      ? await getCategoryTilesByHandles(fallbackHandles, locale)
+      : [];
+
   const [tiles, categoryTiles] = await Promise.all([
     siblings.length > 0
       ? siblings
       : groupTiles.length > 0
         ? groupTiles
-        : getCategoryTilesFromMenu(fallbackMenuHandle, locale),
+        : categoryHandleTiles.length > 0
+          ? categoryHandleTiles
+          : getCategoryTilesFromMenu(fallbackMenuHandle, locale),
     isCuration ? getCategoryTilesFromMenu(fallbackMenuHandle, locale) : [],
   ]);
   return { tiles, categoryTiles };

@@ -13,7 +13,7 @@ export default function MenuPanel({
   children: ReactNode;
 }) {
   return (
-    <div className="invisible absolute inset-x-0 top-full z-50 opacity-0 transition-[opacity,visibility] duration-200 ease-luxury group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+    <div className="invisible absolute inset-x-0 top-full z-50 opacity-0 transition-[opacity,visibility] duration-200 ease-luxury group-data-open:visible group-data-open:opacity-100">
       <MenuIntentContext value={armed}>{children}</MenuIntentContext>
     </div>
   );

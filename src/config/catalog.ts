@@ -159,6 +159,18 @@ export const CATEGORY_TILE_GROUPS: string[][] = [
   PEARL_CATEGORY_HANDLES,
 ];
 
+/** The category tiles on collection pages that belong to no menu column (the
+ * Jewellery link / "all" page), in the same order as the "Shop By Type" column
+ * so those pages match a category page like Rings. */
+export const JEWELLERY_CATEGORY_HANDLES = [
+  "rings",
+  "pendants",
+  "earrings",
+  "necklace",
+  "bangles",
+  "bracelet",
+];
+
 /** Real Shopify collections powering the homepage "Shop By Category" strip
  * and the mobile bottom bar's category sheet
  * — the plain, material-agnostic collections (not the "Gold Rings" /

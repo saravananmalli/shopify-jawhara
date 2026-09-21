@@ -28,6 +28,7 @@ import GiftsMegaMenu from "@/components/layout/GiftsMegaMenu";
 import OurCollectionsMegaMenu from "@/components/layout/OurCollectionsMegaMenu";
 import ImageCategoryMegaMenu from "@/components/layout/ImageCategoryMegaMenu";
 import MobileNavItem from "@/components/layout/MobileNavItem";
+import NavMenuProvider from "@/components/layout/NavMenuProvider";
 import { useDelivery, useLocationUi } from "@/store/delivery";
 import { getShopifyImageUrl, isUntrustedRemoteImage } from "@/utils/shopify-image";
 import type { Brand, Collection, NavLink } from "@/types/content";
@@ -291,6 +292,7 @@ export default function Header({
 
       {/* Category nav */}
       <nav className="relative hidden border-b border-gold-100 bg-cream-200/80 lg:block">
+        <NavMenuProvider>
         <ul className="page-container flex flex-wrap items-center gap-x-4 py-3 text-[14px] font-medium tracking-[0.8px] text-brown-900 xl:gap-x-6 xl:tracking-[1.4px]">
           {links.map((link, index) => {
             const title = link.key;
@@ -351,6 +353,7 @@ export default function Header({
             {t.header.heritage}
           </li>
         </ul>
+        </NavMenuProvider>
       </nav>
 
       {/* Mobile menu */}
