@@ -46,7 +46,7 @@ export default function MegaMenuItem({
       >
         <DirhamText text={toTitleCase(link.title)} />
         {hasColumns && (
-          <ChevronDownIcon className="h-3 w-3 transition-transform duration-200 ease-luxury group-hover:rotate-180 group-focus-within:rotate-180" />
+          <ChevronDownIcon className="h-3 w-3 transition-transform duration-200 ease-luxury group-data-open:rotate-180" />
         )}
       </Link>
 
