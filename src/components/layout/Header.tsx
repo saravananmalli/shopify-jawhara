@@ -143,7 +143,7 @@ export default function Header({
       </div>
 
       {/* Main row: search / logo / account */}
-      <div className="border-b border-gold-100 bg-white py-2">
+      <div className="border-b border-gold-100 bg-white py-2 max-sm:pb-px">
         <div className="page-container flex items-center justify-between gap-4">
           {/* flex-1 like the right-hand cluster, so the logo sits centred. */}
           <div className="flex flex-1 lg:hidden">
