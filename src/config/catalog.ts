@@ -47,11 +47,13 @@ export const ATELIER_COLLECTION_HANDLE = "solitaire";
 
 export const CATEGORY_SCOPED_MENU_COLUMNS = ["curations & style"];
 
-/** Labels live in the dictionary (`collection.sort`), keyed by sort key. */
+/** Labels live in the dictionary (`collection.sort`), keyed by sort key.
+ * Best Selling / New In deliberately left out — they'd read as duplicates of
+ * the New Arrival/Bestseller quick-tag filter below, even though the sort
+ * (Shopify's real sales/created-date signal) and the tag (merchant-curated)
+ * aren't quite the same thing. One home for that concept avoids the confusion. */
 export const SORT_OPTION_KEYS: CatalogSortKey[] = [
   "RECOMMENDED",
-  "BEST_SELLING",
-  "NEWEST",
   "PRICE_ASC",
   "PRICE_DESC",
 ];
