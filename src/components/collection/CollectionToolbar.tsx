@@ -3,6 +3,7 @@
 import { SlidersIcon } from "@/components/icons";
 import SelectDropdown from "@/components/ui/SelectDropdown";
 import FilterDropdown from "@/components/collection/FilterDropdown";
+import QuickTagDropdown from "@/components/collection/QuickTagDropdown";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { useDictionary } from "@/store/locale";
 import { appliedCount, type FilterSection } from "@/utils/catalog-filters";
@@ -21,6 +22,8 @@ export default function CollectionToolbar({
   countLabel,
   sections,
   actions,
+  quickTagSelected,
+  onQuickTagSelect,
   sort,
   sortOptions,
   onSortChange,
@@ -30,6 +33,9 @@ export default function CollectionToolbar({
   countLabel: string;
   sections: FilterSection[];
   actions: FilterActions;
+  /** Currently active "New Arrival / Bestseller / Trending" tag, or null for "All". */
+  quickTagSelected: string | null;
+  onQuickTagSelect: (tag: string | null) => void;
   sort: CatalogSortKey;
   sortOptions: { key: CatalogSortKey; label: string }[];
   onSortChange: (sort: CatalogSortKey) => void;
@@ -40,12 +46,19 @@ export default function CollectionToolbar({
   const totalApplied = actions.active.length;
 
   return (
-    <div className="mt-3.5 flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:py-3">
-      <p aria-live="polite" className="basis-full font-sans text-sm text-brown-900 sm:me-2 sm:basis-auto sm:text-base">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:py-3">
+      {/* Product count: desktop only — on mobile the toolbar goes straight to
+          the filter/sort controls, and the count is still there in the
+          "Show All Filters" drawer's "Show {label}" button. */}
+      <p aria-live="polite" className="hidden font-sans text-sm text-brown-900 sm:me-2 sm:block sm:basis-auto sm:text-base">
         {countLabel}
       </p>
 
+      {/* Metal/Stone/Price… — and the New Arrival/Bestseller/Trending pick
+          alongside them — are desktop-only inline dropdowns; on mobile the
+          same choices live in the "Show All Filters" drawer instead. */}
       <div className="hidden items-center gap-2 lg:flex">
+        <QuickTagDropdown selected={quickTagSelected} onSelect={onQuickTagSelect} />
         {sections.slice(0, MAX_INLINE_FILTERS).map((section) => (
           <FilterDropdown
             key={section.key}
@@ -70,7 +83,7 @@ export default function CollectionToolbar({
         type="button"
         onClick={onOpenFilters}
         aria-haspopup="dialog"
-        className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border border-gold-600 bg-white px-2.5 font-sans text-[13px] font-medium text-gold-700 transition-colors hover:bg-cream-100 ${FILTER_CONTROL_WIDTH_CLASS}`}
+        className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border border-gold-600 bg-white px-2.5 font-sans text-[13px] font-medium text-brown-900 transition-colors hover:bg-cream-100 ${FILTER_CONTROL_WIDTH_CLASS}`}
       >
         <SlidersIcon className="h-4 w-4" />
         {t.showAllFilters}

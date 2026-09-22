@@ -66,7 +66,6 @@ export function buildFilterSections(
   if (!sections.some((section) => section.kind === "price")) {
     sections.push({ key: "price", label: t.price, kind: "price" });
   }
-  sections.push({ key: "deals", label: t.deals, kind: "deals" });
   return sections;
 }
 

@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { ChipButton } from "@/components/ui/Chip";
 import { useDictionary, useLocale } from "@/store/locale";
 import { formatNumber } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import ProductCard from "@/components/ui/ProductCard";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
 import type { FilterActions } from "@/components/collection/FilterOptions";
-import { SparkleIcon, StarIcon, TrendingIcon } from "@/components/icons";
 import { PRODUCT_GRID_CLASS } from "@/config/layout";
 import { QUICK_TAG_CHIPS, SORT_OPTION_KEYS } from "@/config/catalog";
 import {
@@ -110,19 +108,17 @@ export default function CollectionBrowser({
       }),
   };
 
-  const noneApplied = activeFilters.length === 0 && sort === "RECOMMENDED";
-
-  // Quick tag chips act as one exclusive choice; Under-price stays combinable.
+  // Quick tag dropdown acts as one exclusive choice; Under-price stays combinable.
   const tagFilter = (tag: string) => JSON.stringify({ tag });
   const quickTagFilters = QUICK_TAG_CHIPS.map((chip) => tagFilter(chip.tag));
-  const toggleTag = (tag: string) => {
-    const filter = tagFilter(tag);
+  const selectedQuickTag =
+    QUICK_TAG_CHIPS.find((chip) => activeFilters.includes(tagFilter(chip.tag)))
+      ?.tag ?? null;
+  const selectQuickTag = (tag: string | null) => {
     const others = activeFilters.filter(
       (active) => !quickTagFilters.includes(active),
     );
-    navigate({
-      filters: activeFilters.includes(filter) ? others : [...others, filter],
-    });
+    navigate({ filters: tag ? [...others, tagFilter(tag)] : others });
   };
 
   const total = initialPage.totalCount;
@@ -172,35 +168,12 @@ export default function CollectionBrowser({
           is static on collection pages, so this is the only sticky bar. The
           opaque background hides cards passing underneath. */}
       <div className="sticky top-(--sticky-top) z-30 mt-2 bg-cream-50 pt-3 transition-[top] duration-300 ease-luxury">
-        {/* One swipeable row on phones (bleeding to the screen edges) instead
-            of wrapping onto a second line; wraps normally from sm. */}
-        <div className="-mx-(--page-gutter) flex scroll-px-(--page-gutter) snap-x items-center gap-2 overflow-x-auto px-(--page-gutter) pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
-          <ChipButton
-            active={noneApplied}
-            onClick={() => navigate({ sort: "RECOMMENDED", filters: [] })}
-          >
-            {t.all}
-          </ChipButton>
-          {QUICK_TAG_CHIPS.map((chip) => (
-            <ChipButton
-              key={chip.tag}
-              active={activeFilters.includes(tagFilter(chip.tag))}
-              onClick={() => toggleTag(chip.tag)}
-            >
-              {chip.tag === "New Arrival" && (
-                <SparkleIcon className="h-3 w-3" />
-              )}
-              {chip.tag === "Bestseller" && <StarIcon className="h-3 w-3" />}
-              {chip.tag === "Trending" && <TrendingIcon className="h-3 w-3" />}
-              {t.chips[chip.key]}
-            </ChipButton>
-          ))}
-        </div>
-
         <CollectionToolbar
           countLabel={countLabel}
           sections={sections}
           actions={actions}
+          quickTagSelected={selectedQuickTag}
+          onQuickTagSelect={selectQuickTag}
           sort={sort}
           sortOptions={sortOptions}
           onSortChange={(next) => navigate({ sort: next })}
@@ -269,6 +242,7 @@ export default function CollectionBrowser({
         <FiltersDrawer
           sections={sections}
           actions={actions}
+          quickTag={{ selected: selectedQuickTag, onSelect: selectQuickTag }}
           resultLabel={countLabel.toLowerCase()}
           onClearAll={() => navigate({ filters: [] })}
           onClose={closeDrawer}
