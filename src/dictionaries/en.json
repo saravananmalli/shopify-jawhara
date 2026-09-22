@@ -343,6 +343,7 @@
   },
   "collection": {
     "all": "All",
+    "highlights": "Highlights",
     "chips": {
       "newArrival": "New Arrival",
       "bestseller": "Bestseller",

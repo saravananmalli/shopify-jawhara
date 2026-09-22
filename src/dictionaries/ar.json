@@ -359,6 +359,7 @@
   },
   "collection": {
     "all": "الكل",
+    "highlights": "الأبرز",
     "chips": {
       "newArrival": "وصل حديثًا",
       "bestseller": "الأكثر مبيعًا",

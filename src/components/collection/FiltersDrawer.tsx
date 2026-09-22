@@ -6,20 +6,28 @@ import FilterOptions, {
   type FilterActions,
 } from "@/components/collection/FilterOptions";
 import FilterSectionAccordion from "@/components/collection/FilterSectionAccordion";
+import QuickTagOptions from "@/components/collection/QuickTagOptions";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import { appliedCount, type FilterSection } from "@/utils/catalog-filters";
 
+/** Not a real section key (quickTag isn't in `sections`) — just an id for open/close state. */
+const QUICK_TAG_KEY = "quickTag";
+
 export default function FiltersDrawer({
   sections,
   actions,
+  quickTag,
   resultLabel,
   onClearAll,
   onClose,
 }: {
   sections: FilterSection[];
   actions: FilterActions;
+  /** New Arrival/Bestseller/Trending — desktop-only as an inline dropdown
+   * (QuickTagDropdown), so the drawer is its only home on mobile. */
+  quickTag: { selected: string | null; onSelect: (tag: string | null) => void };
   resultLabel: string;
   onClearAll: () => void;
   onClose: () => void;
@@ -28,17 +36,19 @@ export default function FiltersDrawer({
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(panelRef, true, onClose);
 
-  // Start with the first two sections open, plus any that already have a selection.
+  // Start with the quick-tag pick open (its only home on mobile), the first
+  // two sections open, plus any section that already has a selection.
   const [openKeys, setOpenKeys] = useState(
     () =>
-      new Set(
-        sections
+      new Set([
+        QUICK_TAG_KEY,
+        ...sections
           .filter(
             (section, index) =>
               index < 2 || appliedCount(section, actions.active) > 0,
           )
           .map((section) => section.key),
-      ),
+      ]),
   );
   const toggleSection = (key: string) =>
     setOpenKeys((current) => {
@@ -78,6 +88,18 @@ export default function FiltersDrawer({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5">
+          <FilterSectionAccordion
+            label={t.highlights}
+            appliedCount={quickTag.selected ? 1 : 0}
+            open={openKeys.has(QUICK_TAG_KEY)}
+            onToggle={() => toggleSection(QUICK_TAG_KEY)}
+          >
+            <QuickTagOptions
+              selected={quickTag.selected}
+              onSelect={quickTag.onSelect}
+              name="quick-tag-drawer"
+            />
+          </FilterSectionAccordion>
           {sections.map((section) => (
             <FilterSectionAccordion
               key={section.key}
