@@ -83,7 +83,9 @@ export default function CollectionToolbar({
         type="button"
         onClick={onOpenFilters}
         aria-haspopup="dialog"
-        className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border border-gold-600 bg-white px-2.5 font-sans text-[13px] font-medium text-brown-900 transition-colors hover:bg-cream-100 ${FILTER_CONTROL_WIDTH_CLASS}`}
+        className={`flex h-10 items-center justify-center gap-1.5 rounded-lg border bg-white px-2.5 font-sans text-[13px] font-medium text-brown-900 transition-colors hover:border-gold-600 hover:bg-cream-100 ${
+          totalApplied > 0 ? "border-gold-600" : "border-[#D6D3D1]"
+        } ${FILTER_CONTROL_WIDTH_CLASS}`}
       >
         <SlidersIcon className="h-4 w-4" />
         {t.showAllFilters}
