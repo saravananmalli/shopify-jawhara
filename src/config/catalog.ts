@@ -115,6 +115,18 @@ export const TAG_FILTER_GROUPS: readonly {
       ["Sapphire", "Sapphires"],
     ],
   },
+  {
+    prefix: "occasion",
+    label: "Occasion",
+    values: [
+      ["Wedding Wear"],
+      ["Eid & Festive Celebrations", "Eid Festive Celebrations"],
+      ["Party Wear"],
+      ["Mother's Day", "Mothers Day"],
+      ["Daily Wear"],
+      ["Office Wear"],
+    ],
+  },
   { prefix: "stone-color", label: "Stone color", values: [] },
   { prefix: "shape", label: "Shape", values: [] },
   { prefix: "brand", label: "Brand", values: [] },

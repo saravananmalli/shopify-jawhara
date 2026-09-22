@@ -403,6 +403,7 @@
     "groups": {
       "metal": "المعدن",
       "stone": "الحجر",
+      "occasion": "المناسبة",
       "stone-color": "لون الحجر",
       "shape": "الشكل",
       "brand": "العلامة التجارية"
@@ -419,7 +420,13 @@
       "pearl": "لؤلؤ",
       "ruby": "ياقوت أحمر",
       "emerald": "زمرد",
-      "sapphire": "ياقوت أزرق"
+      "sapphire": "ياقوت أزرق",
+      "wedding wear": "إطلالة الزفاف",
+      "eid & festive celebrations": "العيد والمناسبات الاحتفالية",
+      "party wear": "إطلالة السهرات",
+      "mother's day": "عيد الأم",
+      "daily wear": "الإطلالة اليومية",
+      "office wear": "إطلالة العمل"
     }
   },
   "delivery": {
