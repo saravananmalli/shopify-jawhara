@@ -167,7 +167,7 @@ export default function CollectionBrowser({
       {/* Pinned to the top while the product grid scrolls — the site header
           is static on collection pages, so this is the only sticky bar. The
           opaque background hides cards passing underneath. */}
-      <div className="sticky top-(--sticky-top) z-30 mt-2 bg-cream-50 pt-3 transition-[top] duration-300 ease-luxury">
+      <div className="sticky top-(--sticky-top) z-30 mt-2 bg-background pt-3 transition-[top] duration-300 ease-luxury">
         <CollectionToolbar
           countLabel={countLabel}
           sections={sections}

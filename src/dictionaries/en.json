@@ -383,6 +383,7 @@
     "groups": {
       "metal": "Metal",
       "stone": "Stone",
+      "occasion": "Occasion",
       "stone-color": "Stone color",
       "shape": "Shape",
       "brand": "Brand"
@@ -399,7 +400,13 @@
       "pearl": "Pearl",
       "ruby": "Ruby",
       "emerald": "Emerald",
-      "sapphire": "Sapphire"
+      "sapphire": "Sapphire",
+      "wedding wear": "Wedding Wear",
+      "eid & festive celebrations": "Eid & Festive Celebrations",
+      "party wear": "Party Wear",
+      "mother's day": "Mother's Day",
+      "daily wear": "Daily Wear",
+      "office wear": "Office Wear"
     }
   },
   "delivery": {

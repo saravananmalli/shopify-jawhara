@@ -135,7 +135,7 @@ export default async function CollectionPageView({
   };
 
   return (
-    <div className="bg-cream-50">
+    <div className="bg-background">
       <section className="page-container pb-16 pt-3">
         <script
           type="application/ld+json"
