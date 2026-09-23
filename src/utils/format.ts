@@ -1,4 +1,5 @@
 import { defaultLocale, type Locale } from "@/config/i18n";
+import type { Money } from "@/types/money";
 
 /** Intl locale tags per site language. Arabic is pinned to Latin digits
  * (`-u-nu-latn`): prices, sizes and phone numbers read the same in both
@@ -26,6 +27,14 @@ export function formatMoney(
     currency: currencyCode,
     maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
   }).format(amount);
+}
+
+/** Whole-percent markdown off a compare-at price, or null when there is none
+ * to show (no compare-at price, or it isn't actually higher). */
+export function getDiscountPercent(price: Money, compareAtPrice?: Money | null) {
+  if (!compareAtPrice) return null;
+  const percent = Math.round((1 - price.amount / compareAtPrice.amount) * 100);
+  return percent > 0 ? percent : null;
 }
 
 /**

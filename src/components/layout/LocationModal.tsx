@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import Button from "@/components/ui/Button";
+import DialogOverlay from "@/components/ui/DialogOverlay";
+import IconButton from "@/components/ui/IconButton";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { DetectResult } from "@/store/delivery";
 import { useDictionary } from "@/store/locale";
@@ -57,14 +59,12 @@ export default function LocationModal({
   }
 
   return (
-    <div
-      inert={!open}
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-luxury ${
-        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-      }`}
+    <DialogOverlay
+      visible={open}
+      onClose={onClose}
+      scrimClassName="bg-black/50"
+      className="flex items-center justify-center p-4"
     >
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-
       <div
         ref={dialogRef}
         role="dialog"
@@ -79,13 +79,13 @@ export default function LocationModal({
             <MapPinIcon className="h-5 w-5" />
             {t.modalTitle}
           </h2>
-          <button
-            onClick={onClose}
+          <IconButton
+            icon={<CloseIcon className="h-5 w-5" />}
             aria-label={common.close}
-            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/20"
-          >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+            onClick={onClose}
+            hoverTone="white"
+            className="-me-2"
+          />
         </div>
 
         <div className="flex flex-col gap-4 overflow-y-auto p-5">
@@ -167,6 +167,6 @@ export default function LocationModal({
           </ul>
         </div>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

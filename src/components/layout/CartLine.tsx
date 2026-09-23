@@ -4,6 +4,7 @@ import { useOptimistic, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import Price from "@/components/ui/Price";
+import QuantitySelector from "@/components/ui/QuantitySelector";
 import { useCart } from "@/store/cart";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
@@ -75,32 +76,17 @@ export default function CartLine({ line }: { line: CartLineType }) {
           <Price amount={line.lineTotal.amount} currencyCode={line.lineTotal.currencyCode} />
         </p>
         <div className="mt-1 flex items-center gap-2">
-          <div className="flex h-7 items-center rounded-full bg-cream-100">
-            <button
-              type="button"
-              disabled={isPending}
-              aria-label={formatMessage(t.decrease, { title: line.productTitle })}
-              onClick={() => change(optimisticQuantity - 1)}
-              className="flex h-full w-6 items-center justify-center text-sm leading-none text-brown-900/70 transition-colors hover:text-gold-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              −
-            </button>
-            <span
-              aria-live="polite"
-              className="min-w-[1.25rem] text-center text-xs font-semibold text-brown-900"
-            >
-              {optimisticQuantity}
-            </span>
-            <button
-              type="button"
-              disabled={isPending}
-              aria-label={formatMessage(t.increase, { title: line.productTitle })}
-              onClick={() => change(optimisticQuantity + 1)}
-              className="flex h-full w-6 items-center justify-center text-sm leading-none text-brown-900/70 transition-colors hover:text-gold-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              +
-            </button>
-          </div>
+          <QuantitySelector
+            value={optimisticQuantity}
+            onChange={change}
+            min={0}
+            disabled={isPending}
+            decreaseLabel={formatMessage(t.decrease, { title: line.productTitle })}
+            increaseLabel={formatMessage(t.increase, { title: line.productTitle })}
+            className="h-7! rounded-full!"
+            buttonClassName="w-6! text-sm! disabled:opacity-40!"
+            valueClassName="w-auto! min-w-[1.25rem] text-xs!"
+          />
           <button
             type="button"
             disabled={isPending}

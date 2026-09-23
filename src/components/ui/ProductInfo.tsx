@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { DirhamSymbol } from "dirham/react";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import AccordionItem from "@/components/ui/AccordionItem";
 import DeliveryEstimate from "@/components/ui/DeliveryEstimate";
+import Price from "@/components/ui/Price";
 import QuantitySelector from "@/components/ui/QuantitySelector";
 import WishlistButton from "@/components/ui/WishlistButton";
 import RatingStars from "@/components/ui/RatingStars";
 import { ArrowDownIcon, SparkleIcon } from "@/components/icons";
 import { useDictionary, useLocale } from "@/store/locale";
-import { formatMoney, formatNumber } from "@/utils/format";
+import { formatMoney, getDiscountPercent } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import type { ProductDetail, ProductVariant } from "@/types/product";
 import type { RatingSummary } from "@/types/review";
@@ -70,9 +70,7 @@ export default function ProductInfo({
   const price = selectedVariant?.price ?? product.price;
   const compareAtPrice = selectedVariant?.compareAtPrice ?? product.compareAtPrice;
   const available = selectedVariant?.available ?? product.available;
-  const discountPercent = compareAtPrice
-    ? Math.round((1 - price.amount / compareAtPrice.amount) * 100)
-    : null;
+  const discountPercent = getDiscountPercent(price, compareAtPrice);
 
   return (
     <div>
@@ -96,21 +94,25 @@ export default function ProductInfo({
       )}
 
       <div className="mt-4 flex flex-wrap items-center gap-3 font-sans">
-        {discountPercent !== null && discountPercent > 0 && (
+        {discountPercent !== null && (
           <span className="flex items-center gap-1 text-2xl font-bold text-[#008042]">
             <ArrowDownIcon className="h-5 w-5" />
             {discountPercent}%
           </span>
         )}
-        <span className="flex items-center gap-0.5 text-2xl font-bold text-brown-900 rtl:flex-row-reverse">
-          <DirhamSymbol size="0.8em" />
-          {formatNumber(price.amount, locale)}
-        </span>
+        <Price
+          amount={price.amount}
+          currencyCode={price.currencyCode}
+          size="0.8em"
+          className="flex items-center gap-0.5 text-2xl font-bold text-brown-900 rtl:flex-row-reverse"
+        />
         {compareAtPrice && (
-          <span className="flex items-center gap-0.5 text-lg text-[#7A7369] line-through rtl:flex-row-reverse">
-            <DirhamSymbol size="0.65em" />
-            {formatNumber(compareAtPrice.amount, locale)}
-          </span>
+          <Price
+            amount={compareAtPrice.amount}
+            currencyCode={compareAtPrice.currencyCode}
+            size="0.65em"
+            className="flex items-center gap-0.5 text-lg text-[#7A7369] line-through rtl:flex-row-reverse"
+          />
         )}
       </div>
 

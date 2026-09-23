@@ -1,5 +1,6 @@
 import ReviewCard from "@/components/ui/ReviewCard";
 import ReviewCarousel from "@/components/ui/ReviewCarousel";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { getDictionary } from "@/dictionaries";
 import { getLocale } from "@/utils/get-locale";
 import type { Review } from "@/types/review";
@@ -14,12 +15,7 @@ export default async function CustomerReviews({ reviews }: { reviews: Review[] }
     <section aria-labelledby="home-reviews-heading" className="bg-cream-200">
       <div className="page-container py-6 sm:py-12">
         <div className="mb-6">
-          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
-            {t.eyebrow}
-          </p>
-          <h2 id="home-reviews-heading" className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[28px]">
-            {t.title}
-          </h2>
+          <SectionHeading id="home-reviews-heading" eyebrow={t.eyebrow} title={t.title} />
         </div>
         <ReviewCarousel itemCount={reviews.length}>
           {reviews.map((review) => (

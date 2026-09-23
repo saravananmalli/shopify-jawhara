@@ -7,6 +7,8 @@ import { useDictionary, useLocale } from "@/store/locale";
 import { formatMoney } from "@/utils/format";
 import { formatMessage } from "@/utils/i18n";
 import { SearchIcon, CloseIcon } from "@/components/icons";
+import DialogOverlay from "@/components/ui/DialogOverlay";
+import IconButton from "@/components/ui/IconButton";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { getProducts, searchProducts } from "@/services/shopify";
 import { getShopifyImageUrl } from "@/utils/shopify-image";
@@ -104,13 +106,7 @@ export default function SearchOverlay({
   const isSearching = query.trim().length >= MIN_QUERY_LENGTH;
 
   return (
-    <div
-      inert={!open}
-      className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury ${
-        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-      }`}
-    >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <DialogOverlay visible={open} onClose={onClose}>
       <div
         ref={panelRef}
         role="dialog"
@@ -135,13 +131,12 @@ export default function SearchOverlay({
                 className="w-full text-sm outline-none placeholder:text-brown-900/40"
               />
             </div>
-            <button
-              onClick={onClose}
+            <IconButton
+              icon={<CloseIcon className="h-5 w-5" />}
               aria-label={t.close}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brown-900/60 hover:bg-cream-100"
-            >
-              <CloseIcon className="h-5 w-5" />
-            </button>
+              onClick={onClose}
+              className="shrink-0 text-brown-900/60"
+            />
           </div>
 
           <div className="mt-6 flex flex-col gap-6 sm:flex-row">
@@ -232,6 +227,6 @@ export default function SearchOverlay({
           </div>
         </div>
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

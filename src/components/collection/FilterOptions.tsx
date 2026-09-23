@@ -1,10 +1,9 @@
 "use client";
 
-import { DirhamSymbol } from "dirham/react";
 import { PRICE_BANDS } from "@/config/catalog";
 import { CheckIcon } from "@/components/icons";
-import { useDictionary, useLocale } from "@/store/locale";
-import { formatNumber } from "@/utils/format";
+import Price from "@/components/ui/Price";
+import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import {
   bandInput,
@@ -18,27 +17,6 @@ export type FilterActions = {
   onToggle: (input: string) => void;
   currencyCode: string;
 };
-
-function Amount({
-  value,
-  currencyCode,
-}: {
-  value: number;
-  currencyCode: string;
-}) {
-  const locale = useLocale();
-  // The dirham sign is only correct for AED; any other market shows its code.
-  return currencyCode === "AED" ? (
-    <span className="inline-flex items-center gap-0.5 rtl:flex-row-reverse">
-      <DirhamSymbol size="0.85em" />
-      {formatNumber(value, locale)}
-    </span>
-  ) : (
-    <>
-      {currencyCode} {formatNumber(value, locale)}
-    </>
-  );
-}
 
 function CheckRow({
   label,
@@ -141,18 +119,18 @@ export default function FilterOptions({
             band.min === undefined ? (
               withAmount(
                 t.under,
-                <Amount value={band.max ?? 0} currencyCode={currencyCode} />,
+                <Price amount={band.max ?? 0} currencyCode={currencyCode} />,
               )
             ) : band.max === undefined ? (
               withAmount(
                 t.above,
-                <Amount value={band.min} currencyCode={currencyCode} />,
+                <Price amount={band.min} currencyCode={currencyCode} />,
               )
             ) : (
               <>
-                <Amount value={band.min} currencyCode={currencyCode} />
+                <Price amount={band.min} currencyCode={currencyCode} />
                 {" – "}
-                <Amount value={band.max} currencyCode={currencyCode} />
+                <Price amount={band.max} currencyCode={currencyCode} />
               </>
             );
           const input = bandInput(band);

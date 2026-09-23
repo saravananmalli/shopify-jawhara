@@ -8,6 +8,7 @@ import { formatNumber } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import ProductCard from "@/components/ui/ProductCard";
 import Button from "@/components/ui/Button";
+import EmptyStateBox from "@/components/ui/EmptyStateBox";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { PRODUCT_GRID_CLASS } from "@/config/layout";
@@ -226,7 +227,7 @@ export default function CollectionBrowser({
         className={`mt-6 transition-opacity duration-300 ${isPending ? "opacity-50" : ""}`}
       >
         {products.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
+          <EmptyStateBox className="py-16">
             <p className="font-sans text-base text-brown-900">
               {activeFilters.length > 0 ? t.noMatch : t.noProducts}
             </p>
@@ -239,7 +240,7 @@ export default function CollectionBrowser({
                 {t.clearAllFilters}
               </Button>
             )}
-          </div>
+          </EmptyStateBox>
         ) : (
           <ul className={PRODUCT_GRID_CLASS}>
             {products.map((product) => (

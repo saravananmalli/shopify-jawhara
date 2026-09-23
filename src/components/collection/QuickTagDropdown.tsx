@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDownIcon } from "@/components/icons";
 import { useDictionary } from "@/store/locale";
 import { QUICK_TAG_CHIPS } from "@/config/catalog";
 import QuickTagOptions from "@/components/collection/QuickTagOptions";
+import { useDismissableDropdown } from "@/hooks/useDismissableDropdown";
 
 /**
  * Same trigger/panel chrome as FilterDropdown (Metal, Material…) so the
@@ -22,31 +22,7 @@ export default function QuickTagDropdown({
   onSelect: (tag: string | null) => void;
 }) {
   const { collection: t } = useDictionary();
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const panelId = useId();
-
-  useEffect(() => {
-    if (!open) return;
-
-    function handlePointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    }
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-        buttonRef.current?.focus();
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
+  const { open, setOpen, rootRef, buttonRef, panelId } = useDismissableDropdown();
 
   const activeChip = QUICK_TAG_CHIPS.find((chip) => chip.tag === selected);
 

@@ -17,6 +17,8 @@ import {
 import { useCart } from "@/store/cart";
 import { useWishlist } from "@/store/wishlist";
 import CountBadge from "@/components/ui/CountBadge";
+import DialogOverlay from "@/components/ui/DialogOverlay";
+import IconButton from "@/components/ui/IconButton";
 import NavIcon from "@/components/ui/NavIcon";
 import { shopifyConfig } from "@/config/shopify";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
@@ -148,13 +150,14 @@ export default function Header({
         <div className="page-container flex items-center justify-between gap-4">
           {/* flex-1 like the right-hand cluster, so the logo sits centred. */}
           <div className="flex flex-1 lg:hidden">
-            <button
-              className="-ms-2 flex h-11 w-11 items-center justify-center"
-              onClick={() => setMobileOpen(true)}
+            <IconButton
+              icon={<MenuIcon className="h-6 w-6" />}
               aria-label={t.header.openMenu}
-            >
-              <MenuIcon className="h-6 w-6" />
-            </button>
+              onClick={() => setMobileOpen(true)}
+              rounded={false}
+              hoverTone="none"
+              className="-ms-2"
+            />
           </div>
 
           <div className="hidden flex-1 items-center gap-3 lg:flex">
@@ -357,16 +360,7 @@ export default function Header({
       </nav>
 
       {/* Mobile menu */}
-      <div
-        inert={!mobileOpen}
-        className={`fixed inset-0 z-50 flex transition-opacity duration-300 ease-luxury lg:hidden ${
-          mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-black/40"
-          onClick={closeMobileMenu}
-        />
+      <DialogOverlay visible={mobileOpen} onClose={closeMobileMenu} className="flex lg:hidden">
         <div
           ref={mobileMenuRef}
           role="dialog"
@@ -385,13 +379,14 @@ export default function Header({
               unoptimized={isUntrustedRemoteImage(logoSrc)}
               className="h-10 w-auto"
             />
-            <button
-              onClick={() => setMobileOpen(false)}
+            <IconButton
+              icon={<CloseIcon className="h-5 w-5" />}
               aria-label={t.header.closeMenu}
-              className="-me-2 flex h-11 w-11 items-center justify-center"
-            >
-              <CloseIcon className="h-5 w-5" />
-            </button>
+              onClick={() => setMobileOpen(false)}
+              rounded={false}
+              hoverTone="none"
+              className="-me-2"
+            />
           </div>
           <button
             type="button"
@@ -441,7 +436,7 @@ export default function Header({
             <LanguageSwitcher className="font-medium text-gold-700" />
           </div>
         </div>
-      </div>
+      </DialogOverlay>
 
       {searchDialog.mounted && (
         <SearchOverlay

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "@/components/ui/Link";
 import Chip from "@/components/ui/Chip";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { ArrowUpRightIcon, SparkleIcon } from "@/components/icons";
 import { useDictionary } from "@/store/locale";
 import { useHorizontalScrollSection } from "@/hooks/useHorizontalScrollSection";
@@ -41,15 +42,7 @@ export default function ShopByOccasionSection({
           the header while the hook slides the track sideways. */}
       <div className="md:sticky md:top-(--header-offset) md:flex md:h-[calc(100vh-var(--header-offset))] md:flex-col md:justify-center md:gap-8 md:overflow-hidden">
         <div className="px-(--page-gutter) pb-8 text-center md:pb-0">
-          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-gold-800">
-            {t.eyebrow}
-          </p>
-          <h2
-            id="shop-by-occasion-heading"
-            className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[28px]"
-          >
-            {t.title}
-          </h2>
+          <SectionHeading id="shop-by-occasion-heading" eyebrow={t.eyebrow} title={t.title} />
         </div>
 
         <div

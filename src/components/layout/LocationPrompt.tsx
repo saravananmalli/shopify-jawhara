@@ -5,6 +5,7 @@ import { useLocationUi } from "@/store/delivery";
 import { useDictionary } from "@/store/locale";
 import { CloseIcon, MapPinIcon } from "@/components/icons";
 import Button from "@/components/ui/Button";
+import IconButton from "@/components/ui/IconButton";
 
 /**
  * In-page fallback for the browser's location popup, which shoppers often
@@ -51,14 +52,12 @@ export default function LocationPrompt() {
           </button>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={dismissPrompt}
+      <IconButton
+        icon={<CloseIcon className="h-4 w-4" />}
         aria-label={common.dismiss}
-        className="-me-2 -mt-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-brown-900/50 hover:bg-cream-100"
-      >
-        <CloseIcon className="h-4 w-4" />
-      </button>
+        onClick={dismissPrompt}
+        className="-me-2 -mt-2 shrink-0 text-brown-900/50"
+      />
     </aside>
   );
 }

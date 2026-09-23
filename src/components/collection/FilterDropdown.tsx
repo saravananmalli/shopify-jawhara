@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
 import { ChevronDownIcon } from "@/components/icons";
 import FilterOptions, {
   type FilterActions,
 } from "@/components/collection/FilterOptions";
+import { useDismissableDropdown } from "@/hooks/useDismissableDropdown";
 import type { FilterSection } from "@/utils/catalog-filters";
 
 export default function FilterDropdown({
@@ -16,31 +16,7 @@ export default function FilterDropdown({
   activeCount: number;
   actions: FilterActions;
 }) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const panelId = useId();
-
-  useEffect(() => {
-    if (!open) return;
-
-    function handlePointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    }
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-        buttonRef.current?.focus();
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
+  const { open, setOpen, rootRef, buttonRef, panelId } = useDismissableDropdown();
 
   return (
     <div ref={rootRef} className="relative">
