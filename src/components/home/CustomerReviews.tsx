@@ -20,9 +20,6 @@ export default async function CustomerReviews({ reviews }: { reviews: Review[] }
           <h2 id="home-reviews-heading" className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[28px]">
             {t.title}
           </h2>
-          <p className="mt-1 font-sans text-sm text-brown-900/60">
-            {t.subtitle}
-          </p>
         </div>
         <ReviewCarousel itemCount={reviews.length}>
           {reviews.map((review) => (

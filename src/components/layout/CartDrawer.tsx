@@ -1,25 +1,19 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import Link from "@/components/ui/Link";
+import Price from "@/components/ui/Price";
+import CartLine from "@/components/layout/CartLine";
+import { CartLinesSkeleton } from "@/components/ui/Skeleton";
 import { useCart } from "@/store/cart";
-import { useDictionary, useLocale } from "@/store/locale";
-import { formatMoney } from "@/utils/format";
+import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { CloseIcon, BagIcon } from "@/components/icons";
-import { getShopifyImageUrl } from "@/utils/shopify-image";
-
-// 2x the fixed 80x80 thumbnail.
-const CART_LINE_IMAGE_WIDTH = 192;
 
 export default function CartDrawer({ visible }: { visible: boolean }) {
-  const { cart, closeCart, updateItem, removeItem, isLoading, error, dismissError } =
-    useCart();
-  const locale = useLocale();
-  const { cart: t } = useDictionary();
-  const money = (m: { amount: number; currencyCode: string }) =>
-    formatMoney(m.amount, m.currencyCode, locale);
+  const { cart, closeCart, isInitializing, error, dismissError } = useCart();
+  const { cart: t, errors } = useDictionary();
   const drawerRef = useRef<HTMLDivElement>(null);
   const lines = cart?.lines ?? [];
 
@@ -50,7 +44,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
           <button
             onClick={closeCart}
             aria-label={t.close}
-            className="-me-2 flex h-11 w-11 items-center justify-center"
+            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-cream-100"
           >
             <CloseIcon className="h-5 w-5" />
           </button>
@@ -73,69 +67,26 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
         )}
 
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {lines.length === 0 ? (
-            <p className="mt-10 text-center text-sm text-brown-900/60">
-              {t.empty}
-            </p>
+          {isInitializing ? (
+            <CartLinesSkeleton />
+          ) : lines.length === 0 ? (
+            <div className="mt-6 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
+              <BagIcon className="mx-auto h-8 w-8 text-brown-900/30" />
+              <h3 className="mt-3 font-sans text-base text-brown-900">{t.emptyTitle}</h3>
+              <p className="mx-auto mt-2 max-w-[15rem] font-sans text-sm text-brown-900/60">
+                {t.emptyBody}
+              </p>
+              <Link
+                href="/collections"
+                className="mt-6 inline-block rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+              >
+                {errors.browseCollections}
+              </Link>
+            </div>
           ) : (
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col gap-3">
               {lines.map((line) => (
-                <li key={line.id} className="flex gap-3">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white">
-                    {line.image && (
-                      <Image
-                        src={getShopifyImageUrl(line.image.url, CART_LINE_IMAGE_WIDTH)}
-                        alt={line.image.altText}
-                        width={80}
-                        height={80}
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1">
-                    <p dir="auto" className="text-sm font-medium">{line.productTitle}</p>
-                    {line.variantTitle && (
-                      <p className="text-xs text-brown-900/50">{line.variantTitle}</p>
-                    )}
-                    <p className="text-sm font-semibold text-gold-700">
-                      {money(line.lineTotal)}
-                    </p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <div className="flex items-center rounded-full border border-gold-100">
-                        <button
-                          disabled={isLoading}
-                          aria-label={formatMessage(t.decrease, { title: line.productTitle })}
-                          onClick={() =>
-                            line.quantity > 1
-                              ? updateItem(line.id, line.quantity - 1)
-                              : removeItem(line.id)
-                          }
-                          className="px-2.5 py-1 text-sm"
-                        >
-                          −
-                        </button>
-                        <span className="min-w-[1.5rem] text-center text-sm">
-                          {line.quantity}
-                        </span>
-                        <button
-                          disabled={isLoading}
-                          aria-label={formatMessage(t.increase, { title: line.productTitle })}
-                          onClick={() => updateItem(line.id, line.quantity + 1)}
-                          className="px-2.5 py-1 text-sm"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <button
-                        disabled={isLoading}
-                        onClick={() => removeItem(line.id)}
-                        className="text-xs text-brown-900/50 underline"
-                      >
-                        {t.remove}
-                      </button>
-                    </div>
-                  </div>
-                </li>
+                <CartLine key={line.id} line={line} />
               ))}
             </ul>
           )}
@@ -143,13 +94,16 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
 
         {lines.length > 0 && cart && (
           <div className="border-t border-gold-100 px-5 py-4">
-            <div className="mb-3 flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-brown-900/60">{t.subtotal}</span>
-              <span className="font-semibold">{money(cart.subtotal)}</span>
+              <span className="font-semibold">
+                <Price amount={cart.subtotal.amount} currencyCode={cart.subtotal.currencyCode} />
+              </span>
             </div>
+            <p className="mt-1 text-xs text-brown-900/50">{t.shippingNote}</p>
             <a
               href={cart.checkoutUrl}
-              className="block w-full rounded-full bg-gold-600 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white hover:bg-gold-700"
+              className="mt-3 block w-full rounded-full bg-gold-600 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white hover:bg-gold-700"
             >
               {t.checkout}
             </a>

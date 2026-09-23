@@ -22,6 +22,7 @@ const ALLOWED_FILTER_KEYS = new Set([
   "priceBand",
   "deals",
   "inCollection",
+  "unionCollection",
 ]);
 
 const isAmount = (value: unknown) =>
@@ -42,6 +43,11 @@ function hasValidCustomShapes(parsed: Record<string, unknown>): boolean {
   }
   if ("inCollection" in parsed) {
     const handle = parsed.inCollection;
+    if (typeof handle !== "string" || !/^[a-z0-9-]{1,100}$/i.test(handle))
+      return false;
+  }
+  if ("unionCollection" in parsed) {
+    const handle = parsed.unionCollection;
     if (typeof handle !== "string" || !/^[a-z0-9-]{1,100}$/i.test(handle))
       return false;
   }
@@ -109,3 +115,10 @@ export const inCollectionInput = (handle: string) =>
 
 export const isInCollectionFilter = (filter: string) =>
   "inCollection" in JSON.parse(filter);
+
+/** Unlike `inCollection` (a product must ALSO belong to this handle, within
+ * the collection already being scanned), this pulls in an entire *additional*
+ * sibling collection's products, combined into the current page's grid — see
+ * `unionCollections` in catalog-service.ts. */
+export const unionCollectionInput = (handle: string) =>
+  JSON.stringify({ unionCollection: handle });

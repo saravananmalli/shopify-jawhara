@@ -13,6 +13,11 @@ import type { ShopifyCart } from "@/types/shopify-api";
 
 type UserError = { field: string[] | null; message: string };
 
+/** Thrown only from `assertNoUserErrors`, i.e. its message is Shopify's own
+ * user-facing copy (e.g. a real stock-limit message) — safe to show as-is,
+ * unlike a raw network failure or our own input-validation errors below. */
+export class CartUserError extends ShopifyApiError {}
+
 // Prices, totals and stock are never sent by the client — Shopify computes
 // them from the variant ID. Quantity is the only client-supplied number, so
 // reject non-integers/absurd values here instead of relying on the API alone.
@@ -38,7 +43,7 @@ function assertCartId(cartId: string) {
 
 function assertNoUserErrors(userErrors: UserError[]) {
   if (userErrors.length > 0) {
-    throw new ShopifyApiError(userErrors.map((e) => e.message).join("\n"));
+    throw new CartUserError(userErrors.map((e) => e.message).join("\n"));
   }
 }
 

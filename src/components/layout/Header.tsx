@@ -122,7 +122,7 @@ export default function Header({
         <div className="page-container flex items-center justify-between">
           {/* The heritage line lives in the category nav (xl) and the mobile menu. */}
           <Link href="/pages/contact" className="flex items-center gap-1.5 font-medium hover:underline">
-            <NavIcon name="support" tinted className="h-5 w-5" />
+            <NavIcon name="support" tinted className="h-4 w-4" />
             {t.header.customerService}
           </Link>
           <AnnouncementTicker />
@@ -131,9 +131,9 @@ export default function Header({
               <Image
                 src="/brand/icons/store.webp"
                 alt=""
-                width={14}
-                height={14}
-                className="h-3.5 w-3.5 brightness-0 invert"
+                width={16}
+                height={16}
+                className="h-4 w-4 brightness-0 invert"
               />
               {t.header.stores}
             </Link>

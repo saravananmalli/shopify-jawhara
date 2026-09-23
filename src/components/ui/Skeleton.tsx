@@ -141,6 +141,27 @@ export function CollectionPageSkeleton() {
   );
 }
 
+/** Bag drawer: a couple of 80x80-thumbnail rows, shown only while a cart
+ * saved from a previous visit is being fetched on mount. */
+export function CartLinesSkeleton() {
+  const { common } = useDictionary();
+
+  return (
+    <SkeletonRegion label={common.loadingCart} className="flex flex-col gap-4">
+      {Array.from({ length: 2 }, (_, i) => (
+        <div key={i} className="flex gap-3">
+          <Skeleton className="h-20 w-20 shrink-0 rounded-lg" />
+          <div className="flex flex-1 flex-col gap-2 pt-1">
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="mt-1 h-9 w-24 rounded-xl" />
+          </div>
+        </div>
+      ))}
+    </SkeletonRegion>
+  );
+}
+
 /** Product page: breadcrumb, gallery (thumbnails + main photo), buy box. */
 export function ProductPageSkeleton() {
   const { common } = useDictionary();

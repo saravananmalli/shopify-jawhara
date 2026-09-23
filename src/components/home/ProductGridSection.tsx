@@ -41,7 +41,7 @@ export default function ProductGridSection({
 }: {
   eyebrow?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   tabs: ProductTab[];
   products: Product[];
   tightOnPhone?: boolean;

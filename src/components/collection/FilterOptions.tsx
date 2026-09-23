@@ -3,7 +3,6 @@
 import { DirhamSymbol } from "dirham/react";
 import { PRICE_BANDS } from "@/config/catalog";
 import { CheckIcon } from "@/components/icons";
-import Link from "@/components/ui/Link";
 import { useDictionary, useLocale } from "@/store/locale";
 import { formatNumber } from "@/utils/format";
 import { formatMessage } from "@/utils/i18n";
@@ -93,7 +92,7 @@ export default function FilterOptions({
     );
   };
 
-  if (section.kind === "category-links") {
+  if (section.kind === "category") {
     return (
       <ul>
         {section.categoryLinks?.map((link) =>
@@ -110,18 +109,12 @@ export default function FilterOptions({
               </span>
             </li>
           ) : (
-            <li key={link.id}>
-              <Link
-                href={link.href}
-                className="flex items-center gap-2.5 rounded-md px-1 py-1.5 font-sans text-[13px] text-brown-900 hover:bg-cream-100"
-              >
-                <span
-                  aria-hidden
-                  className="h-4 w-4 shrink-0 rounded-[4px] border border-[#D6D3D1]"
-                />
-                <span className="flex-1">{link.label}</span>
-              </Link>
-            </li>
+            <CheckRow
+              key={link.id}
+              label={link.label}
+              checked={active.includes(link.input)}
+              onChange={() => onToggle(link.input)}
+            />
           ),
         )}
       </ul>
