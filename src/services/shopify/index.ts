@@ -15,6 +15,7 @@ export {
   updateCartLines,
   removeCartLines,
   getCart,
+  CartUserError,
 } from "@/services/shopify/cart-service";
 export {
   getBrand,
