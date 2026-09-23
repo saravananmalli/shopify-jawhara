@@ -75,12 +75,15 @@ export async function getCatalogPage(
   args: Parameters<typeof getCatalogPageCore>[0],
 ): Promise<CatalogPage | null> {
   // Tag-group facets (Metal, Stone, ...) come from our own scan, so they run
-  // alongside the main request — and only when facets are wanted at all.
+  // alongside the main request — and only when facets are wanted at all. Any
+  // union collections checked in the Category section are scanned too, so
+  // the counts match the actual combined product set.
+  const { unionCollections } = splitCustomFilters(args.filters ?? []);
   const [page, tagFilters] = await Promise.all([
     getCatalogPageCore(args),
     args.withFilters === false
       ? Promise.resolve([])
-      : getTagGroupFilters(args.handle),
+      : getTagGroupFilters([args.handle, ...unionCollections]),
   ]);
   return page && { ...page, filters: [...tagFilters, ...page.filters] };
 }
@@ -173,6 +176,12 @@ type CustomFilters = {
   onSale: boolean;
   /** Match ANY collection handle (used by the curation category tiles). */
   inCollections: string[];
+  /** Extra collection handles to scan and merge in alongside the page's own
+   * (used by the Category section on pages whose strip links to sibling
+   * collections, e.g. Birthday + Anniversary) — an entire additional
+   * collection's products, not an intersect-with-current-collection check
+   * like `inCollections`. */
+  unionCollections: string[];
   /** Everything Shopify can filter natively. */
   rest: string[];
 };
@@ -189,6 +198,7 @@ function splitCustomFilters(filters: string[]): CustomFilters {
     bands: [],
     onSale: false,
     inCollections: [],
+    unionCollections: [],
     rest: [],
   };
   const tagGroups = new Map<string, Set<string>>();
@@ -205,6 +215,8 @@ function splitCustomFilters(filters: string[]): CustomFilters {
       custom.bands.push(parsed.priceBand as { min?: number; max?: number });
     } else if (isSingleKey && typeof parsed.inCollection === "string") {
       custom.inCollections.push(parsed.inCollection);
+    } else if (isSingleKey && typeof parsed.unionCollection === "string") {
+      custom.unionCollections.push(parsed.unionCollection);
     } else if (isSingleKey && parsed.deals === true) {
       custom.onSale = true;
     } else {
@@ -219,7 +231,8 @@ const hasCustomFilters = (custom: CustomFilters) =>
   custom.tagGroups.length > 0 ||
   custom.bands.length > 0 ||
   custom.onSale ||
-  custom.inCollections.length > 0;
+  custom.inCollections.length > 0 ||
+  custom.unionCollections.length > 0;
 
 function matchesCustomFilters(node: ScanNode, custom: CustomFilters): boolean {
   if (!matchesTagGroups(node.tags, custom.tagGroups)) return false;
@@ -397,29 +410,46 @@ async function scanAll({
  * (unlike stock/price, which are never cached). */
 const TAG_FACET_REVALIDATE_SECONDS = 300;
 
-/** Sections for TAG_FILTER_GROUPS, discovered from the collection's tags.
+/** Sections for TAG_FILTER_GROUPS, discovered from the collection's tags —
+ * plus any union collections checked in the Category section, so a count
+ * like "18K Rose Gold (2)" reflects the actual combined product set instead
+ * of staying pinned to the base collection alone once siblings are added in.
  * Tags aren't translated, so this scan always runs in the default language and
  * one cached copy serves every locale. */
-async function getTagGroupFilters(handle: string): Promise<CatalogFilter[]> {
-  const scan = await scanAll({
-    handle,
-    filters: [],
-    sort: "RECOMMENDED",
-    withFilters: false,
-    revalidate: TAG_FACET_REVALIDATE_SECONDS,
-    locale: defaultLocale,
-  });
-  if (!scan) return [];
+async function getTagGroupFilters(handles: string[]): Promise<CatalogFilter[]> {
+  const scans = await Promise.all(
+    handles.map((handle) =>
+      scanAll({
+        handle,
+        filters: [],
+        sort: "RECOMMENDED",
+        withFilters: false,
+        revalidate: TAG_FACET_REVALIDATE_SECONDS,
+        locale: defaultLocale,
+      }),
+    ),
+  );
 
-  return buildTagGroupFilters(scan.nodes.map((node) => node.tags));
+  const seen = new Set<string>();
+  const tags: string[][] = [];
+  for (const scan of scans) {
+    if (!scan) continue;
+    for (const node of scan.nodes) {
+      if (seen.has(node.id)) continue;
+      seen.add(node.id);
+      tags.push(node.tags);
+    }
+  }
+  return buildTagGroupFilters(tags);
 }
 
 /**
- * Page filtered by our own inputs (tags, price bands, on-sale). Scans the
- * whole (natively filtered, sorted) collection, keeps the matches, then
- * loads full data for just the requested slice. `after` is an offset into
- * the matches here, not a Shopify cursor — the caller passes back whatever
- * `endCursor` this returned.
+ * Page filtered by our own inputs (tags, price bands, on-sale, union
+ * collections). Scans the whole (natively filtered, sorted) collection —
+ * plus any `unionCollections`, each scanned and merged in the same way — and
+ * keeps the matches, then loads full data for just the requested slice.
+ * `after` is an offset into the matches here, not a Shopify cursor — the
+ * caller passes back whatever `endCursor` this returned.
  */
 async function getCustomFilteredCatalogPage({
   handle,
@@ -438,19 +468,58 @@ async function getCustomFilteredCatalogPage({
   withFilters: boolean;
   locale: Locale;
 }): Promise<CatalogPage | null> {
-  const scan = await scanAll({
-    handle,
-    filters: toProductFilterInputs(custom.rest),
-    sort,
-    withFilters,
-    revalidate: PRODUCT_REVALIDATE_SECONDS,
-    locale,
-  });
-  if (!scan) return null;
+  // handles[0] is always the page's own collection; any unionCollections
+  // (Category section siblings checked in Show All Filters) are scanned the
+  // same way and merged in below. With none, this is exactly one scan — the
+  // common case for every other filter (Metal, Stone, Price, Deals, Gift's
+  // own category checkboxes).
+  const handles = [handle, ...custom.unionCollections];
+  const scans = await Promise.all(
+    handles.map((h, i) =>
+      scanAll({
+        handle: h,
+        filters: toProductFilterInputs(custom.rest),
+        sort,
+        // Facets (Metal/Stone/Occasion) only ever come from the page's own
+        // collection, so sibling scans don't need to fetch them.
+        withFilters: withFilters && i === 0,
+        revalidate: PRODUCT_REVALIDATE_SECONDS,
+        locale,
+      }),
+    ),
+  );
+  const baseScan = scans[0];
+  if (!baseScan) return null;
 
-  const matchedIds = scan.nodes
-    .filter((node) => matchesCustomFilters(node, custom))
-    .map((node) => node.id);
+  const seen = new Set<string>();
+  const mergedNodes: ScanNode[] = [];
+  let truncated = false;
+  for (const scan of scans) {
+    // A union handle that no longer exists (deleted/renamed collection)
+    // shouldn't fail the whole request — it's just dropped.
+    if (!scan) continue;
+    truncated ||= scan.truncated;
+    for (const node of scan.nodes) {
+      if (seen.has(node.id)) continue;
+      seen.add(node.id);
+      mergedNodes.push(node);
+    }
+  }
+
+  let matchedNodes = mergedNodes.filter((node) => matchesCustomFilters(node, custom));
+  // Each collection is already correctly price-sorted by Shopify on its own,
+  // but concatenating several separately-sorted lists doesn't produce one
+  // globally sorted list — only needed once there's more than one to merge.
+  if (handles.length > 1 && (sort === "PRICE_ASC" || sort === "PRICE_DESC")) {
+    const direction = sort === "PRICE_ASC" ? 1 : -1;
+    matchedNodes = [...matchedNodes].sort(
+      (a, b) =>
+        direction *
+        (parseFloat(a.priceRange.minVariantPrice.amount) -
+          parseFloat(b.priceRange.minVariantPrice.amount)),
+    );
+  }
+  const matchedIds = matchedNodes.map((node) => node.id);
 
   const products = await getProductsByIds(
     matchedIds.slice(offset, offset + first),
@@ -458,13 +527,13 @@ async function getCustomFilteredCatalogPage({
   );
 
   return {
-    collection: scan.first.collection,
+    collection: baseScan.first.collection,
     products,
-    filters: toCatalogFilters(scan.first.facets),
-    totalCount: scan.truncated ? null : matchedIds.length,
+    filters: toCatalogFilters(baseScan.first.facets),
+    totalCount: truncated ? null : matchedIds.length,
     hasNextPage: offset + first < matchedIds.length,
     endCursor: String(offset + first),
-    supportedSorts: scan.useSearch ? SEARCH_SORTS : COLLECTION_SORTS,
+    supportedSorts: baseScan.useSearch ? SEARCH_SORTS : COLLECTION_SORTS,
   };
 }
 

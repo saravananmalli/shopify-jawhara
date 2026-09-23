@@ -19,11 +19,12 @@ const MAX_INLINE_FILTERS = 4;
  * Filters" (FiltersDrawer maps the full `sections` list, unfiltered). */
 const INLINE_EXCLUDED_KEYS = new Set(["category"]);
 
-/** "Show All Filters" and the sort dropdown share one width: half the row on
- * phones, a fixed width from sm. An explicit half-row basis, not `flex-1`:
- * with a zero basis the button's padding and border would make it wider than
- * the dropdown. 0.25rem is half the row's 0.5rem gap. */
-const FILTER_CONTROL_WIDTH_CLASS = "min-w-0 basis-[calc(50%-0.25rem)] sm:w-48 sm:basis-auto";
+/** "Show All Filters" and the sort dropdown share the row on phones, a fixed
+ * width from sm. `flex-1` (not a fixed percentage basis) so they shrink to
+ * make room for "Clear all" when it appears between them instead of the
+ * whole row wrapping — both sides already truncate their label text, so they
+ * degrade gracefully rather than overflowing. */
+const FILTER_CONTROL_WIDTH_CLASS = "min-w-0 flex-1 sm:w-48 sm:flex-none";
 
 export default function CollectionToolbar({
   countLabel,
@@ -83,7 +84,7 @@ export default function CollectionToolbar({
         <button
           type="button"
           onClick={onClearAll}
-          className="h-9 px-1 font-sans text-[13px] text-brown-900/70 underline underline-offset-4 transition-colors hover:text-gold-700"
+          className="h-9 shrink-0 px-1 font-sans text-[13px] text-brown-900/70 underline underline-offset-4 transition-colors hover:text-gold-700"
         >
           {t.clearAll}
         </button>
@@ -97,16 +98,16 @@ export default function CollectionToolbar({
           totalApplied > 0 ? "border-gold-600" : "border-[#D6D3D1]"
         } ${FILTER_CONTROL_WIDTH_CLASS}`}
       >
-        <SlidersIcon className="h-4 w-4" />
-        {t.showAllFilters}
+        <SlidersIcon className="h-4 w-4 shrink-0" />
+        <span className="min-w-0 truncate">{t.showAllFilters}</span>
         {totalApplied > 0 && (
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-gold-600 px-1 text-[11px] font-medium text-white">
+          <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-gold-600 px-1 text-[11px] font-medium text-white">
             {totalApplied}
           </span>
         )}
       </button>
 
-      <div className="flex min-w-0 basis-[calc(50%-0.25rem)] items-center gap-2 font-sans text-[13px] sm:ms-auto sm:basis-auto">
+      <div className="flex min-w-0 flex-1 items-center gap-2 font-sans text-[13px] sm:ms-auto sm:flex-none">
         <span aria-hidden className="hidden text-brown-900/60 sm:inline">
           {t.sortBy}
         </span>

@@ -4,17 +4,21 @@ import type { CatalogFilter } from "@/types/catalog";
 
 /** One collapsible group in the filters UI. `list` sections are Shopify
  * facets (whatever Search & Discovery returns); `price` and `deals` are
- * built here because Shopify has no equivalent. `category-links` is also
- * built here: on a curation page (Birthday, Wedding…) whose top strip links
- * to sibling collection pages instead of filtering the current one, the
- * Category section mirrors those same links rather than a togglable filter —
- * checking a sibling there can't narrow *this* collection's results. */
+ * built here because Shopify has no equivalent. `category` is also built
+ * here: on a page (Rings, Birthday, Wedding…) whose top strip links to
+ * sibling collection pages instead of filtering the current one, the
+ * Category section mirrors those same tiles — the current page always
+ * checked and locked, every sibling a real checkbox that pulls that whole
+ * collection's products into this page's grid (combined, not intersected —
+ * see `unionCollections` in catalog-service.ts). The top strip itself stays
+ * single-select navigation; this multi-select only applies inside the
+ * filters popup. */
 export type FilterSection = {
   key: string;
   label: string;
-  kind: "list" | "price" | "deals" | "category-links";
+  kind: "list" | "price" | "deals" | "category";
   filter?: CatalogFilter;
-  categoryLinks?: { id: string; label: string; href: string; current: boolean }[];
+  categoryLinks?: { id: string; label: string; input: string; current: boolean }[];
 };
 
 /** Shopify's built-in stock facet — deliberately not offered as a filter here. */
@@ -80,8 +84,13 @@ export function appliedCount(section: FilterSection, active: string[]): number {
     return PRICE_BANDS.filter((band) => active.includes(bandInput(band)))
       .length;
   }
-  if (section.kind === "category-links") {
-    return section.categoryLinks?.some((link) => link.current) ? 1 : 0;
+  if (section.kind === "category") {
+    const current = section.categoryLinks?.some((link) => link.current) ? 1 : 0;
+    const siblings =
+      section.categoryLinks?.filter(
+        (link) => !link.current && active.includes(link.input),
+      ).length ?? 0;
+    return current + siblings;
   }
   return (
     section.filter?.values.filter((value) => active.includes(value.input))

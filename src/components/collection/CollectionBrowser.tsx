@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useDictionary, useLocale } from "@/store/locale";
@@ -13,6 +13,7 @@ import { PRODUCT_GRID_CLASS } from "@/config/layout";
 import { QUICK_TAG_CHIPS, SORT_OPTION_KEYS } from "@/config/catalog";
 import {
   buildCatalogQueryString,
+  unionCollectionInput,
   type CatalogQueryState,
 } from "@/utils/catalog-params";
 import { buildFilterSections, type FilterSection } from "@/utils/catalog-filters";
@@ -46,9 +47,11 @@ export default function CollectionBrowser({
    * in place, e.g. Gift, "all"), listed first. Mutually exclusive with
    * `categoryLinks` — a page has one or the other, never both. */
   categoryFilter: CatalogFilter | null;
-  /** Category section for curation pages whose strip links to sibling
-   * collections instead (Birthday, Wedding…): the same tiles, rendered as
-   * links rather than a togglable filter. */
+  /** Category section for pages whose strip links to sibling collections
+   * instead (Rings, Birthday, Wedding…). The strip itself stays single-select
+   * navigation; here each sibling is a real checkbox that pulls that whole
+   * collection's products into this page's grid, combined with the current
+   * one — the current page's own tile is always included and locked. */
   categoryLinks: CategoryTile[];
 }) {
   const router = useRouter();
@@ -56,6 +59,11 @@ export default function CollectionBrowser({
   const { collection: t } = useDictionary();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  // Checkboxes/sort must react the instant they're clicked, not once the
+  // server round-trip lands — that's the whole point of `useOptimistic` over
+  // just reading `query` straight from props. It falls back to `query` on
+  // its own once the real navigation resolves, so no separate reset is needed.
+  const [optimisticQuery, setOptimisticQuery] = useOptimistic(query);
   useEffect(() => {
     const id = window.setTimeout(loadFiltersDrawer, PRELOAD_DRAWER_DELAY_MS);
     return () => window.clearTimeout(id);
@@ -86,7 +94,7 @@ export default function CollectionBrowser({
     setLoadError(null);
   }
 
-  const { sort, filters: activeFilters } = query;
+  const { sort, filters: activeFilters } = optimisticQuery;
   const sortOptions = SORT_OPTION_KEYS.filter((key) =>
     initialPage.supportedSorts.includes(key),
   ).map((key) => ({ key, label: t.sort[key] }));
@@ -95,11 +103,11 @@ export default function CollectionBrowser({
       ? {
           key: "category",
           label: t.categoryFilter,
-          kind: "category-links",
+          kind: "category",
           categoryLinks: categoryLinks.map((tile) => ({
             id: tile.id,
             label: tile.title,
-            href: `/collections/${tile.handle}`,
+            input: unionCollectionInput(tile.handle),
             current: tile.handle === handle,
           })),
         }
@@ -114,8 +122,13 @@ export default function CollectionBrowser({
   const currencyCode = products[0]?.price.currencyCode ?? "";
 
   function navigate(next: Partial<CatalogQueryState>) {
-    const queryString = buildCatalogQueryString({ ...query, ...next });
+    // Based on the optimistic state, not the raw `query` prop, so a second
+    // toggle fired before the first one's navigation has landed still builds
+    // on the first (rather than reverting it).
+    const merged = { ...optimisticQuery, ...next };
+    const queryString = buildCatalogQueryString(merged);
     startTransition(() => {
+      setOptimisticQuery(merged);
       router.push(queryString ? `${pathname}?${queryString}` : pathname, {
         scroll: false,
       });
