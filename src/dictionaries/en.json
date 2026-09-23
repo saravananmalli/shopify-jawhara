@@ -173,7 +173,6 @@
     "masterpieces": {
       "eyebrow": "Our Finest Creations",
       "title": "Signature Masterpieces",
-      "subtitle": "GIA certified natural solitaires and Bareeq hallmarked 18K/22K heirloom pieces.",
       "tabs": {
         "all": "All Masterpieces",
         "under5000": "Under AED 5,000",
@@ -184,7 +183,6 @@
     "trending": {
       "eyebrow": "Fresh & Favoured",
       "title": "Trending Now in the UAE",
-      "subtitle": "New arrivals from our atelier and the pieces our clients are choosing most.",
       "tabs": {
         "newArrivals": "New Arrivals",
         "bestSellers": "Best Sellers",
@@ -229,7 +227,6 @@
     "reviews": {
       "eyebrow": "Loved by Clients",
       "title": "What Our Customers Say",
-      "subtitle": "Honest words from those who chose Jawhara for their most treasured moments.",
       "previous": "Previous reviews",
       "next": "Next reviews"
     },

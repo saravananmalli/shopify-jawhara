@@ -90,7 +90,6 @@ export default async function Home() {
       <ProductGridSection
         eyebrow={t.masterpieces.eyebrow}
         title={t.masterpieces.title}
-        subtitle={t.masterpieces.subtitle}
         tabs={masterpieceTabs(t.masterpieces.tabs)}
         products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
         tightOnPhone
@@ -106,7 +105,6 @@ export default async function Home() {
       <ProductGridSection
         eyebrow={t.trending.eyebrow}
         title={t.trending.title}
-        subtitle={t.trending.subtitle}
         tabs={trendingTabs(t.trending.tabs)}
         products={products.slice(-4)}
       />
