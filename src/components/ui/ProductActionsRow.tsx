@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { QuestionIcon, ShareIcon } from "@/components/icons";
+import Button from "@/components/ui/Button";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import type { Product } from "@/types/product";
@@ -31,21 +32,22 @@ export default function ProductActionsRow({ product }: { product: Product }) {
 
   return (
     <div className="grid grid-cols-2 gap-4 font-sans text-sm font-semibold">
-      <a
+      <Button
         href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(formatMessage(t.questionSubject, { title: product.title }))}`}
-        className="flex items-center justify-center gap-2 rounded-xl border border-gold-600 px-4 py-3 text-gold-600 transition-colors hover:bg-cream-100"
+        variant="secondary"
+        icon={<QuestionIcon className="h-5 w-5 text-gold-600" />}
+        className="px-4 py-3"
       >
-        <QuestionIcon className="h-5 w-5 text-gold-600" />
         {t.askQuestion}
-      </a>
-      <button
-        type="button"
+      </Button>
+      <Button
+        variant="secondary"
         onClick={handleShare}
-        className="flex items-center justify-center gap-2 rounded-xl border border-gold-600 px-4 py-3 text-gold-600 transition-colors hover:bg-cream-100"
+        icon={<ShareIcon className="h-5 w-5 text-gold-600" />}
+        className="px-4 py-3"
       >
-        <ShareIcon className="h-5 w-5 text-gold-600" />
         {shared ? t.linkCopied : t.share}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "@/components/ui/Link";
+import Button from "@/components/ui/Button";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 
@@ -25,19 +25,12 @@ export default function Error({
         {t.loadFailed}
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => retry()}
-          className="rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white transition-colors duration-(--motion-fast) hover:bg-gold-700"
-        >
+        <Button variant="primary" onClick={() => retry()} className="px-6 py-3 text-sm font-medium">
           {t.tryAgain}
-        </button>
-        <Link
-          href="/"
-          className="rounded-full border border-gold-600 px-6 py-3 text-sm font-medium text-gold-700 transition-colors duration-(--motion-fast) hover:bg-gold-50"
-        >
+        </Button>
+        <Button href="/" variant="secondary" className="px-6 py-3 text-sm font-medium">
           {t.backHome}
-        </Link>
+        </Button>
       </div>
       {error.digest && (
         <p className="mt-6 text-xs text-brown-900/40">

@@ -1,6 +1,6 @@
-import Link from "@/components/ui/Link";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import Chip from "@/components/ui/Chip";
+import Button from "@/components/ui/Button";
 import { CalendarIcon } from "@/components/icons";
 
 export default function HeritageSection() {
@@ -24,12 +24,13 @@ export default function HeritageSection() {
             Bespoke Atelier invites you to collaborate with resident master gemologists to
             craft one-of-a-kind royal bridal parures and monumental solitaires.
           </p>
-          <Link
+          <Button
             href="/pages/bespoke-atelier"
-            className="mt-6 inline-block rounded-full bg-gold-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-gold-700"
+            variant="primary"
+            className="mt-6 px-5 py-2.5 text-sm font-medium"
           >
             View Collections
-          </Link>
+          </Button>
         </div>
 
         <div className="relative">

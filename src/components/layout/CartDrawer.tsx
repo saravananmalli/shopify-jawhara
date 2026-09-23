@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "@/components/ui/Link";
+import Button from "@/components/ui/Button";
 import Price from "@/components/ui/Price";
 import CartLine from "@/components/layout/CartLine";
 import { CartLinesSkeleton } from "@/components/ui/Skeleton";
@@ -76,12 +76,13 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
               <p className="mx-auto mt-2 max-w-[15rem] font-sans text-sm text-brown-900/60">
                 {t.emptyBody}
               </p>
-              <Link
+              <Button
                 href="/collections"
-                className="mt-6 inline-block rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+                variant="primary"
+                className="mt-6 px-6 py-3 text-sm font-medium"
               >
                 {errors.browseCollections}
-              </Link>
+              </Button>
             </div>
           ) : (
             <ul className="flex flex-col gap-3">
@@ -101,12 +102,14 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
               </span>
             </div>
             <p className="mt-1 text-xs text-brown-900/50">{t.shippingNote}</p>
-            <a
+            <Button
               href={cart.checkoutUrl}
-              className="mt-3 block w-full rounded-full bg-gold-600 py-3 text-center text-sm font-semibold uppercase tracking-wide text-white hover:bg-gold-700"
+              variant="primary"
+              fullWidth
+              className="mt-3 py-3 text-center text-sm font-semibold uppercase tracking-wide"
             >
               {t.checkout}
-            </a>
+            </Button>
           </div>
         )}
       </div>

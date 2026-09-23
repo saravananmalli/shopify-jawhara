@@ -75,7 +75,7 @@ export default function CartLine({ line }: { line: CartLineType }) {
           <Price amount={line.lineTotal.amount} currencyCode={line.lineTotal.currencyCode} />
         </p>
         <div className="mt-1 flex items-center gap-2">
-          <div className="flex h-7 items-center rounded-lg bg-cream-100">
+          <div className="flex h-7 items-center rounded-full bg-cream-100">
             <button
               type="button"
               disabled={isPending}

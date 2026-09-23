@@ -2,6 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { useDictionary } from "@/store/locale";
+import Button from "@/components/ui/Button";
 
 export default function Newsletter() {
   const t = useDictionary().home.newsletter;
@@ -46,12 +47,13 @@ export default function Newsletter() {
               placeholder={t.placeholder}
               className="w-full rounded-full border border-gold-200 bg-white px-4 py-2.5 text-sm outline-none"
             />
-            <button
+            <Button
               type="submit"
-              className="shrink-0 rounded-full bg-gold-600 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-gold-700"
+              variant="primary"
+              className="shrink-0 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide"
             >
               {t.subscribe}
-            </button>
+            </Button>
           </form>
         )}
       </div>

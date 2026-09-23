@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "@/components/ui/Link";
+import Button from "@/components/ui/Button";
 import ProductCard from "@/components/ui/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { PRODUCT_GRID_CLASS } from "@/config/layout";
@@ -68,13 +68,13 @@ export default function WishlistView() {
     return (
       <div role="alert" className="mt-8 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-12 text-center">
         <p className="font-sans text-base text-brown-900">{t.loadError}</p>
-        <button
-          type="button"
+        <Button
+          variant="primary"
           onClick={() => setAttempt((n) => n + 1)}
-          className="mt-4 h-10 rounded-full bg-gold-600 px-6 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+          className="mt-4 h-10 px-6 text-sm font-medium"
         >
           {t.retry}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -84,12 +84,13 @@ export default function WishlistView() {
       <div className="mt-8 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
         <h2 className="font-sans text-lg text-brown-900">{t.emptyTitle}</h2>
         <p className="mx-auto mt-2 max-w-sm font-sans text-sm text-brown-900/60">{t.emptyBody}</p>
-        <Link
+        <Button
           href="/collections"
-          className="mt-6 inline-block rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+          variant="primary"
+          className="mt-6 px-6 py-3 text-sm font-medium"
         >
           {errors.browseCollections}
-        </Link>
+        </Button>
       </div>
     );
   }

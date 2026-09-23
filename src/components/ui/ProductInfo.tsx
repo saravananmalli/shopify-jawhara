@@ -220,7 +220,7 @@ export default function ProductInfo({
             label={formatMessage(t.addToBagWithTotal, {
               total: formatMoney(price.amount * quantity, price.currencyCode, locale),
             })}
-            className="h-12 min-w-0 flex-1 rounded-xl! px-2! text-center text-[14px]! leading-tight! max-[359px]:[&>svg]:hidden"
+            className="h-12 min-w-0 flex-1 px-2! text-center text-[14px]! leading-tight! max-[359px]:[&>svg]:hidden"
           />
         ) : (
           <button

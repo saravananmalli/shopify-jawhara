@@ -4,6 +4,7 @@ import { useRoutePath } from "@/hooks/useRoutePath";
 import { useLocationUi } from "@/store/delivery";
 import { useDictionary } from "@/store/locale";
 import { CloseIcon, MapPinIcon } from "@/components/icons";
+import Button from "@/components/ui/Button";
 
 /**
  * In-page fallback for the browser's location popup, which shoppers often
@@ -33,14 +34,14 @@ export default function LocationPrompt() {
           {t.promptBody}
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <button
-            type="button"
+          <Button
+            variant="primary"
             onClick={allowLocation}
             disabled={locating}
-            className="min-h-10 rounded-full bg-gold-600 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-gold-700 disabled:opacity-60"
+            className="min-h-10 px-4 py-2 text-xs font-medium"
           >
             {locating ? t.locating : t.allowLocation}
-          </button>
+          </Button>
           <button
             type="button"
             onClick={openPicker}

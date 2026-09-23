@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { CloseIcon } from "@/components/icons";
+import Button from "@/components/ui/Button";
 import FilterOptions, {
   type FilterActions,
 } from "@/components/collection/FilterOptions";
@@ -114,21 +115,21 @@ export default function FiltersDrawer({
         </div>
 
         <div className="flex gap-2 border-t border-gold-100 px-5 py-3">
-          <button
-            type="button"
+          <Button
+            variant="neutral"
             onClick={onClearAll}
             disabled={actions.active.length === 0}
-            className="h-10 flex-1 rounded-lg border border-[#D6D3D1] text-[13px] text-brown-900 transition-colors hover:bg-cream-100 disabled:cursor-not-allowed disabled:opacity-40"
+            className="h-10 flex-1 text-[13px]"
           >
             {t.clearAll}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="primary"
             onClick={onClose}
-            className="h-10 flex-[2] rounded-lg bg-gold-600 text-[13px] font-medium text-white transition-colors hover:bg-gold-700"
+            className="h-10 flex-[2] text-[13px] font-medium"
           >
             {formatMessage(t.showResults, { label: resultLabel })}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

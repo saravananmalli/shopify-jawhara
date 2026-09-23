@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Button from "@/components/ui/Button";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { DetectResult } from "@/store/delivery";
 import { useDictionary } from "@/store/locale";
@@ -88,14 +89,15 @@ export default function LocationModal({
         </div>
 
         <div className="flex flex-col gap-4 overflow-y-auto p-5">
-          <button
+          <Button
+            variant="neutral-filled"
             onClick={useCurrentLocation}
             disabled={geoStatus === "locating"}
-            className="flex items-center justify-center gap-2 rounded-xl border border-gold-200 bg-cream-100 px-4 py-3 text-sm font-medium text-gold-700 hover:bg-gold-50 disabled:opacity-60"
+            icon={<CrosshairIcon className="h-4 w-4" />}
+            className="px-4 py-3 text-sm font-medium"
           >
-            <CrosshairIcon className="h-4 w-4" />
             {geoStatus === "locating" ? t.locating : t.useMyLocation}
-          </button>
+          </Button>
           {geoStatus === "error" && (
             <p role="alert" className="-mt-2 text-xs text-error-700">
               {t.geoError}

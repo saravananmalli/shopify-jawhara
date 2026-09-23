@@ -1,4 +1,5 @@
 import { DirectionsIcon, MapPinIcon, PhoneIcon } from "@/components/icons";
+import Button from "@/components/ui/Button";
 import { useDictionary } from "@/store/locale";
 import { formatMessage } from "@/utils/i18n";
 import { toDirectionsHref, toTelHref } from "@/utils/stores";
@@ -52,26 +53,27 @@ export default function StoreCard({
       {(telHref || directionsHref) && (
         <div className="mt-5 flex flex-wrap gap-2">
           {telHref && (
-            <a
+            <Button
               href={telHref}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-cream-100 px-3 py-1.5 text-sm font-medium text-brown-900 transition-colors duration-300 ease-luxury hover:bg-gold-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
+              variant="neutral-filled"
+              icon={<PhoneIcon className="h-4 w-4" />}
+              className="gap-1.5 px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
             >
-              <PhoneIcon className="h-4 w-4" />
               {/* A phone number is left-to-right even inside Arabic text. */}
               <span dir="ltr">{store.phone}</span>
-            </a>
+            </Button>
           )}
           {directionsHref && (
-            <a
+            <Button
               href={directionsHref}
               target="_blank"
-              rel="noopener noreferrer"
+              variant="primary"
+              icon={<DirectionsIcon className="h-4 w-4" />}
               aria-label={formatMessage(t.directionsTo, { name: store.name })}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-gold-600 px-3 py-1.5 text-sm font-medium text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
+              className="gap-1.5 px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
             >
-              <DirectionsIcon className="h-4 w-4" />
               {t.directions}
-            </a>
+            </Button>
           )}
         </div>
       )}
