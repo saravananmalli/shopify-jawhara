@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Image from "next/image";
-import Link from "@/components/ui/Link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import { useDictionary } from "@/store/locale";
@@ -33,81 +32,20 @@ const FALLBACK_SLIDES: HeroBanner[] = [
 function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolean }) {
   const { hero } = useDictionary().home;
 
-  return (
-    <>
-      {slide.imageUrl ? (
-        <Image
-          src={getShopifyImageUrl(slide.imageUrl, HERO_IMAGE_WIDTH)}
-          alt={slide.imageAlt}
-          fill
-          priority={priority}
-          sizes="100vw"
-          unoptimized={isUntrustedRemoteImage(slide.imageUrl)}
-          placeholder="blur"
-          blurDataURL={IMAGE_BLUR_DATA_URL}
-          className="object-cover"
-        />
-      ) : (
-        <PlaceholderImage label={hero.campaignPhoto} className="absolute inset-0 h-full w-full" />
-      )}
-
-      {slide.hasBakedInText ? (
-        // Photo already carries its own headline/branding — only add a CTA
-        // pill if a badge was actually filled in, so we don't draw an empty
-        // box on top of a self-contained image.
-        slide.badgeLabel && (
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-            <Link
-              href={slide.href}
-              className="inline-block rounded-lg bg-white/90 px-5 py-3 text-brown-900 shadow-lg backdrop-blur-sm"
-            >
-              <span className="block text-[10px] uppercase tracking-wide text-brown-900/60">
-                {slide.badgeLabel}
-              </span>
-              <span className="block text-xl font-semibold text-gold-700">
-                {slide.badgeValue}
-              </span>
-            </Link>
-          </div>
-        )
-      ) : (
-        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:p-10">
-          {slide.eyebrow && (
-            <span className="font-serif text-4xl italic text-gold-700 drop-shadow-sm sm:text-6xl">
-              {slide.eyebrow}
-            </span>
-          )}
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="mb-1 block text-xs uppercase tracking-widest text-maroon-500">
-                {hero.onlyNaturalDiamonds}
-              </span>
-              {slide.arabicLine && (
-                <p dir="rtl" className="font-serif text-lg text-brown-900">
-                  {slide.arabicLine}
-                </p>
-              )}
-              {slide.englishLine && (
-                <p className="text-sm font-medium tracking-[0.2em] text-brown-900/80">
-                  {slide.englishLine}
-                </p>
-              )}
-            </div>
-            {slide.badgeLabel && (
-              <Link
-                href={slide.href}
-                className="rounded-lg bg-maroon-500 px-5 py-3 text-white shadow-lg"
-              >
-                <span className="block text-[10px] uppercase tracking-wide opacity-80">
-                  {slide.badgeLabel}
-                </span>
-                <span className="block text-xl font-semibold">{slide.badgeValue}</span>
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
-    </>
+  return slide.imageUrl ? (
+    <Image
+      src={getShopifyImageUrl(slide.imageUrl, HERO_IMAGE_WIDTH)}
+      alt={slide.imageAlt}
+      fill
+      priority={priority}
+      sizes="100vw"
+      unoptimized={isUntrustedRemoteImage(slide.imageUrl)}
+      placeholder="blur"
+      blurDataURL={IMAGE_BLUR_DATA_URL}
+      className="object-cover"
+    />
+  ) : (
+    <PlaceholderImage label={hero.campaignPhoto} className="absolute inset-0 h-full w-full" />
   );
 }
 
