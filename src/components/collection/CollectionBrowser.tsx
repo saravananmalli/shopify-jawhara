@@ -15,8 +15,9 @@ import {
   buildCatalogQueryString,
   type CatalogQueryState,
 } from "@/utils/catalog-params";
-import { buildFilterSections } from "@/utils/catalog-filters";
+import { buildFilterSections, type FilterSection } from "@/utils/catalog-filters";
 import type { CatalogFilter, CatalogPage } from "@/types/catalog";
+import type { CategoryTile } from "@/types/content";
 import type { Product } from "@/types/product";
 
 // Opened on demand — kept out of the grid's initial JS, then fetched once the
@@ -36,12 +37,19 @@ export default function CollectionBrowser({
   initialPage,
   query,
   categoryFilter,
+  categoryLinks,
 }: {
   handle: string;
   initialPage: CatalogPage;
   query: CatalogQueryState;
-  /** Extra "Category" section (curation pages only), listed first. */
+  /** Extra "Category" section (curation pages whose strip filters this page
+   * in place, e.g. Gift, "all"), listed first. Mutually exclusive with
+   * `categoryLinks` — a page has one or the other, never both. */
   categoryFilter: CatalogFilter | null;
+  /** Category section for curation pages whose strip links to sibling
+   * collections instead (Birthday, Wedding…): the same tiles, rendered as
+   * links rather than a togglable filter. */
+  categoryLinks: CategoryTile[];
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -82,10 +90,27 @@ export default function CollectionBrowser({
   const sortOptions = SORT_OPTION_KEYS.filter((key) =>
     initialPage.supportedSorts.includes(key),
   ).map((key) => ({ key, label: t.sort[key] }));
-  const sections = buildFilterSections(
-    [...(categoryFilter ? [categoryFilter] : []), ...initialPage.filters],
-    t,
-  );
+  const categoryLinkSection: FilterSection | null =
+    categoryLinks.length > 0
+      ? {
+          key: "category",
+          label: t.categoryFilter,
+          kind: "category-links",
+          categoryLinks: categoryLinks.map((tile) => ({
+            id: tile.id,
+            label: tile.title,
+            href: `/collections/${tile.handle}`,
+            current: tile.handle === handle,
+          })),
+        }
+      : null;
+  const sections = [
+    ...(categoryLinkSection ? [categoryLinkSection] : []),
+    ...buildFilterSections(
+      [...(categoryFilter ? [categoryFilter] : []), ...initialPage.filters],
+      t,
+    ),
+  ];
   const currencyCode = products[0]?.price.currencyCode ?? "";
 
   function navigate(next: Partial<CatalogQueryState>) {

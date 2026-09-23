@@ -25,12 +25,6 @@ export const MAIN_MENU_HANDLE = "main-menu";
  * "all"): a menu of collection links to fall back on. */
 export const CATEGORY_MENU_HANDLE = "collections";
 
-/**
- * Main-menu columns (by title, any case) whose collections are *curations*
- * rather than product categories. Inside one of them the category tiles
- * (Rings, Pendants…) narrow that collection's own products instead of
- * linking to the store-wide category page.
- */
 /** The collection behind the Gifts menu's "Shop the collection" card. It isn't
  * a menu link, so on its own page the category tiles filter it in place
  * instead of leading to other collection pages. */
@@ -45,7 +39,20 @@ export const MASTERPIECES_COLLECTION_HANDLE = "statement-masterpieces";
 /** Shopify collection whose image and link back the homepage atelier section. */
 export const ATELIER_COLLECTION_HANDLE = "solitaire";
 
-export const CATEGORY_SCOPED_MENU_COLUMNS = ["curations & style"];
+/**
+ * Main-menu columns (by title, any case) whose collections are *curations*
+ * rather than product categories — a themed cross-cutting set (an occasion,
+ * a recipient, a style) whose own products plausibly span several product
+ * types, unlike "Shop By Type" or "GEM & METAL". Inside one of these the
+ * category tiles (Rings, Pendants…) narrow that collection's own products
+ * instead of linking to the store-wide category page.
+ */
+export const CATEGORY_SCOPED_MENU_COLUMNS = [
+  "curations & style",
+  "shop by occasion",
+  "shop by recipient",
+  "gift collections",
+];
 
 /** Labels live in the dictionary (`collection.sort`), keyed by sort key.
  * Best Selling / New In deliberately left out — they'd read as duplicates of
