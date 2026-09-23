@@ -2,6 +2,8 @@
 
 import { DirhamSymbol } from "dirham/react";
 import { PRICE_BANDS } from "@/config/catalog";
+import { CheckIcon } from "@/components/icons";
+import Link from "@/components/ui/Link";
 import { useDictionary, useLocale } from "@/store/locale";
 import { formatNumber } from "@/utils/format";
 import { formatMessage } from "@/utils/i18n";
@@ -90,6 +92,41 @@ export default function FilterOptions({
       </>
     );
   };
+
+  if (section.kind === "category-links") {
+    return (
+      <ul>
+        {section.categoryLinks?.map((link) =>
+          link.current ? (
+            <li key={link.id}>
+              <span className="flex items-center gap-2.5 rounded-md px-1 py-1.5 font-sans text-[13px] font-medium text-gold-600">
+                <span
+                  aria-hidden
+                  className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] bg-gold-600 text-white"
+                >
+                  <CheckIcon className="h-2.5 w-2.5" />
+                </span>
+                <span className="flex-1">{link.label}</span>
+              </span>
+            </li>
+          ) : (
+            <li key={link.id}>
+              <Link
+                href={link.href}
+                className="flex items-center gap-2.5 rounded-md px-1 py-1.5 font-sans text-[13px] text-brown-900 hover:bg-cream-100"
+              >
+                <span
+                  aria-hidden
+                  className="h-4 w-4 shrink-0 rounded-[4px] border border-[#D6D3D1]"
+                />
+                <span className="flex-1">{link.label}</span>
+              </Link>
+            </li>
+          ),
+        )}
+      </ul>
+    );
+  }
 
   if (section.kind === "deals") {
     return (

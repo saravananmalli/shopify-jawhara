@@ -67,9 +67,12 @@ export default async function CollectionPageView({
 
   // The gift promo page has no menu column, so its tiles are the product
   // categories — narrowed to the ones with gift products and made to filter
-  // this page in place, so the row stays put when one is chosen.
+  // this page in place, so the row stays put when one is chosen. Those same
+  // counted tiles double as the Category section below, so a pick from
+  // either place shows checked/selected in the other.
   let stripTiles = strip.tiles;
   let stripScope: { basePath: string; query: typeof query } | undefined;
+  let inPlaceCategoryTiles: typeof strip.categoryTiles = [];
   if (handle === GIFTS_PROMO_HANDLE) {
     const counted = await withCategoryCounts(
       handle,
@@ -78,6 +81,7 @@ export default async function CollectionPageView({
     if (counted.length > 0) {
       stripTiles = counted;
       stripScope = { basePath: `/collections/${handle}`, query };
+      inPlaceCategoryTiles = counted;
     }
   }
 
@@ -91,12 +95,17 @@ export default async function CollectionPageView({
     if (ours.length > 0) stripTiles = ours;
   }
 
-  // Inside a curation (e.g. "Trending Collections") the filters gain a
-  // Category section: the product categories that have products in it.
+  // The gift promo page and the "all" page get a real togglable Category
+  // filter: unlike a normal category page's strip (sibling pages to link
+  // to), every tile there is already a genuine subset of the current
+  // collection, so it can double as a filter instead of only being a set of
+  // links.
   const categoryTiles =
-    strip.categoryTiles.length > 0
-      ? await withCategoryCounts(handle, strip.categoryTiles)
-      : [];
+    inPlaceCategoryTiles.length > 0
+      ? inPlaceCategoryTiles
+      : handle === ALL_PRODUCTS_HANDLE
+        ? await withCategoryCounts(handle, stripTiles)
+        : [];
   const categoryFilter: CatalogFilter | null =
     categoryTiles.length > 0
       ? {
@@ -111,6 +120,19 @@ export default async function CollectionPageView({
           })),
         }
       : null;
+
+  // Every other page's strip — a plain category page's siblings (Rings sees
+  // Earrings, Necklace…), a Gold/Diamond/Pearl tile group, or a curation
+  // column (occasion, recipient, gift collections, curations & style, e.g.
+  // Birthday, Wedding, "Trending Collections") — links to sibling collection
+  // pages instead of filtering this one: the Category section mirrors those
+  // exact tiles as links rather than a togglable filter, since picking a
+  // sibling there can't narrow *this* collection's results — it takes you to
+  // that one, same as clicking its strip tile does. Always derived from
+  // what's actually on this page, never a fixed list; skipped when there's
+  // nothing to pick besides the page you're already on.
+  const categoryLinks: typeof strip.categoryTiles =
+    categoryFilter === null && stripTiles.length > 1 ? stripTiles : [];
 
   // Shopify has no "all" collection, so its title is ours to translate.
   const collectionTitle =
@@ -155,6 +177,7 @@ export default async function CollectionPageView({
           initialPage={page}
           query={query}
           categoryFilter={categoryFilter}
+          categoryLinks={categoryLinks}
         />
       </section>
     </div>

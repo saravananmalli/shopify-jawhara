@@ -12,6 +12,13 @@ import type { CatalogSortKey } from "@/types/catalog";
 /** Inline dropdowns beyond this many live only in the "Show All Filters" drawer. */
 const MAX_INLINE_FILTERS = 4;
 
+/** Category never shows as an inline dropdown, on any screen size — the
+ * curation/"all" pages it appears on already have a visual tile strip for
+ * the same choice above the toolbar, so a second copy inline would be
+ * redundant. It's still reachable, like every section, via "Show All
+ * Filters" (FiltersDrawer maps the full `sections` list, unfiltered). */
+const INLINE_EXCLUDED_KEYS = new Set(["category"]);
+
 /** "Show All Filters" and the sort dropdown share one width: half the row on
  * phones, a fixed width from sm. An explicit half-row basis, not `flex-1`:
  * with a zero basis the button's padding and border would make it wider than
@@ -59,14 +66,17 @@ export default function CollectionToolbar({
           same choices live in the "Show All Filters" drawer instead. */}
       <div className="hidden items-center gap-2 lg:flex">
         <QuickTagDropdown selected={quickTagSelected} onSelect={onQuickTagSelect} />
-        {sections.slice(0, MAX_INLINE_FILTERS).map((section) => (
-          <FilterDropdown
-            key={section.key}
-            section={section}
-            activeCount={appliedCount(section, actions.active)}
-            actions={actions}
-          />
-        ))}
+        {sections
+          .filter((section) => !INLINE_EXCLUDED_KEYS.has(section.key))
+          .slice(0, MAX_INLINE_FILTERS)
+          .map((section) => (
+            <FilterDropdown
+              key={section.key}
+              section={section}
+              activeCount={appliedCount(section, actions.active)}
+              actions={actions}
+            />
+          ))}
       </div>
 
       {totalApplied > 0 && (
