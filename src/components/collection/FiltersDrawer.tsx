@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { CloseIcon } from "@/components/icons";
 import Button from "@/components/ui/Button";
+import IconButton from "@/components/ui/IconButton";
 import FilterOptions, {
   type FilterActions,
 } from "@/components/collection/FilterOptions";
@@ -78,14 +79,12 @@ export default function FiltersDrawer({
           <h2 className="font-sans text-lg font-medium text-gold-600">
             {t.filters}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
+          <IconButton
+            icon={<CloseIcon className="h-5 w-5" />}
             aria-label={t.closeFilters}
-            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-cream-100"
-          >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+            onClick={onClose}
+            className="-me-2"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto px-5">

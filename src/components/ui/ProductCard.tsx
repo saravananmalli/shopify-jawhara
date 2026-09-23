@@ -3,15 +3,15 @@
 import { memo, useEffect, useRef, useState, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
-import { DirhamSymbol } from "dirham/react";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 import WishlistButton from "@/components/ui/WishlistButton";
 import Chip from "@/components/ui/Chip";
+import Price from "@/components/ui/Price";
 import RatingStars from "@/components/ui/RatingStars";
 import { ArrowDownIcon, BagIcon, StarIcon } from "@/components/icons";
 import { useDeliveryEstimate } from "@/store/delivery";
 import { useDictionary, useLocale } from "@/store/locale";
-import { formatNumber } from "@/utils/format";
+import { getDiscountPercent } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import { getProductBadge } from "@/utils/product-badge";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
@@ -25,9 +25,7 @@ const SECONDARY_IMAGE_WIDTH = 500;
 // Memoised: listing pages re-render their whole grid on every filter-drawer
 // toggle or pending state, but a card's `product` object is stable.
 export default memo(function ProductCard({ product }: { product: Product }) {
-  const discountPercent = product.compareAtPrice
-    ? Math.round((1 - product.price.amount / product.compareAtPrice.amount) * 100)
-    : null;
+  const discountPercent = getDiscountPercent(product.price, product.compareAtPrice);
 
   const locale = useLocale();
   const { common, product: t } = useDictionary();
@@ -164,21 +162,25 @@ export default memo(function ProductCard({ product }: { product: Product }) {
 
       <div className="flex flex-1 flex-col px-2 pb-2 pt-[2px]">
       <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-sans sm:mt-4">
-        {discountPercent !== null && discountPercent > 0 && (
+        {discountPercent !== null && (
           <span className="flex items-center gap-0.5 text-sm font-semibold text-[#008042]">
             <ArrowDownIcon className="h-3.5 w-3.5" />
             {discountPercent}%
           </span>
         )}
-        <span className="flex items-center gap-0.5 text-sm font-bold text-brown-900 rtl:flex-row-reverse sm:text-[18px]">
-          <DirhamSymbol size="0.85em" />
-          {formatNumber(product.price.amount, locale)}
-        </span>
+        <Price
+          amount={product.price.amount}
+          currencyCode={product.price.currencyCode}
+          size="0.85em"
+          className="flex items-center gap-0.5 text-sm font-bold text-brown-900 rtl:flex-row-reverse sm:text-[18px]"
+        />
         {product.compareAtPrice && (
-          <span className="flex items-center gap-0.5 text-sm text-[#7A7369] line-through rtl:flex-row-reverse sm:text-base">
-            <DirhamSymbol size="0.75em" />
-            {formatNumber(product.compareAtPrice.amount, locale)}
-          </span>
+          <Price
+            amount={product.compareAtPrice.amount}
+            currencyCode={product.compareAtPrice.currencyCode}
+            size="0.75em"
+            className="flex items-center gap-0.5 text-sm text-[#7A7369] line-through rtl:flex-row-reverse sm:text-base"
+          />
         )}
       </div>
 

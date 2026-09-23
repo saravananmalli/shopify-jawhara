@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { ChevronRightIcon } from "@/components/icons";
 import CarouselPagination from "@/components/ui/CarouselPagination";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { useScrollCarousel } from "@/hooks/useScrollCarousel";
 import { useDictionary } from "@/store/locale";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
@@ -41,12 +42,11 @@ export default function CategoryStrip({
   return (
     <section className="bg-white py-6 sm:py-10">
       <div className="flex page-container items-end justify-between">
-        <div>
-          <p className="font-sans text-[11px] font-semibold uppercase tracking-[2.75px] text-gold-800">
-            {t.home.categories.eyebrow}
-          </p>
-          <h2 className="mt-1 font-sans text-2xl font-normal text-gold-600 sm:text-[28px]">{t.home.categories.title}</h2>
-        </div>
+        <SectionHeading
+          eyebrow={t.home.categories.eyebrow}
+          title={t.home.categories.title}
+          eyebrowClassName="text-[11px]! tracking-[2.75px]!"
+        />
         <Link
           href="/collections"
           className="hidden items-center gap-1 text-sm font-medium text-gold-700 sm:flex"

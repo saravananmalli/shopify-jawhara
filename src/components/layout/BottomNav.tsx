@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { CloseIcon } from "@/components/icons";
+import DialogOverlay from "@/components/ui/DialogOverlay";
+import IconButton from "@/components/ui/IconButton";
 import NavIcon from "@/components/ui/NavIcon";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useRoutePath } from "@/hooks/useRoutePath";
@@ -172,13 +174,7 @@ export default function BottomNav({
       </nav>
 
       {/* Closed sheet is inert so its links leave the tab order. */}
-      <div
-        inert={!sheetOpen}
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury md:hidden ${
-          sheetOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      >
-        <div className="absolute inset-0 bg-black/45" onClick={closeSheet} />
+      <DialogOverlay visible={sheetOpen} onClose={closeSheet} scrimClassName="bg-black/45" className="md:hidden">
         <div
           ref={sheetRef}
           role="dialog"
@@ -190,14 +186,13 @@ export default function BottomNav({
         >
           <div className="flex shrink-0 items-center justify-between px-(--page-gutter) py-3">
             <h2 className="font-sans text-lg font-medium text-gold-600">{sheet.title}</h2>
-            <button
-              type="button"
-              onClick={closeSheet}
+            <IconButton
+              icon={<CloseIcon className="h-5 w-5" />}
               aria-label={sheet.close}
-              className="-me-2 flex h-11 w-11 items-center justify-center rounded-full"
-            >
-              <CloseIcon className="h-5 w-5" />
-            </button>
+              onClick={closeSheet}
+              hoverTone="none"
+              className="-me-2"
+            />
           </div>
 
           <ul className={`grid ${sheet.grid} gap-3 overflow-y-auto px-(--page-gutter) pb-5`}>
@@ -238,7 +233,7 @@ export default function BottomNav({
             ))}
           </ul>
         </div>
-      </div>
+      </DialogOverlay>
     </>
   );
 }

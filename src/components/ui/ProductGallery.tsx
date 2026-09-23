@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import Image from "next/image";
+import Chip from "@/components/ui/Chip";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import {
   ChevronDownIcon,
@@ -109,11 +110,7 @@ export default function ProductGallery({
           breathing room instead of filling the box edge to edge — matches
           the reference's "framed" presentation. */}
       <div className="relative order-first flex-1 overflow-hidden rounded-3xl bg-white p-2.5 shadow-md sm:order-2">
-        {badge && (
-          <span className="absolute start-4 top-4 z-10 rounded-full border border-[#E6D7BE] bg-white/95 px-3 py-1.5 font-sans text-[11px] font-bold uppercase tracking-[2.2px] text-gold-600 shadow-sm">
-            {badge}
-          </span>
-        )}
+        {badge && <Chip className="absolute start-4 top-4 z-10">{badge}</Chip>}
         <div
           className="relative aspect-square w-full cursor-zoom-in touch-pan-y overflow-hidden rounded-3xl"
           onPointerDown={handleSwipeStart}

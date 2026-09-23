@@ -2,6 +2,9 @@
 
 import { useRef } from "react";
 import Button from "@/components/ui/Button";
+import DialogOverlay from "@/components/ui/DialogOverlay";
+import EmptyStateBox from "@/components/ui/EmptyStateBox";
+import IconButton from "@/components/ui/IconButton";
 import Price from "@/components/ui/Price";
 import CartLine from "@/components/layout/CartLine";
 import { CartLinesSkeleton } from "@/components/ui/Skeleton";
@@ -20,13 +23,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
   useFocusTrap(drawerRef, visible, closeCart);
 
   return (
-    <div
-      inert={!visible}
-      className={`fixed inset-0 z-50 transition-opacity duration-300 ease-luxury ${
-        visible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-      }`}
-    >
-      <div className="absolute inset-0 bg-black/40" onClick={closeCart} />
+    <DialogOverlay visible={visible} onClose={closeCart}>
       <div
         ref={drawerRef}
         role="dialog"
@@ -41,13 +38,12 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
             <BagIcon className="h-5 w-5" />{" "}
             {formatMessage(t.title, { count: cart?.totalQuantity ?? 0 })}
           </h2>
-          <button
-            onClick={closeCart}
+          <IconButton
+            icon={<CloseIcon className="h-5 w-5" />}
             aria-label={t.close}
-            className="-me-2 flex h-11 w-11 items-center justify-center rounded-full hover:bg-cream-100"
-          >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+            onClick={closeCart}
+            className="-me-2"
+          />
         </div>
 
         {error && (
@@ -56,13 +52,14 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
             className="flex items-center justify-between gap-3 border-b border-error-100 bg-error-50 px-5 py-3 text-sm text-error-700"
           >
             <span>{error}</span>
-            <button
-              onClick={dismissError}
+            <IconButton
+              icon={<CloseIcon className="h-4 w-4" />}
               aria-label={t.dismissError}
-              className="-me-2 flex h-11 w-11 shrink-0 items-center justify-center"
-            >
-              <CloseIcon className="h-4 w-4" />
-            </button>
+              onClick={dismissError}
+              rounded={false}
+              hoverTone="none"
+              className="-me-2 shrink-0"
+            />
           </div>
         )}
 
@@ -70,7 +67,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
           {isInitializing ? (
             <CartLinesSkeleton />
           ) : lines.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
+            <EmptyStateBox className="mt-6 py-16">
               <BagIcon className="mx-auto h-8 w-8 text-brown-900/30" />
               <h3 className="mt-3 font-sans text-base text-brown-900">{t.emptyTitle}</h3>
               <p className="mx-auto mt-2 max-w-[15rem] font-sans text-sm text-brown-900/60">
@@ -83,7 +80,7 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
               >
                 {errors.browseCollections}
               </Button>
-            </div>
+            </EmptyStateBox>
           ) : (
             <ul className="flex flex-col gap-3">
               {lines.map((line) => (
@@ -113,6 +110,6 @@ export default function CartDrawer({ visible }: { visible: boolean }) {
           </div>
         )}
       </div>
-    </div>
+    </DialogOverlay>
   );
 }

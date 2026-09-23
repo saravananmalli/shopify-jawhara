@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import Button from "@/components/ui/Button";
 
 // Replaces the root layout, which itself fetches Shopify data (nav, brand) —
 // so a Shopify outage lands here rather than on error.tsx.
@@ -21,13 +22,12 @@ export default function GlobalError({ retry }: { retry: () => void }) {
               نواجه صعوبة في الوصول إلى الكتالوج. يُرجى المحاولة مرة أخرى بعد قليل.
             </p>
           </div>
-          <button
-            type="button"
+          <Button
             onClick={() => retry()}
-            className="mt-8 rounded-full bg-gold-600 px-6 py-3 text-sm font-medium text-white hover:bg-gold-700"
+            className="mt-8 rounded-full! px-6 py-3 text-sm font-medium"
           >
             Try again · حاول مرة أخرى
-          </button>
+          </Button>
         </div>
       </body>
     </html>

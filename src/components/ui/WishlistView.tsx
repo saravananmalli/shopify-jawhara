@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
+import EmptyStateBox from "@/components/ui/EmptyStateBox";
 import ProductCard from "@/components/ui/ProductCard";
 import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 import { PRODUCT_GRID_CLASS } from "@/config/layout";
@@ -66,7 +67,7 @@ export default function WishlistView() {
 
   if (status === "error") {
     return (
-      <div role="alert" className="mt-8 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-12 text-center">
+      <EmptyStateBox role="alert" className="mt-8 py-12">
         <p className="font-sans text-base text-brown-900">{t.loadError}</p>
         <Button
           variant="primary"
@@ -75,13 +76,13 @@ export default function WishlistView() {
         >
           {t.retry}
         </Button>
-      </div>
+      </EmptyStateBox>
     );
   }
 
   if (products.length === 0) {
     return (
-      <div className="mt-8 rounded-2xl border border-dashed border-gold-100 bg-white px-4 py-16 text-center">
+      <EmptyStateBox className="mt-8 py-16">
         <h2 className="font-sans text-lg text-brown-900">{t.emptyTitle}</h2>
         <p className="mx-auto mt-2 max-w-sm font-sans text-sm text-brown-900/60">{t.emptyBody}</p>
         <Button
@@ -91,7 +92,7 @@ export default function WishlistView() {
         >
           {errors.browseCollections}
         </Button>
-      </div>
+      </EmptyStateBox>
     );
   }
 
