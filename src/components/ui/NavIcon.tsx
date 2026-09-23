@@ -7,7 +7,7 @@ const NAV_ICON_SRC = {
   wishlist: "/brand/icons/nav/wishlist.webp",
   account: "/brand/icons/nav/account.webp",
   cart: "/brand/icons/nav/cart.webp",
-  support: "/brand/icons/support.webp",
+  support: "/brand/icons/customer-service.svg",
   search: "/brand/icons/search.svg",
 } as const;
 
