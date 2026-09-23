@@ -45,7 +45,7 @@ export default function Newsletter() {
               autoComplete="email"
               required
               placeholder={t.placeholder}
-              className="w-full rounded-full border border-gold-200 bg-white px-4 py-2.5 text-sm outline-none"
+              className="w-full rounded-xl border border-gold-200 bg-white px-4 py-2.5 text-sm outline-none"
             />
             <Button
               type="submit"
