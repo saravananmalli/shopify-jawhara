@@ -7,6 +7,7 @@ import { useDictionary, useLocale } from "@/store/locale";
 import { formatNumber } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import ProductCard from "@/components/ui/ProductCard";
+import Button from "@/components/ui/Button";
 import CollectionToolbar from "@/components/collection/CollectionToolbar";
 import type { FilterActions } from "@/components/collection/FilterOptions";
 import { PRODUCT_GRID_CLASS } from "@/config/layout";
@@ -230,13 +231,13 @@ export default function CollectionBrowser({
               {activeFilters.length > 0 ? t.noMatch : t.noProducts}
             </p>
             {activeFilters.length > 0 && (
-              <button
-                type="button"
+              <Button
+                variant="primary"
                 onClick={() => navigate({ filters: [] })}
-                className="mt-4 h-10 rounded-full bg-gold-600 px-6 text-sm font-medium text-white transition-colors hover:bg-gold-700"
+                className="mt-4 h-10 px-6 text-sm font-medium"
               >
                 {t.clearAllFilters}
-              </button>
+              </Button>
             )}
           </div>
         ) : (
@@ -257,14 +258,14 @@ export default function CollectionBrowser({
               {loadError}
             </p>
           )}
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="h-11 rounded-full border border-gold-600 bg-white px-8 font-sans text-sm font-medium text-gold-700 transition-colors hover:bg-cream-100 disabled:cursor-wait disabled:opacity-60"
+            className="h-11 px-8 font-sans text-sm font-medium disabled:cursor-wait!"
           >
             {isLoadingMore ? t.loadingMore : t.loadMore}
-          </button>
+          </Button>
           {total !== null && (
             <p className="font-sans text-xs text-brown-900/60">
               {formatMessage(t.showing, {

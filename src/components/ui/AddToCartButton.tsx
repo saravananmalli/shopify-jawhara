@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCart } from "@/store/cart";
 import { useDictionary } from "@/store/locale";
 import { BagIcon, CheckIcon } from "@/components/icons";
+import Button from "@/components/ui/Button";
 
 export default function AddToCartButton({
   variantId,
@@ -48,13 +49,14 @@ export default function AddToCartButton({
   }
 
   return (
-    <button
+    <Button
+      variant="primary"
       disabled={isLoading}
       onClick={handleClick}
-      className={`flex items-center justify-center gap-2 rounded-full bg-gold-600 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-gold-700 disabled:opacity-60 ${className}`}
+      icon={<BagIcon className="h-3.5 w-3.5" />}
+      className={`px-4 py-2.5 text-xs font-semibold uppercase tracking-wide ${className}`}
     >
-      <BagIcon className="h-3.5 w-3.5" />
       {justAdded ? t.added : buttonLabel}
-    </button>
+    </Button>
   );
 }

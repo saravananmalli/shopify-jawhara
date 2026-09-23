@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import StoreCard from "@/components/stores/StoreCard";
 import SelectDropdown from "@/components/ui/SelectDropdown";
+import Button from "@/components/ui/Button";
 import { CloseIcon, CrosshairIcon, SearchIcon } from "@/components/icons";
 import { useUserCoordinates } from "@/hooks/useUserCoordinates";
 import { useDelivery } from "@/store/delivery";
@@ -213,15 +214,15 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
           onChange={setRegionOverride}
         />
 
-        <button
-          type="button"
+        <Button
+          variant="primary"
           onClick={locate}
           disabled={locating}
-          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold-600 px-5 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:cursor-not-allowed disabled:opacity-70"
+          icon={<CrosshairIcon className={`h-4 w-4 ${locating ? "animate-spin" : ""}`} />}
+          className="min-h-11 px-5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
         >
-          <CrosshairIcon className={`h-4 w-4 ${locating ? "animate-spin" : ""}`} />
           {locating ? t.locating : userCoordinates ? t.updateLocation : t.showNearby}
-        </button>
+        </Button>
       </div>
 
       {locationDenied && (
@@ -233,13 +234,13 @@ export default function StoreLocator({ stores }: { stores: StoreLocation[] }) {
       {visible.length === 0 ? (
         <div className="py-16 text-center">
           <p className="text-base text-brown-900/70">{t.noMatch}</p>
-          <button
-            type="button"
+          <Button
+            variant="primary"
             onClick={resetFilters}
-            className="mt-5 rounded-lg bg-gold-600 px-6 py-2 text-sm font-semibold text-white transition-colors duration-300 ease-luxury hover:bg-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
+            className="mt-5 px-6 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
           >
             {t.clearSearch}
-          </button>
+          </Button>
         </div>
       ) : (
         <>
