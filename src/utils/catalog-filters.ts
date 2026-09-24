@@ -1,4 +1,4 @@
-import { PRICE_BANDS, type PriceBand } from "@/config/catalog";
+import { DISCOUNT_BANDS, PRICE_BANDS, type PriceBand } from "@/config/catalog";
 import type { Dictionary } from "@/dictionaries";
 import type { CatalogFilter } from "@/types/catalog";
 
@@ -16,7 +16,7 @@ import type { CatalogFilter } from "@/types/catalog";
 export type FilterSection = {
   key: string;
   label: string;
-  kind: "list" | "price" | "deals" | "category";
+  kind: "list" | "price" | "discount" | "deals" | "category";
   filter?: CatalogFilter;
   categoryLinks?: { id: string; label: string; input: string; current: boolean }[];
 };
@@ -33,6 +33,9 @@ export const bandInput = (band: PriceBand) =>
   });
 
 export const DEALS_INPUT = JSON.stringify({ deals: true });
+
+export const discountInput = (min: number) =>
+  JSON.stringify({ discountBand: { min } });
 
 const TAG_GROUP_ID = /^tag-group\.([^.]+)(?:\.(.+))?$/;
 
@@ -75,6 +78,8 @@ export function buildFilterSections(
   if (!sections.some((section) => section.kind === "price")) {
     sections.push({ key: "price", label: t.price, kind: "price" });
   }
+  // Shopify has no discount facet, so this is always ours to build.
+  sections.push({ key: "discount", label: t.discount, kind: "discount" });
   return sections;
 }
 
@@ -82,6 +87,10 @@ export function appliedCount(section: FilterSection, active: string[]): number {
   if (section.kind === "deals") return active.includes(DEALS_INPUT) ? 1 : 0;
   if (section.kind === "price") {
     return PRICE_BANDS.filter((band) => active.includes(bandInput(band)))
+      .length;
+  }
+  if (section.kind === "discount") {
+    return DISCOUNT_BANDS.filter((min) => active.includes(discountInput(min)))
       .length;
   }
   if (section.kind === "category") {

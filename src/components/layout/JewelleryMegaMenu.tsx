@@ -104,12 +104,22 @@ export default function JewelleryMegaMenu({
 
               {otherColumns.map((column) => (
                 <div key={column.title} className="min-w-[140px] flex-1">
-                  <MenuLink
-                    href={column.url}
-                    className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
-                  >
-                    <DirhamText text={column.title} />
-                  </MenuLink>
+                  {/* A column left unlinked in Shopify's menu editor resolves to
+                      "/" (toSafeInternalPath's fallback) — that's a heading, not
+                      a real destination, so it renders as plain text instead of
+                      a link to the homepage. */}
+                  {column.url === "/" ? (
+                    <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-gold-700">
+                      <DirhamText text={column.title} />
+                    </p>
+                  ) : (
+                    <MenuLink
+                      href={column.url}
+                      className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
+                    >
+                      <DirhamText text={column.title} />
+                    </MenuLink>
+                  )}
                   {column.items.length > 0 && (
                     <ul className="flex flex-col gap-2.5">
                       {column.items.map((leaf) => (

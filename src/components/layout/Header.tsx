@@ -57,6 +57,7 @@ export default function Header({
   goldCategories,
   diamondCategories,
   pearlCategories,
+  kidsCategories,
 }: {
   brand: Brand;
   navLinks: NavLink[];
@@ -64,6 +65,7 @@ export default function Header({
   goldCategories: Collection[];
   diamondCategories: Collection[];
   pearlCategories: Collection[];
+  kidsCategories: Collection[];
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -345,6 +347,16 @@ export default function Header({
                   link={link}
                   isActive={isActive}
                   categories={pearlCategories}
+                />
+              );
+            }
+            if (title === "kids") {
+              return (
+                <ImageCategoryMegaMenu
+                  key={key}
+                  link={link}
+                  isActive={isActive}
+                  categories={kidsCategories}
                 />
               );
             }

@@ -13,6 +13,7 @@ import {
   DIAMOND_CATEGORY_HANDLES,
   GIFTS_PROMO_HANDLE,
   GOLD_CATEGORY_HANDLES,
+  KIDS_CATEGORY_HANDLES,
   PEARL_CATEGORY_HANDLES,
   SHOP_BY_CATEGORY_HANDLES,
 } from "@/config/catalog";
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       gold: goldCategories,
       diamond: diamondCategories,
       pearl: pearlCategories,
+      kids: kidsCategories,
       categories: shopCategories,
     },
   ] = await Promise.all([
@@ -101,6 +103,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       gold: GOLD_CATEGORY_HANDLES,
       diamond: DIAMOND_CATEGORY_HANDLES,
       pearl: PEARL_CATEGORY_HANDLES,
+      kids: KIDS_CATEGORY_HANDLES,
       categories: SHOP_BY_CATEGORY_HANDLES,
     }, locale),
   ]);
@@ -129,6 +132,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
                 goldCategories={goldCategories}
                 diamondCategories={diamondCategories}
                 pearlCategories={pearlCategories}
+                kidsCategories={kidsCategories}
               />
               <main className="flex-1">{children}</main>
               <Footer brand={brand} footerNav={footerNav} />

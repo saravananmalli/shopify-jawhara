@@ -375,6 +375,8 @@
     "shopByCategory": "Shop by category",
     "categoryFilter": "Category",
     "price": "Price",
+    "discount": "Discount",
+    "discountOrMore": "{percent}% Off or more",
     "deals": "Deals",
     "onSale": "On sale",
     "under": "Under {amount}",
