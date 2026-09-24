@@ -395,6 +395,8 @@
     "shopByCategory": "تسوّق حسب الفئة",
     "categoryFilter": "الفئة",
     "price": "السعر",
+    "discount": "الخصم",
+    "discountOrMore": "خصم {percent}% أو أكثر",
     "deals": "العروض",
     "onSale": "بأسعار مخفّضة",
     "under": "أقل من {amount}",

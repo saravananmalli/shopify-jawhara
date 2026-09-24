@@ -20,6 +20,7 @@ const ALLOWED_FILTER_KEYS = new Set([
   "category",
   // Not Shopify inputs — resolved by our own server-side filtering.
   "priceBand",
+  "discountBand",
   "deals",
   "inCollection",
   "unionCollection",
@@ -37,6 +38,19 @@ function hasValidCustomShapes(parsed: Record<string, unknown>): boolean {
       typeof band !== "object" ||
       !isAmount(band.min) ||
       !isAmount(band.max)
+    ) {
+      return false;
+    }
+  }
+  if ("discountBand" in parsed) {
+    const band = parsed.discountBand as { min?: unknown } | null;
+    if (
+      !band ||
+      typeof band !== "object" ||
+      typeof band.min !== "number" ||
+      !Number.isFinite(band.min) ||
+      band.min <= 0 ||
+      band.min > 100
     ) {
       return false;
     }

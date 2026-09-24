@@ -1,6 +1,6 @@
 "use client";
 
-import { PRICE_BANDS } from "@/config/catalog";
+import { DISCOUNT_BANDS, PRICE_BANDS } from "@/config/catalog";
 import { CheckIcon } from "@/components/icons";
 import Price from "@/components/ui/Price";
 import { useDictionary } from "@/store/locale";
@@ -8,6 +8,7 @@ import { formatMessage } from "@/utils/i18n";
 import {
   bandInput,
   DEALS_INPUT,
+  discountInput,
   type FilterSection,
 } from "@/utils/catalog-filters";
 
@@ -138,6 +139,24 @@ export default function FilterOptions({
             <CheckRow
               key={input}
               label={label}
+              checked={active.includes(input)}
+              onChange={() => onToggle(input)}
+            />
+          );
+        })}
+      </ul>
+    );
+  }
+
+  if (section.kind === "discount") {
+    return (
+      <ul>
+        {DISCOUNT_BANDS.map((min) => {
+          const input = discountInput(min);
+          return (
+            <CheckRow
+              key={input}
+              label={formatMessage(t.discountOrMore, { percent: min })}
               checked={active.includes(input)}
               onChange={() => onToggle(input)}
             />

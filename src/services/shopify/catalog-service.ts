@@ -173,6 +173,8 @@ type CustomFilters = {
   tagGroups: { group: string; keys: Set<string> }[];
   /** Match ANY band: min inclusive, max exclusive. */
   bands: { min?: number; max?: number }[];
+  /** Match ANY threshold: product's own discount percent >= threshold. */
+  discountBands: number[];
   onSale: boolean;
   /** Match ANY collection handle (used by the curation category tiles). */
   inCollections: string[];
@@ -196,6 +198,7 @@ function splitCustomFilters(filters: string[]): CustomFilters {
   const custom: CustomFilters = {
     tagGroups: [],
     bands: [],
+    discountBands: [],
     onSale: false,
     inCollections: [],
     unionCollections: [],
@@ -213,6 +216,9 @@ function splitCustomFilters(filters: string[]): CustomFilters {
       );
     } else if (isSingleKey && parsed.priceBand) {
       custom.bands.push(parsed.priceBand as { min?: number; max?: number });
+    } else if (isSingleKey && parsed.discountBand) {
+      const { min } = parsed.discountBand as { min: number };
+      custom.discountBands.push(min);
     } else if (isSingleKey && typeof parsed.inCollection === "string") {
       custom.inCollections.push(parsed.inCollection);
     } else if (isSingleKey && typeof parsed.unionCollection === "string") {
@@ -230,6 +236,7 @@ function splitCustomFilters(filters: string[]): CustomFilters {
 const hasCustomFilters = (custom: CustomFilters) =>
   custom.tagGroups.length > 0 ||
   custom.bands.length > 0 ||
+  custom.discountBands.length > 0 ||
   custom.onSale ||
   custom.inCollections.length > 0 ||
   custom.unionCollections.length > 0;
@@ -257,10 +264,23 @@ function matchesCustomFilters(node: ScanNode, custom: CustomFilters): boolean {
   }
 
   // Same rule as the product card: compare-at only counts when above price.
-  return (
-    !custom.onSale ||
-    parseFloat(node.compareAtPriceRange.minVariantPrice.amount) > price
+  const compareAtPrice = parseFloat(
+    node.compareAtPriceRange.minVariantPrice.amount,
   );
+  const onSale = compareAtPrice > price;
+  if (custom.onSale && !onSale) return false;
+
+  if (custom.discountBands.length > 0) {
+    // Same rounding as the product card's discount badge (getDiscountPercent).
+    const discountPercent = onSale
+      ? Math.round((1 - price / compareAtPrice) * 100)
+      : 0;
+    if (!custom.discountBands.some((min) => discountPercent >= min)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 const SCAN_PAGE_SIZE = 250;

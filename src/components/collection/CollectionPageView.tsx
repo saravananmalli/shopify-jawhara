@@ -8,10 +8,13 @@ import {
   CATEGORY_SCOPED_MENU_COLUMNS,
   CATEGORY_TILE_GROUPS,
   JEWELLERY_CATEGORY_HANDLES,
+  KIDS_CATEGORY_HANDLES,
+  KIDS_LANDING_HANDLE,
   MAIN_MENU_HANDLE,
 } from "@/config/catalog";
 import {
   getCatalogPage,
+  getCategoryTilesByHandles,
   getCategoryTilesForCollection,
   getCategoryTilesFromMenu,
   getMenu,
@@ -83,6 +86,17 @@ export default async function CollectionPageView({
       stripScope = { basePath: `/collections/${handle}`, query };
       inPlaceCategoryTiles = counted;
     }
+  }
+
+  // The Kids main-menu link is a single top-level link (no mega-menu column,
+  // unlike Gold/Diamonds/Pearls' image megamenus but same handle-list
+  // mechanism), so its landing page isn't itself a member of
+  // KIDS_CATEGORY_HANDLES — give it that group's tabs explicitly, as real
+  // links to those sibling pages (Pearl's tab/category structure), not an
+  // in-place filter like the gift promo page above.
+  if (handle === KIDS_LANDING_HANDLE) {
+    const kidsTiles = await getCategoryTilesByHandles(KIDS_CATEGORY_HANDLES, locale);
+    if (kidsTiles.length > 0) stripTiles = kidsTiles;
   }
 
   if (ourCollectionsLanding) {

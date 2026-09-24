@@ -84,6 +84,12 @@ export const PRICE_BANDS: PriceBand[] = [
   { min: 10000 },
 ];
 
+/** Discount-filter checkboxes: minimum whole-percent markdown off
+ * compare-at price, "X% Off or more". A product matches a band when its own
+ * discount percent (see `getDiscountPercent`) is >= the band's threshold, so
+ * higher bands are a subset of lower ones by construction. */
+export const DISCOUNT_BANDS: number[] = [10, 25, 35, 50, 60, 70];
+
 /**
  * Filter sections built from product tags in Shopify Admin. A product joins a
  * section either with a prefixed tag — `metal:18K White Gold`, `brand:Filo` —
@@ -167,6 +173,21 @@ export const PEARL_CATEGORY_HANDLES = [
   "pearl-necklace",
   "pearl-bracelet",
 ];
+/** "kids-necklcae" is Shopify's real handle (kept the original typo; only the
+ * title was corrected to "Kids Necklaces") — update here if it's ever renamed.
+ * Any handle here that doesn't match a real Shopify collection is skipped. */
+export const KIDS_CATEGORY_HANDLES = [
+  "kids-necklcae",
+  "kids-earring",
+  "kids-bracelets",
+  "kids-brooch",
+];
+
+/** The Kids main-menu link's own landing collection — a single top-level nav
+ * link (like Gold/Diamonds/Pearls), not a mega-menu column, so it isn't
+ * itself one of KIDS_CATEGORY_HANDLES' siblings and needs its own branch in
+ * CollectionPageView to show that group's tabs. */
+export const KIDS_LANDING_HANDLE = "kids-collections";
 
 /**
  * Sets of collections that sit together but aren't a Shopify menu column.
@@ -178,6 +199,7 @@ export const CATEGORY_TILE_GROUPS: string[][] = [
   GOLD_CATEGORY_HANDLES,
   DIAMOND_CATEGORY_HANDLES,
   PEARL_CATEGORY_HANDLES,
+  KIDS_CATEGORY_HANDLES,
 ];
 
 /** The category tiles on collection pages that belong to no menu column (the
