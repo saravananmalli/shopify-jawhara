@@ -47,6 +47,8 @@ export default function LanguageSwitcher({
         router.push(`${href}${window.location.search}${window.location.hash}`);
       }}
       className={className}
+      // The label is Arabic even on English pages, where the site font is Poppins.
+      style={target === "ar" ? { fontFamily: "var(--font-arabic), var(--font-latin)" } : undefined}
     >
       {showFlag && target === "ar" && (
         <Image src="/brand/icons/nav/uae.webp" alt="" width={24} height={24} className="h-6 w-6" />
