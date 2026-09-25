@@ -396,6 +396,7 @@
     "showing": "عرض {shown} من {total}",
     "shopByCategory": "تسوّق حسب الفئة",
     "categoryFilter": "الفئة",
+    "jewelleryType": "نوع المجوهرات",
     "price": "السعر",
     "discount": "الخصم",
     "discountOrMore": "خصم {percent}% أو أكثر",
