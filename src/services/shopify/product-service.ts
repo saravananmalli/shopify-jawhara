@@ -16,12 +16,15 @@ import type { ShopifyProductCard, ShopifyProductDetail } from "@/types/shopify-a
 export async function getProducts({
   first = 12,
   sortKey = "BEST_SELLING",
+  reverse = false,
   revalidate = PRODUCT_REVALIDATE_SECONDS,
   locale,
 }: {
   locale: Locale;
   first?: number;
   sortKey?: "BEST_SELLING" | "CREATED_AT" | "PRICE" | "TITLE";
+  /** Shopify sorts CREATED_AT oldest-first; pass true for newest-first. */
+  reverse?: boolean;
   /** Override for statically generated pages that re-render on their own schedule. */
   revalidate?: number;
 }): Promise<Product[]> {
@@ -29,7 +32,7 @@ export async function getProducts({
     products: { edges: { node: ShopifyProductCard }[] };
   }>({
     query: PRODUCTS_QUERY,
-    variables: { first, sortKey },
+    variables: { first, sortKey, reverse },
     locale,
     revalidate,
   });
@@ -84,10 +87,13 @@ export async function searchProducts({
 export async function filterProducts({
   query,
   first = 12,
+  revalidate = PRODUCT_REVALIDATE_SECONDS,
   locale,
 }: {
   query: string;
   first?: number;
+  /** Override for statically generated pages that re-render on their own schedule. */
+  revalidate?: number;
   locale: Locale;
 }): Promise<Product[]> {
   const data = await shopifyFetch<{
@@ -96,7 +102,7 @@ export async function filterProducts({
     query: SEARCH_PRODUCTS_QUERY,
     variables: { query, first },
     locale,
-    revalidate: PRODUCT_REVALIDATE_SECONDS,
+    revalidate,
   });
 
   return data.products.edges.map((edge) => toProduct(edge.node));
