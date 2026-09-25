@@ -225,4 +225,6 @@ export const SHOP_BY_CATEGORY_HANDLES = [
   "necklace",
   "bracelet",
   "bangles",
+  "strap-accessories",
+  "complete-sets",
 ];

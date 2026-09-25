@@ -16,13 +16,16 @@ export default function Chip({
   children: ReactNode;
   className?: string;
   /** "dark" is for chips sitting on a brown/photo overlay; "deep" is the
-   * deeper gold used as an eyebrow above a primary-gold heading. */
-  tone?: "light" | "dark" | "deep";
+   * deeper gold used as an eyebrow above a primary-gold heading; "highlight"
+   * is a filled, brighter-gold badge (e.g. "New") for standing out inline
+   * next to plain text, never a dominant fill. */
+  tone?: "light" | "dark" | "deep" | "highlight";
 }) {
   const TONE_STYLES = {
     light: "border-[#E6D7BE] bg-cream-100 text-gold-600",
     deep: "border-[#E6D7BE] bg-cream-100 text-gold-800",
     dark: "border-cream-50/15 bg-cream-50/10 text-cream-50",
+    highlight: "border-transparent bg-badge-highlight text-white",
   } as const;
   const toneStyle = TONE_STYLES[tone];
   return (
