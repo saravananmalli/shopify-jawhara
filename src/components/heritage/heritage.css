@@ -1,0 +1,168 @@
+/* Heritage Since 1907 — motion only. Colours and fonts come from globals.css tokens. */
+
+@keyframes her-rise {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes her-settle {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+@keyframes her-nudge {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(10px); opacity: 1; }
+}
+
+.her-hero-image { animation: her-settle 3200ms var(--ease-luxury) both; }
+.her-hero-item { animation: her-rise 1500ms var(--ease-luxury) both; animation-delay: var(--d, 0ms); }
+.her-scroll-line { animation: her-nudge 2600ms ease-in-out 3000ms infinite; }
+
+/* Timeline stage — year and photo crossfade as the active chapter changes. */
+.her-year { opacity: 0; transform: translateY(24px); transition: opacity 900ms var(--ease-luxury), transform 900ms var(--ease-luxury); }
+.her-year[data-active] { opacity: 1; transform: none; }
+.her-stage-image { opacity: 0; transition: opacity 1100ms var(--ease-luxury); }
+.her-stage-image[data-active] { opacity: 1; }
+.her-rail-fill { transform: scaleY(var(--progress, 0)); transform-origin: top; transition: transform 300ms linear; }
+
+@media (scripting: enabled) {
+  .her-item { opacity: 0.28; transition: opacity 800ms var(--ease-luxury); }
+  .her-item[data-active] { opacity: 1; }
+  @media (max-width: 1023.98px) {
+    .her-item { opacity: 1; }
+  }
+}
+
+/* Reveals only hide content when JS can reveal it again and motion is welcome. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 1400ms var(--ease-luxury), transform 1400ms var(--ease-luxury);
+    transition-delay: var(--d, 0ms);
+  }
+  [data-reveal][data-in] { opacity: 1; transform: none; }
+
+  /* The observed wrapper stays fully visible (IntersectionObserver would
+     otherwise see a fully clipped target); only its photo is wiped in. */
+  [data-reveal="clip"] { opacity: 1; transform: none; }
+  [data-reveal="clip"] > * {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1800ms var(--ease-luxury);
+  }
+  [data-reveal="clip"][data-in] > * { clip-path: inset(0); }
+
+  [data-reveal="line"] {
+    opacity: 1;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 2200ms var(--ease-luxury);
+  }
+  [data-reveal="line"][data-in] { transform: scaleY(1); }
+
+  [data-reveal="zoom"] {
+    opacity: 1;
+    transform: scale(1.18);
+    transition: transform 4500ms var(--ease-luxury);
+  }
+  [data-reveal="zoom"][data-in] { transform: scale(1); }
+
+  [data-reveal="track"] {
+    opacity: 0;
+    transform: none;
+    letter-spacing: 0.02em;
+    transition: opacity 1800ms var(--ease-luxury), letter-spacing 2400ms var(--ease-luxury);
+  }
+  [data-reveal="track"][data-in] { opacity: 1; letter-spacing: 0.14em; }
+}
+:root[lang="ar"] [data-reveal="track"] { letter-spacing: 0 !important; }
+
+/* ---- Royal detailing ------------------------------------------------- */
+
+/* Gold-foil type: a soft highlight slowly sweeps across years and numbers. */
+@keyframes her-foil {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0 0; }
+}
+.her-gold,
+.her-gold-dark {
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: her-foil 9s ease-in-out infinite;
+}
+.her-gold {
+  background-image: linear-gradient(100deg, var(--color-gold-800) 0%, var(--color-gold-500) 30%, var(--color-gold-300) 50%, var(--color-gold-500) 70%, var(--color-gold-800) 100%);
+}
+.her-gold-dark {
+  background-image: linear-gradient(100deg, var(--color-gold-300) 0%, var(--color-gold-50) 45%, var(--color-gold-300) 60%, var(--color-gold-500) 100%);
+}
+
+/* Word-by-word masks (SplitText). Padding keeps ascenders/descenders and
+   Arabic diacritics from being clipped by the mask. */
+.her-word { display: inline-block; overflow: hidden; vertical-align: top; padding-block: 0.2em; margin-block: -0.2em; }
+.her-word > span { display: inline-block; }
+@keyframes her-word { from { transform: translateY(115%); } to { transform: none; } }
+.her-hero-words .her-word > span {
+  animation: her-word 1500ms var(--ease-luxury) both;
+  animation-delay: calc(2400ms + var(--i) * 130ms);
+}
+
+/* Ornament — rule + jewel */
+.her-ornament { display: flex; align-items: center; justify-content: center; gap: 1rem; color: var(--color-gold-500); }
+.her-ornament-line { display: block; height: 1px; width: min(9rem, 24vw); background: linear-gradient(to right, transparent, currentColor); }
+.her-ornament-line:last-child { background: linear-gradient(to left, transparent, currentColor); }
+.her-ornament-gem { width: 0.75rem; height: 0.75rem; flex: none; }
+
+/* Inner gold frame laid over a photo */
+.her-frame { position: relative; }
+.her-frame::after {
+  content: "";
+  position: absolute;
+  inset: clamp(0.5rem, 1.4vw, 1.1rem);
+  border: 1px solid color-mix(in srgb, var(--color-gold-50) 65%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Gold progress bar (logical: fills from the reading-start edge) */
+.her-progress { position: fixed; inset-block-start: 0; inset-inline: 0; height: 2px; z-index: 60; pointer-events: none; }
+.her-progress > span { display: block; height: 100%; background: var(--color-gold-50); box-shadow: 0 0 6px var(--color-gold-300); transform: scaleX(var(--page-p, 0)); transform-origin: left; }
+:root[dir="rtl"] .her-progress > span { transform-origin: right; }
+
+/* Timeline photo settles as its chapter becomes active */
+.her-stage-image > * { transform: scale(1.1); transition: transform 2600ms var(--ease-luxury); }
+.her-stage-image[data-active] > * { transform: scale(1); }
+
+/* Hero: content lifts away and thins as the page scrolls on */
+.her-hero-exit { transform: translate3d(0, calc(var(--p, 0) * -70px), 0); opacity: calc(1 - var(--p, 0) * 1.5); will-change: transform, opacity; }
+.her-plx { transform: translate3d(0, calc((var(--p, 0.5) - 0.5) * -9%), 0); will-change: transform; }
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal="words"] { opacity: 1; transform: none; }
+  [data-reveal="words"] .her-word > span {
+    transform: translateY(115%);
+    transition: transform 1500ms var(--ease-luxury);
+    transition-delay: calc(var(--d, 0ms) + var(--i) * 90ms);
+  }
+  [data-reveal="words"][data-in] .her-word > span { transform: none; }
+
+  [data-reveal="draw"] { opacity: 1; transform: none; }
+  [data-reveal="draw"] .her-ornament-line { transform: scaleX(0); transition: transform 1800ms var(--ease-luxury) 250ms; }
+  [data-reveal="draw"] .her-ornament-line:first-child { transform-origin: right; }
+  [data-reveal="draw"] .her-ornament-line:last-child { transform-origin: left; }
+  [data-reveal="draw"] .her-ornament-gem { opacity: 0; transform: rotate(-90deg) scale(0.4); transition: opacity 1200ms var(--ease-luxury), transform 1600ms var(--ease-luxury); }
+  [data-reveal="draw"][data-in] .her-ornament-line { transform: scaleX(1); }
+  [data-reveal="draw"][data-in] .her-ornament-gem { opacity: 1; transform: none; }
+
+  .her-frame[data-reveal]::after { opacity: 0; transform: scale(1.06); transition: opacity 1600ms var(--ease-luxury) 900ms, transform 2200ms var(--ease-luxury) 900ms; }
+  .her-frame[data-reveal][data-in]::after { opacity: 1; transform: none; }
+
+  [data-scrub] .her-scrub-word {
+    opacity: clamp(0.16, calc(0.16 + (var(--p, 1) * (var(--n) + 2) - var(--i)) * 0.84), 1);
+  }
+}
+/* Arabic never gets letter-spaced or split into letters */
+:root[lang="ar"] .her-gold, :root[lang="ar"] .her-gold-dark { animation-duration: 9s; }

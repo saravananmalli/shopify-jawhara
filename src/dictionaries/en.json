@@ -508,5 +508,168 @@
     "emptyBody": "Tap the heart on any piece to save it here.",
     "loadError": "We couldn't load your saved pieces. Please try again.",
     "retry": "Try again"
+  },
+  "heritage": {
+    "meta": {
+      "title": "Heritage Since 1907",
+      "description": "A century of craftsmanship — the story of Jawhara Jewellery, from a master goldsmith in 1907 to more than 300 stores across 11 countries."
+    },
+    "hero": {
+      "eyebrow": "Heritage Since 1907",
+      "heading": "A Legacy Crafted Across Generations",
+      "description": "For more than a century, a passion for craftsmanship has shaped our journey — from the hands of a master goldsmith to a jewellery house with a presence across the world.",
+      "scroll": "Scroll to discover"
+    },
+    "beginning": {
+      "year": "1907",
+      "label": "The Beginning",
+      "heading": "Where a Beautiful Legacy Began",
+      "body": "Our journey began in 1907 with the vision of a master goldsmith whose dedication to craftsmanship laid the foundation for a legacy that would revolutionise the jewellery industry.",
+      "body2": "That dedication established our first retail shop in Dubai, laying the foundation for our presence in the Dubai Gold Souq and building a loyal customer base. Success in Dubai soon led to the opening of our first branch in the Emirate of Sharjah."
+    },
+    "expansion": {
+      "eyebrow": "Growth",
+      "heading": "From Dubai to the World",
+      "body": "The continued development of Dubai, together with the engagement of the third generation, brought renewed dedication to the jewellery industry.",
+      "body2": "This dedication allowed us to expand our retail presence across the Emirates and beyond into other GCC countries.",
+      "body3": "We also ventured into the wholesale business and began trading with Italy — recognised as a global leader in creativity and craftsmanship.",
+      "statement": "From a local business to an international jeweller."
+    },
+    "statement": {
+      "heading": "More Than Jewellery. A Heritage in Every Detail.",
+      "emphasis": "Heritage",
+      "body": "Today, Jawhara Jewellery has more than 300 shops across 11 countries and over 80 brand strongholds.",
+      "body2": "Our legacy is narrated through timeless pieces that uphold traditional techniques of jewellery making, showcasing the creativity of skilled artisans whose designs epitomise our expertise, heritage and dedication to our loyal customers."
+    },
+    "modern": {
+      "heading": "Where Heritage Meets Modern Life",
+      "body": "Jawhara celebrates the diversity of cultural nuances by offering world-class elegance and uniqueness in every piece we design.",
+      "body2": "Our jewellery is crafted to enhance today's dynamic lifestyles, providing a fashionable connection to our culture and heritage while staying on top of ever-evolving trends.",
+      "items": [
+        {
+          "label": "Tradition",
+          "title": "Traditional Craftsmanship"
+        },
+        {
+          "label": "Culture",
+          "title": "A Connection to Heritage"
+        },
+        {
+          "label": "Contemporary",
+          "title": "Designed for Today's Lifestyles"
+        }
+      ]
+    },
+    "fairuz": {
+      "eyebrow": "Fairuz",
+      "heading": "A New Expression of the Legacy",
+      "body": "Fairuz, a division of the Jawhara Group, is the contemporary sister brand of Jawhara Jewellery, designed for a younger, fashion-forward audience.",
+      "body2": "With five exclusive mall-based stores across the UAE, Fairuz blends modern elegance with the trusted craftsmanship and quality that define the Jawhara legacy."
+    },
+    "timeline": {
+      "eyebrow": "1907 — 2026",
+      "heading": "A Journey Through Time",
+      "milestones": [
+        {
+          "year": "1907",
+          "title": "The Birth of a Beautiful Legacy",
+          "body": "Our journey began in 1907 with the vision of a master goldsmith whose dedication to craftsmanship laid the foundation for a legacy that would revolutionise the jewellery industry."
+        },
+        {
+          "year": "1958",
+          "title": "The First Flare in Dubai's Gold Souq",
+          "body": "Elegance took shape in Dubai's Gold Souq, marking an important chapter in the family's jewellery journey and establishing a strong connection with the city's growing jewellery trade."
+        },
+        {
+          "year": "1961",
+          "title": "Showcasing the Elegance of Natural Pearl Jewellery",
+          "body": "The Abdullah family began to highlight their natural pearl jewellery more prominently, captivating the market with their innovative designs. Their expanded collection of captivating natural pearls won customers' hearts, showcasing their commitment to elegance and variety."
+        },
+        {
+          "year": "1965",
+          "title": "Wholesale Begins alongside Retail and Manufacturing",
+          "body": "The family initiated wholesale operations in the Middle East, complementing their retail and manufacturing ventures."
+        },
+        {
+          "year": "1972",
+          "title": "Embracing High-End Technology in Diamond Jewellery Manufacturing",
+          "body": "Driving innovation in the jewellery industry, the Abdullah family adopted cutting-edge diamond-cutting technology, introducing a new era of bridal jewellery that set new standards for quality and craftsmanship."
+        },
+        {
+          "year": "1975",
+          "title": "Introducing International Diamond Jewellery",
+          "body": "The family expanded its jewellery offering by introducing international diamond jewellery, further strengthening its position in the evolving regional jewellery market."
+        },
+        {
+          "year": "1979",
+          "title": "The Opening of the First Store in the Retail Network",
+          "body": "The opening of the first store marked another important step in building the family's growing retail network and bringing its jewellery closer to customers."
+        },
+        {
+          "year": "1983",
+          "title": "Welcoming International Brands to the Network",
+          "body": "The family expanded its retail offering by introducing international jewellery brands, bringing new styles and craftsmanship to customers across the region."
+        },
+        {
+          "year": "1995",
+          "title": "First Diamond Division Established",
+          "body": "The establishment of the first dedicated diamond division strengthened the family's expertise and presence in the diamond jewellery sector."
+        },
+        {
+          "year": "2013",
+          "title": "Jawhara Jewellery Begins",
+          "body": "The Abdullah family transitioned from their Damas brand to introduce Jawhara Jewellery, marking a significant milestone in the evolution of their esteemed heritage and ongoing commitment to excellence."
+        },
+        {
+          "year": "2014",
+          "title": "The Emergence of Jawhara Jewellery",
+          "body": "A remarkable gem emerged from the heart of the United Arab Emirates. The Abdullah family proudly presented Jawhara as their flagship brand, showcasing their esteemed Emirati craftsmanship and innovative jewellery designs.",
+          "body2": "This reflects their enduring commitment to delivering the best value for high-quality jewellery, maintaining a century-old tradition of authenticity and dedication to their customers."
+        },
+        {
+          "year": "2018",
+          "title": "Expands Collections with Top International Brands",
+          "body": "Jawhara expanded its collections with leading international brands including Forevermark, Chimento, Caoro, Annamaria Cammilli and Stella, alongside more than 60 in-house brands."
+        },
+        {
+          "year": "2021",
+          "title": "A Mark of Distinction with Forevermark",
+          "body": "Jawhara strengthened its association with exceptional diamond craftsmanship through Forevermark, adding another distinguished chapter to its diamond jewellery journey."
+        },
+        {
+          "year": "2022",
+          "title": "A Shining Alliance with the Natural Diamond Council",
+          "body": "Jawhara established a collaboration with the Natural Diamond Council, reinforcing its connection with the world of natural diamonds and their enduring beauty."
+        },
+        {
+          "year": "2023",
+          "title": "A Collaboration with the Royal Mint for Gold Bars and Coins",
+          "body": "Jawhara collaborated with the Royal Mint to offer premium gold bars and coins, extending its heritage in precious metals into a distinctive new offering."
+        },
+        {
+          "year": "2026",
+          "title": "Network Expands to 300 Stores",
+          "body": "Jawhara Jewellery's network flourished, reaching a milestone of 300 stores across 11 countries."
+        }
+      ],
+      "goTo": "Go to {year}",
+      "skip": "Skip the timeline"
+    },
+    "stats": {
+      "stores": "300",
+      "storesLabel": "Stores",
+      "countries": "11",
+      "countriesLabel": "Countries",
+      "heading": "A Century of Craftsmanship",
+      "body": "From a master goldsmith's vision in 1907 to a global jewellery presence today, Jawhara's journey continues across generations."
+    },
+    "closing": {
+      "heading": "The Story Continues",
+      "body": "From a master goldsmith's vision in 1907 to a global jewellery presence today, the journey continues — carried forward through craftsmanship, creativity, culture and generations.",
+      "large": "Heritage Since 1907",
+      "small": "Jawhara Jewellery",
+      "cta": "Explore the Collections",
+      "years": "1907 — 2026"
+    }
   }
 }
