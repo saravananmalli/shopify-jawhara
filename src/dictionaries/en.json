@@ -376,6 +376,7 @@
     "showing": "Showing {shown} of {total}",
     "shopByCategory": "Shop by category",
     "categoryFilter": "Category",
+    "jewelleryType": "Jewellery type",
     "price": "Price",
     "discount": "Discount",
     "discountOrMore": "{percent}% Off or more",

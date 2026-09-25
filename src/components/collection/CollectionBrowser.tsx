@@ -41,6 +41,7 @@ export default function CollectionBrowser({
   query,
   categoryFilter,
   categoryLinks,
+  typeFilter,
 }: {
   handle: string;
   initialPage: CatalogPage;
@@ -55,6 +56,9 @@ export default function CollectionBrowser({
    * collection's products into this page's grid, combined with the current
    * one — the current page's own tile is always included and locked. */
   categoryLinks: CategoryTile[];
+  /** Product types (Rings, Earrings…) narrowing this collection's own
+   * products, shown beside `categoryLinks` on curation pages. */
+  typeFilter: CatalogFilter | null;
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -117,7 +121,11 @@ export default function CollectionBrowser({
   const sections = [
     ...(categoryLinkSection ? [categoryLinkSection] : []),
     ...buildFilterSections(
-      [...(categoryFilter ? [categoryFilter] : []), ...initialPage.filters],
+      [
+        ...(categoryFilter ? [categoryFilter] : []),
+        ...(typeFilter ? [typeFilter] : []),
+        ...initialPage.filters,
+      ],
       t,
     ),
   ];

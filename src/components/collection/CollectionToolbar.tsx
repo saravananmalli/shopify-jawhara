@@ -10,7 +10,7 @@ import { appliedCount, type FilterSection } from "@/utils/catalog-filters";
 import type { CatalogSortKey } from "@/types/catalog";
 
 /** Inline dropdowns beyond this many live only in the "Show All Filters" drawer. */
-const MAX_INLINE_FILTERS = 4;
+const MAX_INLINE_FILTERS = 5;
 
 /** "Show All Filters" and the sort dropdown share the row on phones, a fixed
  * width from sm. `flex-1` (not a fixed percentage basis) so they shrink to
@@ -45,6 +45,13 @@ export default function CollectionToolbar({
 }) {
   const { collection: t } = useDictionary();
   const totalApplied = actions.active.length;
+  // Price is always upfront: it takes the last inline slot when the sections
+  // ahead of it (Category, Jewellery type, Metal…) would otherwise fill them all.
+  const inlineSections = sections.filter(
+    (section, index) =>
+      section.kind === "price" ||
+      index < MAX_INLINE_FILTERS - (sections.some((s) => s.kind === "price") ? 1 : 0),
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-y border-gold-100 py-2 sm:py-3">
@@ -60,9 +67,7 @@ export default function CollectionToolbar({
           same choices live in the "Show All Filters" drawer instead. */}
       <div className="hidden items-center gap-2 lg:flex">
         <QuickTagDropdown selected={quickTagSelected} onSelect={onQuickTagSelect} />
-        {sections
-          .slice(0, MAX_INLINE_FILTERS)
-          .map((section) => (
+        {inlineSections.map((section) => (
             <FilterDropdown
               key={section.key}
               section={section}

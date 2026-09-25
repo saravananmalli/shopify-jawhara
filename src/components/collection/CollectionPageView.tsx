@@ -114,17 +114,12 @@ export default async function CollectionPageView({
   // to), every tile there is already a genuine subset of the current
   // collection, so it can double as a filter instead of only being a set of
   // links.
-  // Curation pages (Birthday, Wedding, gift collections…) list sibling
-  // curations in the strip, so the product categories (Rings, Earrings…) are
-  // offered as a real filter that narrows this collection's own products.
   const categoryTiles =
     inPlaceCategoryTiles.length > 0
       ? inPlaceCategoryTiles
       : handle === ALL_PRODUCTS_HANDLE
         ? await withCategoryCounts(handle, stripTiles)
-        : strip.categoryTiles.length > 0
-          ? await withCategoryCounts(handle, strip.categoryTiles)
-          : [];
+        : [];
   const categoryFilter: CatalogFilter | null =
     categoryTiles.length > 0
       ? {
@@ -133,6 +128,28 @@ export default async function CollectionPageView({
           type: "LIST",
           values: categoryTiles.map((tile) => ({
             id: `category.${tile.handle}`,
+            label: tile.title,
+            count: tile.count ?? 0,
+            input: inCollectionInput(tile.handle),
+          })),
+        }
+      : null;
+
+  // Curation pages (Birthday, Wedding…) list sibling curations in the strip
+  // (the Category links below), so the product types (Rings, Earrings…) are a
+  // separate filter that narrows this collection's own products.
+  const typeTiles =
+    strip.categoryTiles.length > 0
+      ? await withCategoryCounts(handle, strip.categoryTiles)
+      : [];
+  const typeFilter: CatalogFilter | null =
+    typeTiles.length > 0
+      ? {
+          id: "jewellery-type",
+          label: t.jewelleryType,
+          type: "LIST",
+          values: typeTiles.map((tile) => ({
+            id: `type.${tile.handle}`,
             label: tile.title,
             count: tile.count ?? 0,
             input: inCollectionInput(tile.handle),
@@ -197,6 +214,7 @@ export default async function CollectionPageView({
           query={query}
           categoryFilter={categoryFilter}
           categoryLinks={categoryLinks}
+          typeFilter={typeFilter}
         />
       </section>
     </div>
