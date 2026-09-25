@@ -3,6 +3,7 @@
 import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
 import MenuPanel from "@/components/layout/MenuPanel";
+import Chip from "@/components/ui/Chip";
 import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import { useMenuIntent } from "@/hooks/useMenuIntent";
@@ -56,9 +57,14 @@ export default function OurCollectionsMegaMenu({
                 <MenuLink
                   key={item.title}
                   href={item.url}
-                  className="text-sm font-medium text-brown-900 transition-colors hover:text-gold-700"
+                  className="flex items-center gap-1.5 text-sm text-brown-900/80 transition-colors hover:text-gold-700"
                 >
                   <DirhamText text={item.title} />
+                  {item.badge && (
+                    <Chip tone="highlight">
+                      <span dir="auto">{item.badge}</span>
+                    </Chip>
+                  )}
                 </MenuLink>
               ))}
             </div>

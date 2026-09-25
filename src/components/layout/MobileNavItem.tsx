@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "@/components/ui/Link";
+import Chip from "@/components/ui/Chip";
 import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import type { NavLink } from "@/types/content";
@@ -44,9 +45,14 @@ export default function MobileNavItem({
         <Link
           href={link.url}
           onClick={onNavigate}
-          className={`block ${rowPadding} ${headingClass}`}
+          className={`flex items-center gap-1.5 ${rowPadding} ${headingClass}`}
         >
           <DirhamText text={title} />
+          {link.badge && (
+            <Chip tone="highlight">
+              <span dir="auto">{link.badge}</span>
+            </Chip>
+          )}
         </Link>
       </li>
     );

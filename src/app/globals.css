@@ -33,6 +33,11 @@
   --color-maroon-500: #8b1538; /* $dark-maroon */
   --color-maroon-600: #6b1029; /* computed, darker than dark-maroon */
 
+  /* Filled highlight chip (e.g. a "New" nav badge) — a brighter, more
+     saturated gold than the brand's primary gold-600, used only as a small
+     filled accent, never a dominant fill. */
+  --color-badge-highlight: #e6b502;
+
   /* State colors (rules #9, #38) — never rely on ad hoc Tailwind defaults */
   --color-success-50: #eaf1ee;
   --color-success-500: #7a9b8e; /* $success-color / $sage-green */
@@ -168,6 +173,8 @@
 
   --color-maroon-500: var(--color-maroon-500);
   --color-maroon-600: var(--color-maroon-600);
+
+  --color-badge-highlight: var(--color-badge-highlight);
 
   --color-review-star: var(--color-review-star);
   --color-review-star-deep: var(--color-review-star-deep);

@@ -5,6 +5,8 @@ export type NavLink = {
   key: string;
   title: string;
   url: string;
+  /** Small label shown next to the link (e.g. "New") — see `toNavLinks`. */
+  badge?: string;
   items: NavLink[];
 };
 

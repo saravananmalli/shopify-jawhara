@@ -240,12 +240,34 @@ export function toBrand(brand: ShopifyBrand | null): Brand {
 }
 
 export function toNavLinks(items: ShopifyMenuItem[]): NavLink[] {
-  return items.map((item) => ({
-    key: item.title.trim().toLowerCase(),
-    title: item.title,
-    url: toRelativeUrl(item.url),
-    items: toNavLinks(item.items ?? []),
-  }));
+  return items.map((item) => {
+    const { url, badge } = splitCollectionBadge(toRelativeUrl(item.url));
+    return {
+      key: item.title.trim().toLowerCase(),
+      title: item.title,
+      url,
+      badge,
+      items: toNavLinks(item.items ?? []),
+    };
+  });
+}
+
+const COLLECTION_WITH_EXTRA_SEGMENT = /^(\/collections\/[a-z0-9-]+)\/([^/?#]+)\/?$/i;
+
+/**
+ * Shopify's menu editor has no dedicated "badge" field on a link, so an admin
+ * picking a collection and then typing e.g. "New" into the link field saves
+ * it as an extra URL segment ("/collections/filo-collection/New") rather than
+ * a real page — this app's routing only understands the bare
+ * "/collections/<handle>" path, so that segment would otherwise 404. Treat it
+ * as a small label instead: peel it off into `badge` and correct the link to
+ * the real collection page.
+ */
+function splitCollectionBadge(path: string): { url: string; badge?: string } {
+  const match = path.match(COLLECTION_WITH_EXTRA_SEGMENT);
+  if (!match) return { url: path };
+  const badge = decodeURIComponent(match[2]).trim();
+  return badge ? { url: match[1], badge } : { url: path };
 }
 
 /** Copies the default-language keys onto a translated menu. Shopify
