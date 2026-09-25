@@ -34,6 +34,7 @@ import NavMenuProvider from "@/components/layout/NavMenuProvider";
 import { useDelivery, useLocationUi } from "@/store/delivery";
 import { getShopifyImageUrl, isUntrustedRemoteImage } from "@/utils/shopify-image";
 import type { Brand, Collection, NavLink } from "@/types/content";
+import { isNavLinkActive, NAV_ACTIVE_TEXT } from "@/utils/nav";
 
 // Dialogs nobody sees on first paint: loaded on first open (or on hover/focus
 // of their trigger) rather than shipped in every page's initial JS.
@@ -49,6 +50,8 @@ const LOGO_IMAGE_WIDTH_DESKTOP = 320;
 const LOGO_IMAGE_WIDTH_MOBILE = 192;
 
 const FALLBACK_LOGO = "/brand/jawhara-logo.png";
+
+const HERITAGE_PATH = "/pages/heritage-since-1907";
 
 export default function Header({
   brand,
@@ -125,7 +128,7 @@ export default function Header({
       <div className="hidden bg-gradient-to-r from-gold-700 via-gold-600 to-gold-700 py-1.5 text-[12px] tracking-[1.1px] text-cream-50 sm:block">
         <div className="page-container flex items-center justify-between">
           {/* The heritage line lives in the category nav (xl) and the mobile menu. */}
-          <Link href="/pages/contact" className="flex items-center gap-1.5 font-medium hover:underline">
+          <Link href="/customer-service" className="flex items-center gap-1.5 font-medium hover:underline">
             <NavIcon name="support" tinted className="h-4 w-4" />
             {t.header.customerService}
           </Link>
@@ -302,7 +305,7 @@ export default function Header({
           {links.map((link, index) => {
             const title = link.key;
             const key = `${link.title}-${index}`;
-            const isActive = pathname === link.url;
+            const isActive = isNavLinkActive(link, pathname);
 
             if (title === "jewellery") {
               return <JewelleryMegaMenu key={key} link={link} isActive={isActive} />;
@@ -365,7 +368,10 @@ export default function Header({
           <li className="ms-auto hidden whitespace-nowrap xl:flex">
             <Link
               href="/pages/heritage-since-1907"
-              className="flex items-center gap-1.5 text-gold-700 transition-colors duration-(--motion-fast) hover:text-gold-600"
+              aria-current={pathname === HERITAGE_PATH ? "page" : undefined}
+              className={`flex items-center gap-1.5 transition-colors duration-(--motion-fast) hover:text-gold-600 ${
+                pathname === HERITAGE_PATH ? NAV_ACTIVE_TEXT : "text-gold-700"
+              }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
               <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
@@ -432,7 +438,10 @@ export default function Header({
             <Link
               href="/pages/heritage-since-1907"
               onClick={() => setMobileOpen(false)}
-              className="flex min-h-11 items-center gap-2 text-xs font-medium tracking-wide text-gold-700"
+              aria-current={pathname === HERITAGE_PATH ? "page" : undefined}
+              className={`flex min-h-11 items-center gap-2 text-xs font-medium tracking-wide ${
+                pathname === HERITAGE_PATH ? NAV_ACTIVE_TEXT : "text-gold-700"
+              }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
               <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />

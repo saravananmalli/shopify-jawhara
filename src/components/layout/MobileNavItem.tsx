@@ -6,7 +6,9 @@ import Chip from "@/components/ui/Chip";
 import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import type { NavLink } from "@/types/content";
+import { useRoutePath } from "@/hooks/useRoutePath";
 import { toTitleCase } from "@/utils/format";
+import { isNavLinkActive, NAV_ACTIVE_TEXT } from "@/utils/nav";
 
 /**
  * Mobile-drawer counterpart to the desktop mega-menu — same real Shopify
@@ -27,6 +29,7 @@ export default function MobileNavItem({
 }) {
   const [expanded, setExpanded] = useState(false);
   const hasChildren = link.items.length > 0;
+  const active = isNavLinkActive(link, useRoutePath());
 
   const rowPadding = depth === 0 ? "py-3" : "py-2";
   // Top-level items are title case like the desktop nav, even if the Shopify
@@ -45,7 +48,8 @@ export default function MobileNavItem({
         <Link
           href={link.url}
           onClick={onNavigate}
-          className={`flex items-center gap-1.5 ${rowPadding} ${headingClass}`}
+          aria-current={active ? "page" : undefined}
+          className={`flex items-center gap-1.5 ${rowPadding} ${headingClass} ${active ? NAV_ACTIVE_TEXT : ""}`}
         >
           <DirhamText text={title} />
           {link.badge && (
@@ -64,7 +68,7 @@ export default function MobileNavItem({
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className={`flex w-full items-center justify-between ${rowPadding} ${headingClass}`}
+        className={`flex w-full items-center justify-between ${rowPadding} ${headingClass} ${active ? NAV_ACTIVE_TEXT : ""}`}
       >
         <DirhamText text={title} />
         <ChevronDownIcon

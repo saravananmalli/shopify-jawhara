@@ -127,11 +127,6 @@
   z-index: 2;
 }
 
-/* Gold progress bar (logical: fills from the reading-start edge) */
-.her-progress { position: fixed; inset-block-start: 0; inset-inline: 0; height: 2px; z-index: 60; pointer-events: none; }
-.her-progress > span { display: block; height: 100%; background: var(--color-gold-50); box-shadow: 0 0 6px var(--color-gold-300); transform: scaleX(var(--page-p, 0)); transform-origin: left; }
-:root[dir="rtl"] .her-progress > span { transform-origin: right; }
-
 /* Timeline photo settles as its chapter becomes active */
 .her-stage-image > * { transform: scale(1.1); transition: transform 2600ms var(--ease-luxury); }
 .her-stage-image[data-active] > * { transform: scale(1); }

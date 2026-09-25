@@ -114,7 +114,7 @@
           },
           {
             "title": "Contact Us",
-            "url": "/pages/contact"
+            "url": "/customer-service"
           }
         ]
       },
@@ -147,7 +147,9 @@
           }
         ]
       }
-    ]
+    ],
+    "badgesAlt": "Awards and certifications: Superbrands UAE's Choice 2025, Only Natural Diamonds by the Natural Diamond Council, UAE Favorite's Women's Brand 2025, and diamond certification by IGI, GSI, IDL and SGL.",
+    "contactHeading": "Contact"
   },
   "features": [
     "Jewellery Certification",
@@ -670,6 +672,80 @@
       "small": "Jawhara Jewellery",
       "cta": "Explore the Collections",
       "years": "1907 — 2026"
+    }
+  },
+  "customerService": {
+    "meta": {
+      "title": "Customer Service",
+      "description": "Get in touch with Jawhara Jewellery — enquiries, corporate and wholesale, store visits, plus delivery, returns and policy information."
+    },
+    "hero": {
+      "eyebrow": "We're here to help",
+      "heading": "Customer Service",
+      "body": "Whether you are choosing a piece, planning a gift or need help with an order, our team is glad to assist — every day of the week."
+    },
+    "contact": {
+      "eyebrow": "Contact us",
+      "heading": "Get in touch",
+      "items": [
+        {
+          "title": "Call us",
+          "body": "Speak to our customer service team about an order, a piece or a store.",
+          "cta": "Call now"
+        },
+        {
+          "title": "WhatsApp",
+          "body": "Message us any time and we will reply as soon as we can.",
+          "cta": "Start a chat"
+        },
+        {
+          "title": "Email",
+          "body": "Write to us with your question or feedback and we will get back to you.",
+          "cta": "Send an email"
+        },
+        {
+          "title": "Visit us",
+          "body": "Our head office is in the Old Gold Souk. Or find your nearest store.",
+          "cta": "Find a store"
+        }
+      ],
+      "corporate": "Corporate & wholesale enquiries"
+    },
+    "topics": {
+      "eyebrow": "Help centre",
+      "heading": "How can we help?",
+      "items": [
+        {
+          "title": "Shipping & Returns",
+          "body": "Delivery information and how returns work."
+        },
+        {
+          "title": "Terms & Conditions",
+          "body": "The terms that apply to your purchases."
+        },
+        {
+          "title": "Privacy Policy",
+          "body": "How we look after your personal information."
+        },
+        {
+          "title": "Frequently Asked Questions",
+          "body": "Quick answers to the questions we hear most."
+        },
+        {
+          "title": "Our Stores",
+          "body": "Addresses, opening hours and directions across the UAE and the GCC."
+        },
+        {
+          "title": "Our Heritage",
+          "body": "The story of Jawhara — jewellers since 1907."
+        }
+      ]
+    },
+    "band": {
+      "heading": "Still need help?",
+      "body": "Our enquiry team is here for you — write to us and we will take it from there.",
+      "cta": "Contact us",
+      "ctaSecondary": "Find a store"
     }
   }
 }
