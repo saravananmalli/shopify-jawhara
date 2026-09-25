@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
 import NavAutoHide from "@/components/layout/NavAutoHide";
 import LocationPrompt from "@/components/layout/LocationPrompt";
+import LaylaLauncher from "@/components/layla/LaylaLauncher";
 import { CartProvider } from "@/store/cart";
 import { LocaleProvider } from "@/store/locale";
 import { DeliveryProvider } from "@/store/delivery";
@@ -17,6 +18,7 @@ import {
   PEARL_CATEGORY_HANDLES,
   SHOP_BY_CATEGORY_HANDLES,
 } from "@/config/catalog";
+import { isLaylaVisible } from "@/config/layla";
 import { siteUrl } from "@/config/site";
 import { localeConfig, locales } from "@/config/i18n";
 import { getLocale } from "@/utils/get-locale";
@@ -143,6 +145,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
                 ourCollectionsUrl={headerNav.find((link) => link.key === "our collections")?.url ?? "/collections"}
               />
               <NavAutoHide />
+              {isLaylaVisible() && <LaylaLauncher />}
             </DeliveryProvider>
           </WishlistProvider>
         </CartProvider>
