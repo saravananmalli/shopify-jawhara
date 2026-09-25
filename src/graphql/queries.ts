@@ -6,8 +6,8 @@ import {
 } from "@/graphql/fragments";
 
 export const PRODUCTS_QUERY = /* GraphQL */ `
-  query Products($first: Int!, $sortKey: ProductSortKeys!) {
-    products(first: $first, sortKey: $sortKey) {
+  query Products($first: Int!, $sortKey: ProductSortKeys!, $reverse: Boolean = false) {
+    products(first: $first, sortKey: $sortKey, reverse: $reverse) {
       edges {
         node {
           ...ProductCardFields

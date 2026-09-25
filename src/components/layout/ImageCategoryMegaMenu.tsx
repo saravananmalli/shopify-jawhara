@@ -11,6 +11,7 @@ import { useDictionary } from "@/store/locale";
 import { toTitleCase } from "@/utils/format";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { NavLink, Collection } from "@/types/content";
+import { NAV_ACTIVE_TEXT } from "@/utils/nav";
 
 // 2x the fixed tile width (~200px per the `sizes` breakpoint).
 const MEGA_MENU_TILE_IMAGE_WIDTH = 480;
@@ -52,9 +53,10 @@ export default function ImageCategoryMegaMenu({
     >
       <Link
         href={link.url}
+        aria-current={isActive ? "page" : undefined}
         aria-haspopup={hasContent ? "true" : undefined}
         className={`flex items-center gap-1 whitespace-nowrap capitalize outline-none transition-colors hover:text-gold-700 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300 ${
-          isActive ? "text-gold-700" : ""
+          isActive ? NAV_ACTIVE_TEXT : ""
         }`}
       >
         <DirhamText text={toTitleCase(link.title)} />

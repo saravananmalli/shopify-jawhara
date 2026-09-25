@@ -9,6 +9,7 @@ import DirhamText from "@/components/ui/DirhamText";
 import { useMenuIntent } from "@/hooks/useMenuIntent";
 import { useDictionary } from "@/store/locale";
 import type { NavLink } from "@/types/content";
+import { NAV_ACTIVE_TEXT } from "@/utils/nav";
 import { toTitleCase } from "@/utils/format";
 
 /**
@@ -52,9 +53,10 @@ export default function JewelleryMegaMenu({
     >
       <Link
         href={link.url}
+        aria-current={isActive ? "page" : undefined}
         aria-haspopup={hasColumns ? "true" : undefined}
         className={`flex items-center gap-1 whitespace-nowrap capitalize outline-none transition-colors hover:text-gold-700 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300 ${
-          isActive ? "text-gold-700" : ""
+          isActive ? NAV_ACTIVE_TEXT : ""
         }`}
       >
         <DirhamText text={toTitleCase(link.title)} />

@@ -23,12 +23,15 @@ import type { Product } from "@/types/product";
  */
 export type ProductTab =
   | { label: string; mode: "initial" }
+  /** Products already fetched on the server for this tab — no client request. */
+  | { label: string; mode: "products"; products: Product[] }
   | { label: string; mode: "query"; query: string }
   | { label: string; mode: "collection"; handle: string }
   | {
       label: string;
       mode: "sort";
       sortKey: "BEST_SELLING" | "CREATED_AT" | "PRICE" | "TITLE";
+      reverse?: boolean;
     };
 
 export default function ProductGridSection({
@@ -59,13 +62,15 @@ export default function ProductGridSection({
   const products =
     !activeTab || activeTab.mode === "initial"
       ? initialProducts
-      : (fetchedProducts ?? []);
+      : activeTab.mode === "products"
+        ? activeTab.products
+        : (fetchedProducts ?? []);
 
   useEffect(() => {
     const tab = tabs[activeTabIndex];
     // The "initial" tab reuses the `products` prop directly (see the
     // `products` derivation above) — nothing to fetch or sync into state.
-    if (!tab || tab.mode === "initial") return;
+    if (!tab || tab.mode === "initial" || tab.mode === "products") return;
 
     let cancelled = false;
 
@@ -83,7 +88,7 @@ export default function ProductGridSection({
             ? await filterProducts({ query: tab.query, first: 12, locale })
             : tab.mode === "collection"
               ? await getCollectionProducts({ handle: tab.handle, first: 12, locale })
-              : await getProducts({ sortKey: tab.sortKey, first: 12, locale });
+              : await getProducts({ sortKey: tab.sortKey, reverse: tab.reverse, first: 12, locale });
         if (!cancelled) setFetchedProducts(result);
       } catch {
         if (!cancelled)

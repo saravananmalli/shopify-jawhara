@@ -4,8 +4,9 @@ import { getLocale } from "@/utils/get-locale";
 import { sanitizeRichText } from "@/utils/sanitize-html";
 import type { ContentPage } from "@/types/content";
 
-/** Shell for merchant-authored pages and policies: breadcrumb, H1, styled rich text. */
-export default async function ContentPageView({ page }: { page: ContentPage }) {
+/** Shell for merchant-authored pages and policies: breadcrumb, H1, styled rich text.
+ * `wide` drops the reading-width cap so the text spans the full page width. */
+export default async function ContentPageView({ page, wide = false }: { page: ContentPage; wide?: boolean }) {
   const { common } = await getDictionary(await getLocale());
 
   return (
@@ -17,7 +18,11 @@ export default async function ContentPageView({ page }: { page: ContentPage }) {
       {/* dir="auto": the merchant's text may be in either script. */}
       <div
         dir="auto"
-        className="rich-text mt-6 max-w-3xl"
+        className={`rich-text mt-6 ${
+          wide
+            ? ""
+            : "max-w-3xl"
+        }`}
         dangerouslySetInnerHTML={{ __html: sanitizeRichText(page.bodyHtml) }}
       />
     </article>

@@ -1,11 +1,19 @@
-import Link from "@/components/ui/Link";
-import { AwardIcon } from "@/components/icons";
+import Image from "next/image";
+import FooterLink from "@/components/layout/FooterLink";
+import { SocialIcon } from "@/components/SocialIcons";
+import { contact } from "@/config/contact";
+import { SOCIAL_LINKS } from "@/config/socials";
 import { getDictionary } from "@/dictionaries";
 import { formatMessage } from "@/utils/i18n";
 import { getLocale } from "@/utils/get-locale";
 import type { Brand, NavLink } from "@/types/content";
 
-const SOCIALS = ["Instagram", "Facebook", "Snapchat", "TikTok", "YouTube", "LinkedIn", "X"];
+// Enquiry mailboxes shown in the footer (no Storefront field for a segmented contact block).
+const EMAILS = [
+  { key: "general", address: "Contactus@jawharajewellery.ae" },
+  { key: "corporate", address: "b2b@jawharajewellery.ae" },
+  { key: "hr", address: "careers@jawharajewellery.ae" },
+] as const;
 
 export default async function Footer({
   brand,
@@ -25,84 +33,83 @@ export default async function Footer({
     : t.footer.columns;
 
   return (
-    <footer className="border-t border-gold-100 bg-cream-100">
-      <div className="page-container py-12">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <div className="flex items-center gap-2 text-gold-700">
-              <AwardIcon className="h-9 w-9" />
-              <span className="text-xs leading-tight">{t.footer.onlyNaturalDiamonds}</span>
-            </div>
-            <p className="mt-4 text-[11px] tracking-wide text-brown-900/50">
-              IGI &middot; GIA &middot; IDL &middot; SGL
-            </p>
-
-            {/* Not yet Shopify-driven: no native Storefront field for a
-             * segmented (General/Corporate/HR) enquiry contact block. */}
-            <div className="mt-6 text-sm">
-              <p className="font-semibold">{t.footer.support}</p>
-              {/* dir="ltr": an address is Latin text and must not be reordered
-                  by the surrounding Arabic paragraph. */}
-              <p className="mt-2 text-brown-900/70">
-                {t.footer.general}:{" "}
-                <a dir="ltr" href="mailto:Contactus@jawharajewllery.ae" className="break-all text-gold-700 underline">
-                  Contactus@jawharajewllery.ae
-                </a>
-              </p>
-              <p className="text-brown-900/70">
-                {t.footer.corporate}:{" "}
-                <a dir="ltr" href="mailto:b2b@jawharajewllery.ae" className="break-all text-gold-700 underline">
-                  b2b@jawharajewllery.ae
-                </a>
-              </p>
-              <p className="text-brown-900/70">
-                {t.footer.hr}:{" "}
-                <a dir="ltr" href="mailto:careers@jawharajewllery.ae" className="break-all text-gold-700 underline">
-                  careers@jawharajewllery.ae
-                </a>
-              </p>
-            </div>
-          </div>
-
+    <footer>
+      <div className="bg-white">
+        <div className="page-container grid gap-x-10 gap-y-12 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:py-16">
           {columns.map((col) => (
-            <div key={col.title}>
-              <p className="mb-3 text-sm font-semibold">{col.title}</p>
-              <ul className="flex flex-col gap-2 text-sm text-brown-900/70">
+            <nav key={col.title} aria-label={col.title} className="lg:col-span-2 lg:[&:nth-child(2)]:col-span-3">
+              <h2 className="font-sans text-lg font-medium text-brown-900">{col.title}</h2>
+              <ul className="mt-5 flex flex-col gap-3 text-[15px] text-brown-900/80">
                 {col.links.map((link) => (
                   <li key={link.title}>
-                    <Link href={link.url} className="hover:text-gold-700">
-                      {link.title}
-                    </Link>
+                    <FooterLink href={link.url}>{link.title}</FooterLink>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
-        </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-gold-100 pt-6 sm:flex-row">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span className="text-sm font-medium">{t.footer.findUsOn}</span>
-            <ul className="flex flex-wrap items-center gap-2">
-              {SOCIALS.map((s) => (
-                <li key={s}>
-                  <Link
-                    href="#"
-                    aria-label={s}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-600 text-[10px] font-semibold text-white"
-                  >
-                    {s[0]}
-                  </Link>
+          <div className="lg:col-span-3">
+            <h2 className="font-sans text-lg font-medium text-brown-900">{t.footer.contactHeading}</h2>
+            <p className="mt-5 text-[15px] font-medium text-brown-900">{t.footer.support}</p>
+            <ul className="mt-3 flex flex-col gap-3 text-[15px] text-brown-900/80">
+              <li>
+                <a dir="ltr" href={contact.phone.href} className="transition-colors hover:text-gold-600">
+                  {contact.phone.display}
+                </a>
+              </li>
+              {EMAILS.map((email) => (
+                <li key={email.key}>
+                  <span className="block text-[11px] uppercase tracking-widest text-brown-900/50">
+                    {t.footer[email.key]}
+                  </span>
+                  <a dir="ltr" href={`mailto:${email.address}`} className="break-all transition-colors hover:text-gold-600">
+                    {email.address}
+                  </a>
                 </li>
               ))}
             </ul>
           </div>
-          <p className="text-xs text-brown-900/50">
+
+          {/* Recognition & certification */}
+          <div className="flex items-center justify-center sm:col-span-2 lg:col-span-4 lg:justify-end">
+            <div className="relative aspect-[631/395] w-full max-w-sm">
+              <Image
+                src="/jawhara-footer.png"
+                alt={t.footer.badgesAlt}
+                fill
+                sizes="(min-width: 1024px) 384px, 90vw"
+                className="object-contain mix-blend-multiply"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Base bar — the brand primary */}
+      <div className="bg-gold-600 text-white">
+        <div className="page-container flex flex-col items-center justify-between gap-4 py-2 sm:flex-row">
+          <p className="text-sm font-medium">
             {formatMessage(t.footer.copyright, {
               brand: brand.name,
               year: new Date().getFullYear(),
             })}
           </p>
+          <ul className="flex items-center gap-5">
+            {SOCIAL_LINKS.map((social) => (
+              <li key={social.key}>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="block p-1 transition-opacity duration-(--motion-fast) hover:opacity-75"
+                >
+                  <SocialIcon name={social.key} className="h-5 w-5" />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

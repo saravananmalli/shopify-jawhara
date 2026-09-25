@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const COUNT_DURATION_MS = 2600;
 const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
@@ -10,14 +10,11 @@ const clamp01 = (n: number) => Math.min(Math.max(n, 0), 1);
  * - IntersectionObserver adds `data-in` to `[data-reveal]` blocks and counts
  *   `[data-count]` numbers up;
  * - scroll progress is written as `--p` onto `[data-parallax]` (image drift),
- *   `[data-scrub]` (word-by-word light-up) and `[data-scrollp]` (hero exit),
- *   plus `--page-p` for the gold progress bar.
+ *   `[data-scrub]` (word-by-word light-up) and `[data-scrollp]` (hero exit).
  * The CSS only hides or dims anything when scripting is on and motion is
  * welcome, so the page reads fully if this never runs.
  */
 export default function HeritageEffects() {
-  const barRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -48,13 +45,6 @@ export default function HeritageEffects() {
     );
     document.querySelectorAll("[data-reveal], [data-count]").forEach((el) => observer.observe(el));
 
-    const bar = barRef.current;
-    const setBar = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      bar?.style.setProperty("--page-p", (max > 0 ? clamp01(window.scrollY / max) : 0).toFixed(4));
-    };
-    setBar();
-
     let frame = 0;
     let cleanup = () => {};
     if (!reduce) {
@@ -65,7 +55,6 @@ export default function HeritageEffects() {
       const update = () => {
         frame = 0;
         const vh = window.innerHeight;
-        setBar();
         for (const el of parallax) {
           const r = el.parentElement!.getBoundingClientRect();
           if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) continue;
@@ -91,10 +80,6 @@ export default function HeritageEffects() {
         window.removeEventListener("resize", onScroll);
         if (frame) cancelAnimationFrame(frame);
       };
-    } else {
-      const onScroll = () => setBar();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      cleanup = () => window.removeEventListener("scroll", onScroll);
     }
 
     return () => {
@@ -103,9 +88,5 @@ export default function HeritageEffects() {
     };
   }, []);
 
-  return (
-    <div ref={barRef} className="her-progress" aria-hidden>
-      <span />
-    </div>
-  );
+  return null;
 }
