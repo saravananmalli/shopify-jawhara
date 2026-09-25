@@ -362,10 +362,15 @@ export default function Header({
             }
             return <MegaMenuItem key={key} link={link} isActive={isActive} />;
           })}
-          <li className="ms-auto hidden items-center gap-1.5 whitespace-nowrap text-gold-700 xl:flex">
-            {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
-            <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
-            {t.header.heritage}
+          <li className="ms-auto hidden whitespace-nowrap xl:flex">
+            <Link
+              href="/pages/heritage-since-1907"
+              className="flex items-center gap-1.5 text-gold-700 transition-colors duration-(--motion-fast) hover:text-gold-600"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
+              <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
+              {t.header.heritage}
+            </Link>
           </li>
         </ul>
         </NavMenuProvider>
@@ -424,11 +429,15 @@ export default function Header({
             ))}
           </ul>
           <div className="flex shrink-0 flex-col border-t border-gold-100 pt-2 text-sm max-sm:border-t-0 max-sm:pt-0">
-            <p className="flex min-h-11 items-center gap-2 text-xs font-medium tracking-wide text-gold-700">
+            <Link
+              href="/pages/heritage-since-1907"
+              onClick={() => setMobileOpen(false)}
+              className="flex min-h-11 items-center gap-2 text-xs font-medium tracking-wide text-gold-700"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element -- local brand SVG; matches the FeaturesBar convention. */}
               <img src="/brand/icons/badge-primary.svg" alt="" aria-hidden className="h-5 w-5" />
               {t.header.heritage}
-            </p>
+            </Link>
             <Link
               href="/stores"
               onClick={() => setMobileOpen(false)}

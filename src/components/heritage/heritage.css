@@ -14,13 +14,13 @@
 }
 
 .her-hero-image { animation: her-settle 3200ms var(--ease-luxury) both; }
-.her-hero-item { animation: her-rise 1500ms var(--ease-luxury) both; animation-delay: var(--d, 0ms); }
-.her-scroll-line { animation: her-nudge 2600ms ease-in-out 3000ms infinite; }
+.her-hero-item { animation: her-rise 1000ms var(--ease-luxury) both; animation-delay: var(--d, 0ms); }
+.her-scroll-line { animation: her-nudge 2600ms ease-in-out 2200ms infinite; }
 
 /* Timeline stage — year and photo crossfade as the active chapter changes. */
-.her-year { opacity: 0; transform: translateY(24px); transition: opacity 900ms var(--ease-luxury), transform 900ms var(--ease-luxury); }
+.her-year { opacity: 0; transform: translateY(24px); transition: opacity 650ms var(--ease-luxury), transform 650ms var(--ease-luxury); }
 .her-year[data-active] { opacity: 1; transform: none; }
-.her-stage-image { opacity: 0; transition: opacity 1100ms var(--ease-luxury); }
+.her-stage-image { opacity: 0; transition: opacity 800ms var(--ease-luxury); }
 .her-stage-image[data-active] { opacity: 1; }
 .her-rail-fill { transform: scaleY(var(--progress, 0)); transform-origin: top; transition: transform 300ms linear; }
 
@@ -37,7 +37,7 @@
   [data-reveal] {
     opacity: 0;
     transform: translateY(28px);
-    transition: opacity 1400ms var(--ease-luxury), transform 1400ms var(--ease-luxury);
+    transition: opacity 900ms var(--ease-luxury), transform 900ms var(--ease-luxury);
     transition-delay: var(--d, 0ms);
   }
   [data-reveal][data-in] { opacity: 1; transform: none; }
@@ -47,7 +47,7 @@
   [data-reveal="clip"] { opacity: 1; transform: none; }
   [data-reveal="clip"] > * {
     clip-path: inset(0 0 100% 0);
-    transition: clip-path 1800ms var(--ease-luxury);
+    transition: clip-path 1200ms var(--ease-luxury);
   }
   [data-reveal="clip"][data-in] > * { clip-path: inset(0); }
 
@@ -55,7 +55,7 @@
     opacity: 1;
     transform: scaleY(0);
     transform-origin: top;
-    transition: transform 2200ms var(--ease-luxury);
+    transition: transform 1400ms var(--ease-luxury);
   }
   [data-reveal="line"][data-in] { transform: scaleY(1); }
 
@@ -70,7 +70,7 @@
     opacity: 0;
     transform: none;
     letter-spacing: 0.02em;
-    transition: opacity 1800ms var(--ease-luxury), letter-spacing 2400ms var(--ease-luxury);
+    transition: opacity 1200ms var(--ease-luxury), letter-spacing 1600ms var(--ease-luxury);
   }
   [data-reveal="track"][data-in] { opacity: 1; letter-spacing: 0.14em; }
 }
@@ -106,8 +106,8 @@
 .her-word > span { display: inline-block; }
 @keyframes her-word { from { transform: translateY(115%); } to { transform: none; } }
 .her-hero-words .her-word > span {
-  animation: her-word 1500ms var(--ease-luxury) both;
-  animation-delay: calc(2400ms + var(--i) * 130ms);
+  animation: her-word 1000ms var(--ease-luxury) both;
+  animation-delay: calc(700ms + var(--i) * 90ms);
 }
 
 /* Ornament — rule + jewel */
@@ -144,13 +144,13 @@
   [data-reveal="words"] { opacity: 1; transform: none; }
   [data-reveal="words"] .her-word > span {
     transform: translateY(115%);
-    transition: transform 1500ms var(--ease-luxury);
-    transition-delay: calc(var(--d, 0ms) + var(--i) * 90ms);
+    transition: transform 950ms var(--ease-luxury);
+    transition-delay: calc(var(--d, 0ms) + var(--i) * 60ms);
   }
   [data-reveal="words"][data-in] .her-word > span { transform: none; }
 
   [data-reveal="draw"] { opacity: 1; transform: none; }
-  [data-reveal="draw"] .her-ornament-line { transform: scaleX(0); transition: transform 1800ms var(--ease-luxury) 250ms; }
+  [data-reveal="draw"] .her-ornament-line { transform: scaleX(0); transition: transform 1200ms var(--ease-luxury) 150ms; }
   [data-reveal="draw"] .her-ornament-line:first-child { transform-origin: right; }
   [data-reveal="draw"] .her-ornament-line:last-child { transform-origin: left; }
   [data-reveal="draw"] .her-ornament-gem { opacity: 0; transform: rotate(-90deg) scale(0.4); transition: opacity 1200ms var(--ease-luxury), transform 1600ms var(--ease-luxury); }

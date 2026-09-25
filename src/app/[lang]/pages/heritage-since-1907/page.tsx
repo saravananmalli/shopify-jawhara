@@ -82,9 +82,9 @@ export default async function HeritagePage() {
         <div aria-hidden className="pointer-events-none absolute inset-[clamp(0.75rem,1.6vw,1.5rem)] -z-10 border border-cream-50/20" />
 
         <div className="page-container her-hero-exit pb-10 pt-40 sm:pb-14 lg:pb-16">
-          <div className="flex items-center gap-4" style={{ "--d": "2200ms" } as React.CSSProperties}>
-            <span className="her-hero-item block h-px w-12 bg-gold-50" style={{ "--d": "2200ms" } as React.CSSProperties} aria-hidden />
-            <p className={`her-hero-item ${eyebrow} text-gold-50`} style={{ "--d": "2200ms" } as React.CSSProperties}>
+          <div className="flex items-center gap-4" style={{ "--d": "300ms" } as React.CSSProperties}>
+            <span className="her-hero-item block h-px w-12 bg-gold-50" style={{ "--d": "300ms" } as React.CSSProperties} aria-hidden />
+            <p className={`her-hero-item ${eyebrow} text-gold-50`} style={{ "--d": "300ms" } as React.CSSProperties}>
               {h.hero.eyebrow}
             </p>
           </div>
@@ -96,14 +96,14 @@ export default async function HeritagePage() {
           />
           <p
             className="her-hero-item mt-7 max-w-xl text-base leading-[1.8] text-cream-50/90 [text-shadow:0_1px_18px_rgb(0_0_0/0.4)] sm:text-lg"
-            style={{ "--d": "3500ms" } as React.CSSProperties}
+            style={{ "--d": "1300ms" } as React.CSSProperties}
           >
             {h.hero.description}
           </p>
 
           <div
             className="her-hero-item mt-12 flex items-center justify-between gap-6 border-t border-cream-50/25 pt-6 lg:mt-16"
-            style={{ "--d": "4200ms" } as React.CSSProperties}
+            style={{ "--d": "1700ms" } as React.CSSProperties}
           >
             <a
               href="#beginning"
