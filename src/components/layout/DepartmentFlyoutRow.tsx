@@ -1,6 +1,7 @@
 "use client";
 
 import MenuLink from "@/components/layout/MenuLink";
+import MenuColumnHeading from "@/components/layout/MenuColumnHeading";
 import { ChevronRightIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import type { NavLink } from "@/types/content";
@@ -44,12 +45,7 @@ export default function DepartmentFlyoutRow({
           <div className="flex min-w-[480px] gap-10 rounded-e-2xl border border-gold-100 bg-white p-6 shadow-xl">
             {item.items.map((column) => (
               <div key={column.title} className="min-w-[140px] flex-1">
-                <MenuLink
-                  href={column.url}
-                  className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
-                >
-                  <DirhamText text={column.title} />
-                </MenuLink>
+                <MenuColumnHeading column={column} />
                 {column.items.length > 0 && (
                   <ul className="flex flex-col gap-2.5">
                     {column.items.map((leaf) => (
