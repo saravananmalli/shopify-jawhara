@@ -135,12 +135,25 @@ export default async function CollectionPageView({
         }
       : null;
 
-  // Curation pages (Birthday, Wedding…) list sibling curations in the strip
-  // (the Category links below), so the product types (Rings, Earrings…) are a
-  // separate filter that narrows this collection's own products.
+  // Any collection whose products span several product types (Birthday, 18K
+  // Yellow Gold…) gets a Jewellery type filter narrowing its own products.
+  // Counted from the real products, so a single-type page (Rings) or one with
+  // a Category filter already (Gift, all) shows none.
+  const typeCandidates =
+    categoryFilter !== null
+      ? []
+      : strip.categoryTiles.length > 0
+        ? strip.categoryTiles
+        : await getCategoryTilesFromMenu(CATEGORY_MENU_HANDLE, locale);
+  const countedTypes =
+    typeCandidates.length > 0
+      ? await withCategoryCounts(handle, typeCandidates)
+      : [];
+  // A page that is itself a type (Rings) is never split by type.
   const typeTiles =
-    strip.categoryTiles.length > 0
-      ? await withCategoryCounts(handle, strip.categoryTiles)
+    countedTypes.length > 1 &&
+    !typeCandidates.some((tile) => tile.handle === handle)
+      ? countedTypes
       : [];
   const typeFilter: CatalogFilter | null =
     typeTiles.length > 0
