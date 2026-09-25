@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
+import MenuColumnHeading from "@/components/layout/MenuColumnHeading";
 import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon, ChevronRightIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
@@ -68,12 +69,7 @@ export default function GiftsMegaMenu({
             <div className="flex page-container gap-10 py-6">
               {link.items.map((column) => (
                 <div key={column.title} className="min-w-[140px] flex-1">
-                  <MenuLink
-                    href={column.url}
-                    className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
-                  >
-                    <DirhamText text={column.title} />
-                  </MenuLink>
+                  <MenuColumnHeading column={column} />
                   {column.items.length > 0 && (
                     <ul className="flex flex-col gap-2.5">
                       {column.items.map((leaf) => (

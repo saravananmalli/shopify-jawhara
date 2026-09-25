@@ -2,6 +2,7 @@
 
 import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
+import MenuColumnHeading from "@/components/layout/MenuColumnHeading";
 import MenuPanel from "@/components/layout/MenuPanel";
 import { ChevronDownIcon, ChevronRightIcon, CheckIcon } from "@/components/icons";
 import DepartmentFlyoutRow from "@/components/layout/DepartmentFlyoutRow";
@@ -106,22 +107,7 @@ export default function JewelleryMegaMenu({
 
               {otherColumns.map((column) => (
                 <div key={column.title} className="min-w-[140px] flex-1">
-                  {/* A column left unlinked in Shopify's menu editor resolves to
-                      "/" (toSafeInternalPath's fallback) — that's a heading, not
-                      a real destination, so it renders as plain text instead of
-                      a link to the homepage. */}
-                  {column.url === "/" ? (
-                    <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-gold-700">
-                      <DirhamText text={column.title} />
-                    </p>
-                  ) : (
-                    <MenuLink
-                      href={column.url}
-                      className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
-                    >
-                      <DirhamText text={column.title} />
-                    </MenuLink>
-                  )}
+                  <MenuColumnHeading column={column} />
                   {column.items.length > 0 && (
                     <ul className="flex flex-col gap-2.5">
                       {column.items.map((leaf) => (

@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "@/components/ui/Link";
 import MenuLink from "@/components/layout/MenuLink";
+import MenuColumnHeading from "@/components/layout/MenuColumnHeading";
 import MenuPanel from "@/components/layout/MenuPanel";
-import { ChevronDownIcon, ChevronRightIcon } from "@/components/icons";
+import { ChevronDownIcon } from "@/components/icons";
 import DirhamText from "@/components/ui/DirhamText";
 import { useMenuIntent } from "@/hooks/useMenuIntent";
-import { useDictionary } from "@/store/locale";
 import { toTitleCase } from "@/utils/format";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { NavLink, Collection } from "@/types/content";
@@ -35,7 +35,6 @@ export default function ImageCategoryMegaMenu({
   isActive: boolean;
   categories: Collection[];
 }) {
-  const { common } = useDictionary();
   const imageCategories = categories.filter((c) => c.imageUrl);
   const hasContent = link.items.length > 0 || imageCategories.length > 0;
 
@@ -71,17 +70,6 @@ export default function ImageCategoryMegaMenu({
             <div className="page-container py-6">
               {imageCategories.length > 0 && (
                 <>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-sans text-2xl font-normal text-brown-900">
-                      <DirhamText text={toTitleCase(link.title)} />
-                    </h3>
-                    <MenuLink
-                      href={link.url}
-                      className="flex items-center gap-1 text-sm font-medium text-gold-700 hover:underline"
-                    >
-                      {common.shopAll} <ChevronRightIcon className="h-4 w-4" />
-                    </MenuLink>
-                  </div>
                   <div className="grid grid-cols-6 gap-4">
                     {imageCategories.map((category) => (
                       <MenuLink
@@ -115,12 +103,7 @@ export default function ImageCategoryMegaMenu({
                 <div className={`flex gap-10 ${imageCategories.length > 0 ? "mt-6" : ""}`}>
                   {link.items.map((column) => (
                     <div key={column.title} className="min-w-[140px] flex-1">
-                      <MenuLink
-                        href={column.url}
-                        className="mb-3 block text-[11px] font-semibold uppercase tracking-widest text-gold-700 hover:underline"
-                      >
-                        <DirhamText text={column.title} />
-                      </MenuLink>
+                      <MenuColumnHeading column={column} />
                       {column.items.length > 0 && (
                         <ul className="flex flex-col gap-2.5">
                           {column.items.map((leaf) => (
