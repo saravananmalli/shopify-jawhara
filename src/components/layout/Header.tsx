@@ -191,7 +191,7 @@ export default function Header({
               onClick={() => setSearchOpen(true)}
               onPointerEnter={loadSearchOverlay}
               onFocus={loadSearchOverlay}
-              className="flex w-full max-w-52 items-center gap-1.5 overflow-hidden rounded-full border border-gold-100 bg-white px-3 py-1.5 text-start"
+              className="flex w-full max-w-64 items-center gap-1.5 overflow-hidden rounded-full border border-gold-100 bg-white px-3 py-1.5 text-start"
               aria-haspopup="dialog"
             >
               <SearchIcon className="h-3.5 w-3.5 shrink-0 text-gold-700" />

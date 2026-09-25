@@ -88,10 +88,10 @@ export default async function Home() {
       <CategoryStrip categories={categories} />
       <FeaturesBar />
       <ProductGridSection
-        eyebrow={t.masterpieces.eyebrow}
-        title={t.masterpieces.title}
-        tabs={masterpieceTabs(t.masterpieces.tabs)}
-        products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
+        eyebrow={t.trending.eyebrow}
+        title={t.trending.title}
+        tabs={trendingTabs(t.trending.tabs)}
+        products={products.slice(-4)}
         tightOnPhone
       />
       <AtelierSection
@@ -103,10 +103,10 @@ export default async function Home() {
       />
       <ShopByOccasionSection occasions={occasions} />
       <ProductGridSection
-        eyebrow={t.trending.eyebrow}
-        title={t.trending.title}
-        tabs={trendingTabs(t.trending.tabs)}
-        products={products.slice(-4)}
+        eyebrow={t.masterpieces.eyebrow}
+        title={t.masterpieces.title}
+        tabs={masterpieceTabs(t.masterpieces.tabs)}
+        products={signatureProducts.length > 0 ? signatureProducts : products.slice(0, 4)}
       />
       <CustomerReviews reviews={reviews} />
       <Testimonials testimonials={testimonials} />
