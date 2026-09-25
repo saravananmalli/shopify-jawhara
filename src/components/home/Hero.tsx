@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Image from "next/image";
+import Link from "@/components/ui/Link";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import PlaceholderImage from "@/components/ui/PlaceholderImage";
 import { useDictionary } from "@/store/locale";
@@ -29,23 +30,38 @@ const FALLBACK_SLIDES: HeroBanner[] = [
   },
 ];
 
-function SlideContent({ slide, priority }: { slide: HeroBanner; priority: boolean }) {
+function SlideContent({
+  slide,
+  priority,
+  active,
+}: {
+  slide: HeroBanner;
+  priority: boolean;
+  /** Inactive slides already have pointer-events disabled by the caller
+   * (mouse/touch); this also keeps them out of the Tab order so keyboard
+   * users can't land on a link that's invisible. */
+  active: boolean;
+}) {
   const { hero } = useDictionary().home;
 
-  return slide.imageUrl ? (
-    <Image
-      src={getShopifyImageUrl(slide.imageUrl, HERO_IMAGE_WIDTH)}
-      alt={slide.imageAlt}
-      fill
-      priority={priority}
-      sizes="100vw"
-      unoptimized={isUntrustedRemoteImage(slide.imageUrl)}
-      placeholder="blur"
-      blurDataURL={IMAGE_BLUR_DATA_URL}
-      className="object-cover"
-    />
-  ) : (
-    <PlaceholderImage label={hero.campaignPhoto} className="absolute inset-0 h-full w-full" />
+  return (
+    <Link href={slide.href} tabIndex={active ? undefined : -1} className="absolute inset-0 block">
+      {slide.imageUrl ? (
+        <Image
+          src={getShopifyImageUrl(slide.imageUrl, HERO_IMAGE_WIDTH)}
+          alt={slide.imageAlt}
+          fill
+          priority={priority}
+          sizes="100vw"
+          unoptimized={isUntrustedRemoteImage(slide.imageUrl)}
+          placeholder="blur"
+          blurDataURL={IMAGE_BLUR_DATA_URL}
+          className="object-cover"
+        />
+      ) : (
+        <PlaceholderImage label={hero.campaignPhoto} className="h-full w-full" />
+      )}
+    </Link>
   );
 }
 
@@ -144,7 +160,7 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
               i === index ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           >
-            <SlideContent slide={slide} priority={i === 0} />
+            <SlideContent slide={slide} priority={i === 0} active={i === index} />
           </div>
         );
       })}
