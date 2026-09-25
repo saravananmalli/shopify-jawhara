@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...localised("/", { changeFrequency: "daily", priority: 1 }),
     ...localised("/collections", { changeFrequency: "weekly", priority: 0.8 }),
     ...localised("/stores", { changeFrequency: "monthly", priority: 0.5 }),
+    ...localised("/pages/heritage-since-1907", { changeFrequency: "yearly", priority: 0.4 }),
     ...collections.flatMap((collection) =>
       localised(`/collections/${collection.handle}`, {
         lastModified: toDate(collection.updatedAt),
