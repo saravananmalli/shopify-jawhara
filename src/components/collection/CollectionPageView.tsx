@@ -114,12 +114,17 @@ export default async function CollectionPageView({
   // to), every tile there is already a genuine subset of the current
   // collection, so it can double as a filter instead of only being a set of
   // links.
+  // Curation pages (Birthday, Wedding, gift collections…) list sibling
+  // curations in the strip, so the product categories (Rings, Earrings…) are
+  // offered as a real filter that narrows this collection's own products.
   const categoryTiles =
     inPlaceCategoryTiles.length > 0
       ? inPlaceCategoryTiles
       : handle === ALL_PRODUCTS_HANDLE
         ? await withCategoryCounts(handle, stripTiles)
-        : [];
+        : strip.categoryTiles.length > 0
+          ? await withCategoryCounts(handle, strip.categoryTiles)
+          : [];
   const categoryFilter: CatalogFilter | null =
     categoryTiles.length > 0
       ? {

@@ -12,13 +12,6 @@ import type { CatalogSortKey } from "@/types/catalog";
 /** Inline dropdowns beyond this many live only in the "Show All Filters" drawer. */
 const MAX_INLINE_FILTERS = 4;
 
-/** Category never shows as an inline dropdown, on any screen size — the
- * curation/"all" pages it appears on already have a visual tile strip for
- * the same choice above the toolbar, so a second copy inline would be
- * redundant. It's still reachable, like every section, via "Show All
- * Filters" (FiltersDrawer maps the full `sections` list, unfiltered). */
-const INLINE_EXCLUDED_KEYS = new Set(["category"]);
-
 /** "Show All Filters" and the sort dropdown share the row on phones, a fixed
  * width from sm. `flex-1` (not a fixed percentage basis) so they shrink to
  * make room for "Clear all" when it appears between them instead of the
@@ -68,7 +61,6 @@ export default function CollectionToolbar({
       <div className="hidden items-center gap-2 lg:flex">
         <QuickTagDropdown selected={quickTagSelected} onSelect={onQuickTagSelect} />
         {sections
-          .filter((section) => !INLINE_EXCLUDED_KEYS.has(section.key))
           .slice(0, MAX_INLINE_FILTERS)
           .map((section) => (
             <FilterDropdown
