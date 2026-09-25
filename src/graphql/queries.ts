@@ -47,6 +47,21 @@ export const SEARCH_PRODUCTS_QUERY = /* GraphQL */ `
   ${PRODUCT_CARD_FRAGMENT}
 `;
 
+/** Same as SEARCH_PRODUCTS_QUERY but ordered by Shopify, for callers that need
+ * the cheapest/dearest matches across the whole result set, not just the top by relevance. */
+export const SEARCH_PRODUCTS_SORTED_QUERY = /* GraphQL */ `
+  query SearchProductsSorted($query: String!, $first: Int!, $sortKey: ProductSortKeys!, $reverse: Boolean!) {
+    products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
+      edges {
+        node {
+          ...ProductCardFields
+        }
+      }
+    }
+  }
+  ${PRODUCT_CARD_FRAGMENT}
+`;
+
 export const PRODUCT_BY_HANDLE_QUERY = /* GraphQL */ `
   query Product($handle: String!) {
     product(handle: $handle) {

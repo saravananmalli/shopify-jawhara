@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
     "@shopify/hydrogen-react": "^2026.4.3",
     "@types/sanitize-html": "^2.16.1",
     "dirham": "^1.5.3",

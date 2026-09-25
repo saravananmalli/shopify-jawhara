@@ -8,6 +8,7 @@ import {
   PRODUCT_BY_HANDLE_QUERY,
   PRODUCT_RECOMMENDATIONS_QUERY,
   SEARCH_PRODUCTS_QUERY,
+  SEARCH_PRODUCTS_SORTED_QUERY,
 } from "@/graphql/queries";
 import { PRODUCT_REVALIDATE_SECONDS } from "@/config/catalog";
 import type { Product, ProductDetail } from "@/types/product";
@@ -87,11 +88,14 @@ export async function searchProducts({
 export async function filterProducts({
   query,
   first = 12,
+  sort,
   revalidate = PRODUCT_REVALIDATE_SECONDS,
   locale,
 }: {
   query: string;
   first?: number;
+  /** Order by price across every match instead of Shopify's relevance order. */
+  sort?: "price_asc" | "price_desc";
   /** Override for statically generated pages that re-render on their own schedule. */
   revalidate?: number;
   locale: Locale;
@@ -99,8 +103,10 @@ export async function filterProducts({
   const data = await shopifyFetch<{
     products: { edges: { node: ShopifyProductCard }[] };
   }>({
-    query: SEARCH_PRODUCTS_QUERY,
-    variables: { query, first },
+    query: sort ? SEARCH_PRODUCTS_SORTED_QUERY : SEARCH_PRODUCTS_QUERY,
+    variables: sort
+      ? { query, first, sortKey: "PRICE", reverse: sort === "price_desc" }
+      : { query, first },
     locale,
     revalidate,
   });

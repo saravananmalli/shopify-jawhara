@@ -747,5 +747,93 @@
       "cta": "Contact us",
       "ctaSecondary": "Find a store"
     }
+  },
+  "layla": {
+    "title": "Layla",
+    "subtitle": "Jewellery Consultant",
+    "launcher": "Ask Layla AI Expert",
+    "open": "Chat with Layla",
+    "close": "Close chat",
+    "newChat": "New chat",
+    "greeting": "Welcome to Jawhara ✨ I'm Layla, your jewellery concierge.",
+    "greetingBody": "I can help you find the perfect piece, answer questions about delivery and returns, or anything else — just ask!",
+    "starters": [
+      {
+        "label": "Gift Finder",
+        "message": "Help me find a gift"
+      },
+      {
+        "label": "Best Sellers",
+        "message": "Show me your best sellers"
+      },
+      {
+        "label": "Recommend",
+        "message": "Recommend something for me"
+      }
+    ],
+    "inputLabel": "Message Layla",
+    "placeholder": "Ask Layla anything…",
+    "send": "Send",
+    "typing": "Layla is thinking…",
+    "messagesLabel": "Conversation with Layla",
+    "scrollPrev": "Previous pieces",
+    "scrollNext": "Next pieces",
+    "recommended": "Pieces recommended by Layla",
+    "viewProduct": "View",
+    "outOfStock": "Out of stock",
+    "suggestions": "Suggested replies",
+    "errorGeneric": "Layla couldn't answer just now. Please try again.",
+    "errorRateLimited": "You're sending messages quickly. Please wait a moment and try again.",
+    "errorUnavailable": "Layla isn't available right now. Our team is happy to help instead.",
+    "retry": "Try again",
+    "fallbackReply": "I'm sorry, I couldn't put that together. Could you rephrase, or would you like to speak with our team?",
+    "disclaimer": "Layla is an AI assistant. Please confirm prices and details before ordering.",
+    "youSaid": "You",
+    "laylaSaid": "Layla",
+    "links": {
+      "faq": "FAQs",
+      "shipping_policy": "Shipping policy",
+      "store_locator": "Find a store",
+      "customer_service": "Customer service",
+      "whatsapp": "WhatsApp us",
+      "phone": "Call us",
+      "account": "My account",
+      "all_jewellery": "Shop all jewellery"
+    },
+    "helpTitle": "What can I help you with?",
+    "aiBadge": "AI",
+    "tooltipTitle": "Say Hello to Layla",
+    "tooltipBody": "Chat with the UAE’s first AI-Powered jewellery search assistant and browse jewellery stress free!",
+    "orders": "My Orders",
+    "cart": "My Cart",
+    "wishlist": "My Wishlist",
+    "chatWhatsapp": "Chat on WhatsApp",
+    "goldTitle": "Today's Gold Rates",
+    "goldNote": "International reference rate, not a Jawhara selling price.",
+    "welcomeChips": [
+      {
+        "label": "Today's Gold Price",
+        "message": "What is today's gold price?"
+      },
+      {
+        "label": "Everyday Luxury",
+        "message": "Show me the Everyday Luxury collection"
+      },
+      {
+        "label": "New Collection",
+        "message": "Show me your new collection"
+      },
+      {
+        "label": "Find a Store",
+        "message": "Where are your stores?"
+      }
+    ],
+    "trackOrder": "Track My Order",
+    "statusSearching": "Searching our collection…",
+    "statusGold": "Checking today's gold price…",
+    "statusLookup": "Looking that up…",
+    "goldPrefer": "What would you prefer?",
+    "goldUpdated": "Updated {time}",
+    "justNow": "just now"
   }
 }

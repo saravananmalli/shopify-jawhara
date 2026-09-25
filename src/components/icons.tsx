@@ -144,6 +144,57 @@ export function SparkleIcon({ className }: IconProps) {
   );
 }
 
+export function SendIcon({ className }: IconProps) {
+  // An up arrow, not a paper plane: it points the same way in both directions.
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const stroke = { stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+
+export function PackageIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M21 8l-9-5-9 5v8l9 5 9-5V8zM3.3 7.7L12 12.5l8.7-4.8M12 12.5V21" {...stroke} />
+    </svg>
+  );
+}
+
+export function PaperPlaneIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={`${className ?? ""} ${FLIP_IN_RTL}`} aria-hidden>
+      <path d="M21 3L10 14M21 3l-7 18-4-7-7-4 18-7z" {...stroke} />
+    </svg>
+  );
+}
+
+export function DiamondIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M6 3h12l4 6-10 12L2 9l4-6zM2 9h20M8.5 3L12 9l3.5-6M12 21L8 9M12 21l4-12" {...stroke} />
+    </svg>
+  );
+}
+
+export function GiftIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" {...stroke} />
+    </svg>
+  );
+}
+
+export function TruckIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={`${className ?? ""} ${FLIP_IN_RTL}`} aria-hidden>
+      <path d="M1 5h13v11H1zM14 9h4l3 3v4h-7M8.5 19a2 2 0 11-4 0 2 2 0 014 0zM19.5 19a2 2 0 11-4 0 2 2 0 014 0z" {...stroke} />
+    </svg>
+  );
+}
+
 export function CrosshairIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
