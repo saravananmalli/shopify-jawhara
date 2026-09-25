@@ -37,12 +37,13 @@ const latin = Poppins({
   style: ["normal", "italic"],
 });
 
-// Geometric Kufi cut to sit next to Poppins. Only referenced when rendering
-// /ar, so English pages neither preload nor download it.
+// Geometric Kufi cut to sit next to Poppins. Not preloaded, so English pages
+// only download it if Arabic text (the "العربية" language link) is on screen.
 const arabic = Noto_Kufi_Arabic({
   variable: "--font-arabic",
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
+  preload: false,
 });
 
 export const dynamicParams = false;
@@ -119,7 +120,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     <html
       lang={locale}
       dir={dir}
-      className={`${latin.variable} ${locale === "ar" ? arabic.variable : ""} h-full antialiased`}
+      className={`${latin.variable} ${arabic.variable} h-full antialiased`}
     >
       {/* Bottom padding keeps the footer clear of the phone tab bar (about 4.25rem tall). */}
       <body className="min-h-full flex flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-brown-900 md:pb-0">
