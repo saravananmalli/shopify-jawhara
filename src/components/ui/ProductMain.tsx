@@ -1,10 +1,19 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import ProductGallery from "@/components/ui/ProductGallery";
 import ProductInfo from "@/components/ui/ProductInfo";
 import type { ProductDetail, ProductVariant } from "@/types/product";
 import type { RatingSummary } from "@/types/review";
+import { findVariantByParam } from "@/utils/variant-param";
+
+const subscribeToUrl = (notify: () => void) => {
+  window.addEventListener("popstate", notify);
+  return () => window.removeEventListener("popstate", notify);
+};
+const readSearch = () => window.location.search;
+// Server and hydration render see no query, so markup matches; the client value follows.
+const readServerSearch = () => "";
 
 /**
  * Gallery + info column. The selected variant lives in ProductInfo, but the
@@ -24,6 +33,11 @@ export default function ProductMain({
   children: ReactNode;
 }) {
   const [focusImageUrl, setFocusImageUrl] = useState<string | null>(null);
+  const search = useSyncExternalStore(subscribeToUrl, readSearch, readServerSearch);
+  const preferredVariant = useMemo(
+    () => findVariantByParam(product.variants, new URLSearchParams(search).get("variant")),
+    [product.variants, search],
+  );
 
   const handleVariantChange = (variant: ProductVariant) => {
     if (variant.image) setFocusImageUrl(variant.image.url);
@@ -35,11 +49,16 @@ export default function ProductMain({
         images={product.images}
         title={product.title}
         badge={badge}
-        focusImageUrl={focusImageUrl}
+        focusImageUrl={focusImageUrl ?? preferredVariant?.image?.url ?? null}
       />
 
       <div>
-        <ProductInfo product={product} rating={rating} onVariantChange={handleVariantChange} />
+        <ProductInfo
+          product={product}
+          rating={rating}
+          onVariantChange={handleVariantChange}
+          preferredVariant={preferredVariant}
+        />
         {children}
       </div>
     </div>

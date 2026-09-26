@@ -39,6 +39,9 @@ export type Product = {
   tags: string[];
   /** Null when the product has no published review. */
   rating: RatingSummary | null;
+  /** Set when a price-range filter swapped the card to the cheaper variant that
+   * matched, so the link should open the product on that variant. */
+  variantPreselected?: boolean;
 };
 
 /**

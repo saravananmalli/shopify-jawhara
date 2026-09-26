@@ -14,6 +14,7 @@ import { useDictionary, useLocale } from "@/store/locale";
 import { getDiscountPercent } from "@/utils/format";
 import { formatMessage, pluralize } from "@/utils/i18n";
 import { getProductBadge } from "@/utils/product-badge";
+import { toVariantParam } from "@/utils/variant-param";
 import { getShopifyImageUrl, IMAGE_BLUR_DATA_URL } from "@/utils/shopify-image";
 import type { Product } from "@/types/product";
 
@@ -26,6 +27,10 @@ const SECONDARY_IMAGE_WIDTH = 500;
 // toggle or pending state, but a card's `product` object is stable.
 export default memo(function ProductCard({ product }: { product: Product }) {
   const discountPercent = getDiscountPercent(product.price, product.compareAtPrice);
+  const productHref =
+    product.variantPreselected && product.defaultVariant
+      ? `/products/${product.handle}?variant=${toVariantParam(product.defaultVariant.id)}`
+      : `/products/${product.handle}`;
 
   const locale = useLocale();
   const { common, product: t } = useDictionary();
@@ -112,7 +117,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        <Link href={`/products/${product.handle}`} className="block">
+        <Link href={productHref} className="block">
           <div className="relative aspect-square overflow-hidden bg-cream-50">
             {product.image ? (
               <>
@@ -184,7 +189,7 @@ export default memo(function ProductCard({ product }: { product: Product }) {
         )}
       </div>
 
-      <Link href={`/products/${product.handle}`}>
+      <Link href={productHref}>
         <h3 dir="auto" className="mt-1.5 line-clamp-1 font-sans text-[13px] leading-snug text-brown-900 sm:mt-2 sm:line-clamp-2 sm:min-h-[2.5em] sm:text-[14px]">
           {product.title}
         </h3>
