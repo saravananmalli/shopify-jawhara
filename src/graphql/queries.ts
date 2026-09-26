@@ -1,5 +1,6 @@
 import {
   CART_FRAGMENT,
+  IMAGE_FRAGMENT,
   PRODUCT_DETAIL_FRAGMENT,
   PRODUCT_FILTER_FRAGMENT,
   PRODUCT_CARD_FRAGMENT,
@@ -708,4 +709,41 @@ export const SHOP_POLICIES_QUERY = /* GraphQL */ `
       }
     }
   }
+`;
+
+/** Every variant's price and photo for a few products — only fetched when a
+ * price-range filter needs to show the variant that matched. */
+export const PRODUCT_VARIANTS_BY_IDS_QUERY = /* GraphQL */ `
+  query ProductVariantsByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Product {
+        id
+        variants(first: 25) {
+          edges {
+            node {
+              id
+              title
+              availableForSale
+              price {
+                amount
+                currencyCode
+              }
+              compareAtPrice {
+                amount
+                currencyCode
+              }
+              selectedOptions {
+                name
+                value
+              }
+              image {
+                ...ImageFields
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ${IMAGE_FRAGMENT}
 `;

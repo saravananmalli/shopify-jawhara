@@ -50,6 +50,12 @@ export type ShopifyProductCard = {
   };
 };
 
+/** A product's variants alone (PRODUCT_VARIANTS_BY_IDS_QUERY). */
+export type ShopifyProductVariants = {
+  id: string;
+  variants: ShopifyProductCard["variants"];
+};
+
 /** Full product (PRODUCT_FRAGMENT) — the detail page's base. */
 export type ShopifyProduct = ShopifyProductCard & {
   description: string;

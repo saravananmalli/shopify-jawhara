@@ -32,8 +32,11 @@ export default function ProductInfo({
   product,
   rating,
   onVariantChange,
+  preferredVariant,
 }: {
   product: ProductDetail;
+  /** The variant a `?variant=` link asked for (e.g. from a price-filtered card). */
+  preferredVariant?: ProductVariant | null;
   /** Fired when the shopper picks an option, with the variant it resolves to. */
   onVariantChange?: (variant: ProductVariant) => void;
   /** Real Judge.me rating from Shopify; null/undefined hides the row. */
@@ -54,13 +57,15 @@ export default function ProductInfo({
   ];
   const showOptionPicker = optionNames.length > 0;
 
-  const [selection, setSelection] = useState<Record<string, string>>(() => {
-    const initial: Record<string, string> = {};
-    for (const option of product.defaultVariant?.options ?? []) {
-      initial[option.name] = option.value;
-    }
-    return initial;
-  });
+  // The shopper's own picks win; until they pick, the variant a `?variant=`
+  // link asked for (known only on the client — the page itself is static),
+  // else the default one.
+  const [picked, setSelection] = useState<Record<string, string> | null>(null);
+  const selection: Record<string, string> = {};
+  for (const option of (preferredVariant ?? product.defaultVariant)?.options ?? []) {
+    selection[option.name] = option.value;
+  }
+  Object.assign(selection, picked);
   const [quantity, setQuantity] = useState(1);
 
   const selectedVariant =

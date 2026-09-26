@@ -7,12 +7,14 @@ import {
   toCatalogFilters,
   toCatalogPageFromCollection,
   toCatalogPageFromSearch,
+  withCheapestVariant,
 } from "@/services/shopify/adapters";
 import {
   CATALOG_COLLECTION_QUERY,
   CATALOG_SEARCH_QUERY,
   CATALOG_TAG_SCAN_COLLECTION_QUERY,
   CATALOG_TAG_SCAN_SEARCH_QUERY,
+  PRODUCT_VARIANTS_BY_IDS_QUERY,
 } from "@/graphql/queries";
 import {
   ALL_PRODUCTS_HANDLE,
@@ -21,12 +23,14 @@ import {
   PRODUCT_REVALIDATE_SECONDS,
 } from "@/config/catalog";
 import { toProductFilterInputs } from "@/utils/catalog-params";
+import { inBand, priceBandOfHandle, type Band } from "@/utils/price-band";
 import {
   buildTagGroupFilters,
   matchesTagGroups,
   refOfTag,
 } from "@/utils/tag-filters";
 import type { CategoryTile } from "@/types/content";
+import type { Product } from "@/types/product";
 import type {
   CatalogFilter,
   CatalogPage,
@@ -36,6 +40,7 @@ import type {
   ShopifyCatalogCollection,
   ShopifyCatalogSearch,
   ShopifyFilter,
+  ShopifyProductVariants,
   ShopifyTagScanCollection,
   ShopifyTagScanSearch,
 } from "@/types/shopify-api";
@@ -78,14 +83,63 @@ export async function getCatalogPage(
   // alongside the main request — and only when facets are wanted at all. Any
   // union collections checked in the Category section are scanned too, so
   // the counts match the actual combined product set.
-  const { unionCollections } = splitCustomFilters(args.filters ?? []);
+  const { unionCollections, bands: filterBands } = splitCustomFilters(args.filters ?? []);
+  // A "shop by price" collection page is its own band, unless the shopper
+  // picked price checkboxes on top of it.
+  const handleBand = priceBandOfHandle(args.handle);
+  const bands: Band[] = filterBands.length > 0 ? filterBands : handleBand ? [handleBand] : [];
   const [page, tagFilters] = await Promise.all([
     getCatalogPageCore(args),
     args.withFilters === false
       ? Promise.resolve([])
       : getTagGroupFilters([args.handle, ...unionCollections]),
   ]);
-  return page && { ...page, filters: [...tagFilters, ...page.filters] };
+  if (!page) return page;
+  const products =
+    bands.length > 0 ? await withMatchedVariants(page.products, bands, args.locale) : page.products;
+  return { ...page, products, filters: [...tagFilters, ...page.filters] };
+}
+
+/**
+ * A price band matches a product by its cheapest variant, so on a filtered page
+ * a card whose first variant costs more than that (Full Set vs Earrings) must
+ * show the variant that is actually in range. Only the few such products cost
+ * an extra request; if it fails the cards simply keep their default variant.
+ */
+async function withMatchedVariants(
+  products: Product[],
+  bands: Band[],
+  locale: Locale,
+): Promise<Product[]> {
+  const inAnyBand = (amount: number) => bands.some((band) => inBand(amount, band));
+  // The card shows the cheapest price with the first variant's photo, so it is
+  // wrong when the first variant costs more, or when that cheapest price is
+  // itself outside the band (it got in through a dearer variant).
+  const mismatched = products.filter(
+    (product) =>
+      product.defaultVariant &&
+      (product.defaultVariant.price.amount > product.price.amount ||
+        !inAnyBand(product.price.amount)),
+  );
+  if (mismatched.length === 0) return products;
+
+  try {
+    const data = await shopifyFetch<{ nodes: (ShopifyProductVariants | null)[] }>({
+      query: PRODUCT_VARIANTS_BY_IDS_QUERY,
+      variables: { ids: mismatched.map((product) => product.id) },
+      locale,
+      revalidate: PRODUCT_REVALIDATE_SECONDS,
+    });
+    const variantsById = new Map(
+      data.nodes.flatMap((node) => (node ? [[node.id, node.variants] as const] : [])),
+    );
+    return products.map((product) => {
+      const variants = variantsById.get(product.id);
+      return variants ? withCheapestVariant(product, variants, bands) : product;
+    });
+  } catch {
+    return products;
+  }
 }
 
 async function getCatalogPageCore({

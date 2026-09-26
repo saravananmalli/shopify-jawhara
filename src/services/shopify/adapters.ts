@@ -1,5 +1,6 @@
 import { PRODUCT_SPEC_FIELDS } from "@/config/product-specs";
 import type { Locale } from "@/config/i18n";
+import { inBand, type Band } from "@/utils/price-band";
 import { formatMetafieldValue, formatMoney } from "@/utils/format";
 import { brandName } from "@/config/site";
 import { isSafeCheckoutUrl, isSafeHttpsUrl, toSafeInternalPath } from "@/utils/safe-url";
@@ -41,6 +42,7 @@ import type {
   ShopifyMoney,
   ShopifyOccasionMetaobject,
   ShopifyProductCard,
+  ShopifyProductVariants,
   ShopifyProductDetail,
   ShopifySitemapNode,
   ShopifyStoreLocationMetaobject,
@@ -138,6 +140,44 @@ export function toProduct(
         : null,
     defaultVariant: variants[0] ?? null,
     variants,
+  };
+}
+
+/**
+ * A price-range filter matches a product on its cheapest variant, but a card
+ * shows the first variant's photo and quick-adds the first variant. When those
+ * differ (a bridal set whose Earrings variant is the one in range), show and
+ * sell the variant that matched: its price, photo and add-to-bag target.
+ */
+export function withCheapestVariant(
+  product: Product,
+  raw: ShopifyProductVariants["variants"],
+  bands: Band[],
+): Product {
+  const variants = raw.edges.map((edge) => toVariant(edge.node));
+  // Prefer the variants inside the band(s); a product listed there through
+  // another rule keeps its overall cheapest.
+  const inRange = variants.filter((variant) =>
+    bands.some((band) => inBand(variant.price.amount, band)),
+  );
+  const cheapest = (inRange.length > 0 ? inRange : variants).reduce<ProductVariant | null>(
+    (best, variant) => (!best || variant.price.amount < best.price.amount ? variant : best),
+    null,
+  );
+  if (
+    !cheapest ||
+    (cheapest.id === product.defaultVariant?.id && cheapest.price.amount === product.price.amount)
+  ) {
+    return product;
+  }
+  return {
+    ...product,
+    price: cheapest.price,
+    compareAtPrice: cheapest.compareAtPrice,
+    available: cheapest.available,
+    image: cheapest.image ?? product.image,
+    defaultVariant: cheapest,
+    variantPreselected: true,
   };
 }
 
