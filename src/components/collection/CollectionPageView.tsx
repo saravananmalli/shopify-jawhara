@@ -120,11 +120,16 @@ export default async function CollectionPageView({
       : handle === ALL_PRODUCTS_HANDLE
         ? await withCategoryCounts(handle, stripTiles)
         : [];
+  // On the gift and "all" pages the tiles are the jewellery types themselves,
+  // so that one filter is the Jewellery type dropdown. The "Our Collections"
+  // landing's tiles are collections (365, Ada…), a genuine Category filter that
+  // still needs a Jewellery type dropdown of its own below.
+  const categoryTilesAreTypes = !ourCollectionsLanding;
   const categoryFilter: CatalogFilter | null =
     categoryTiles.length > 0
       ? {
           id: "category",
-          label: t.categoryFilter,
+          label: categoryTilesAreTypes ? t.jewelleryType : t.categoryFilter,
           type: "LIST",
           values: categoryTiles.map((tile) => ({
             id: `category.${tile.handle}`,
@@ -137,10 +142,11 @@ export default async function CollectionPageView({
 
   // Any collection whose products span several product types (Birthday, 18K
   // Yellow Gold…) gets a Jewellery type filter narrowing its own products.
-  // Counted from the real products, so a single-type page (Rings) or one with
-  // a Category filter already (Gift, all) shows none.
+  // Counted from the real products, so a page whose products are all one type
+  // shows none, and neither does one whose type dropdown is already the
+  // Category filter above (Gift, all).
   const typeCandidates =
-    categoryFilter !== null
+    categoryFilter !== null && categoryTilesAreTypes
       ? []
       : strip.categoryTiles.length > 0
         ? strip.categoryTiles
@@ -149,12 +155,9 @@ export default async function CollectionPageView({
     typeCandidates.length > 0
       ? await withCategoryCounts(handle, typeCandidates)
       : [];
-  // A page that is itself a type (Rings) is never split by type.
-  const typeTiles =
-    countedTypes.length > 1 &&
-    !typeCandidates.some((tile) => tile.handle === handle)
-      ? countedTypes
-      : [];
+  // Even a type page (Rings) gets the dropdown when the merchant has put
+  // another type's product in it.
+  const typeTiles = countedTypes.length > 1 ? countedTypes : [];
   const typeFilter: CatalogFilter | null =
     typeTiles.length > 0
       ? {
