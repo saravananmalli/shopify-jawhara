@@ -123,7 +123,10 @@ export async function runLayla({
     const stream = getClient().messages.stream({
       model: LAYLA_MODEL,
       max_tokens: LAYLA_LIMITS.maxOutputTokens,
-      output_config: { effort: "low" },
+      // Haiku 4.5 rejects `effort`.
+      ...(LAYLA_MODEL.startsWith("claude-haiku") ? {} : { output_config: { effort: "low" as const } }),
+      // Caches the growing conversation too, so tool rounds 2+ re-read it at cache price.
+      cache_control: { type: "ephemeral" },
       system: [
         // Stable prefix (tools + this block) is cached across every conversation.
         { type: "text", text: LAYLA_SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
@@ -150,6 +153,10 @@ export async function runLayla({
       if (typeof text === "string" && text) onEvent?.({ type: "message", text });
     });
     const response = await stream.finalMessage();
+    const { input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens } = response.usage;
+    console.info(
+      `[layla] round=${round + 1} in=${input_tokens} cache_read=${cache_read_input_tokens ?? 0} cache_write=${cache_creation_input_tokens ?? 0} out=${output_tokens}`,
+    );
 
     if (response.stop_reason === "refusal" || response.stop_reason === "max_tokens") {
       return fallbackReply(dictionary, dictionary.fallbackReply);

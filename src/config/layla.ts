@@ -1,8 +1,8 @@
 /**
- * Layla — the AI jewellery consultant. Deliberately fixed to Sonnet: it is not
+ * Layla — the AI jewellery consultant. Deliberately fixed to one model: it is not
  * overridable by env so a stray setting can't quietly move the chat to another model.
  */
-export const LAYLA_MODEL = "claude-sonnet-5";
+export const LAYLA_MODEL = "claude-haiku-4-5";
 
 /** Server-only secret — deliberately not NEXT_PUBLIC_. */
 export function isLaylaConfigured(): boolean {
@@ -19,7 +19,7 @@ export const LAYLA_LIMITS = {
   /** Characters a shopper may type in one message. */
   maxMessageChars: 500,
   /** Turns of history sent back to the model. */
-  maxHistoryTurns: 14,
+  maxHistoryTurns: 8,
   /** Cap per history turn (assistant turns carry a product-context note). */
   maxTurnChars: 1200,
   maxRequestBytes: 24_000,
